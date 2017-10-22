@@ -86,7 +86,7 @@ class DefaultUsersRestApiSpec extends WordSpec with Matchers with UserRestApiSpe
       }
     }
 
-    "get all users by id for GET /admin/users request" in withUser("jeckyl") { user =>
+    "get all users for GET /admin/users request" in withUser("jeckyl") { user =>
 
       Get(s"/admin/users") ~> usersRestApi.routes ~> check {
         responseAs[List[User]] should contain(
@@ -124,7 +124,20 @@ class DefaultUsersRestApiSpec extends WordSpec with Matchers with UserRestApiSpe
       }
     }
 
-    "get all active users by id for GET /users request" in withUser("jeckyl") { user =>
+    "get only not blocked users for GET /users request" in withUser("jeckyl") { user =>
+
+      Post(s"/admin/user/${user.id}/block") ~> usersRestApi.routes ~> runRoute
+
+      Get(s"/users") ~> usersRestApi.routes ~> check {
+        responseAs[List[UserResponse]] should not contain UserResponse(
+          user.id,
+          user.userName,
+          user.emailAddress
+        )
+      }
+    }
+
+    "get only not deleted users for GET /users request" in withUser("jeckyl") { user =>
 
       Post(s"/admin/user/${user.id}/block") ~> usersRestApi.routes ~> runRoute
       Delete(s"/admin/user/${user.id}") ~> usersRestApi.routes ~> check {

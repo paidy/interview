@@ -10,12 +10,12 @@ import scala.concurrent.Future
 
 case class UsersRestApi(
   userManagement: UserManagement[Future[?]]
-) extends HttpApi with ErrorHandling with FailFastCirceSupport with RequestCodecs with ResponseCodecs {
+) extends HttpApi with ErrorHandling with DefaultCirceSupport with RequestCodecs with ResponseCodecs {
 
   private val userId = Segment.map(UserId)
 
-  override def routes: Route = {
-    handleExceptions(errorHandler) {
+  override def routes: Route = handleExceptions(errorHandler) {
+    withRequestTimeoutResponse(timeoutResponse) {
 
       pathPrefix("user") {
 

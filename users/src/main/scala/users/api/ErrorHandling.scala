@@ -15,9 +15,15 @@ trait ErrorHandling {
     case Deleted => completeWithError(StatusCodes.BadRequest, "User is deleted.")
     case Blocked => completeWithError(StatusCodes.BadRequest, "User is blocked.")
     case sys: System => completeWithError(StatusCodes.InternalServerError, sys.underlying.getMessage)
+    case _: Exception => completeWithError(StatusCodes.InternalServerError, "Something unexpected happened.")
   }
 
   private def completeWithError(statusCode: StatusCode, message: String) =
     complete(HttpResponse(statusCode, entity = message))
 
+  val timeoutResponse: HttpRequest => HttpResponse = {
+    _ => HttpResponse(
+      StatusCodes.InternalServerError,
+      entity = "Unable to serve response within time limit, please enhance your calm.")
+  }
 }

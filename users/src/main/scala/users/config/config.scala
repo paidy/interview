@@ -2,11 +2,17 @@ package users.config
 
 import cats.data._
 
+import scala.concurrent.duration.Duration
+
 case class ApplicationConfig(
     executors: ExecutorsConfig,
-    services: ServicesConfig,
-    akka: AkkaConfig,
-    http: HttpConfig
+    services: ServicesConfig
+)
+
+case class HttpApplicationConfig(
+  application: ApplicationConfig,
+  akka: AkkaConfig,
+  http: HttpConfig
 )
 
 case class ExecutorsConfig(
@@ -42,16 +48,17 @@ case class AkkaConfig(
 )
 
 object AkkaConfig {
-  val fromApplicationConfig: Reader[ApplicationConfig, AkkaConfig] =
+  val fromApplicationConfig: Reader[HttpApplicationConfig, AkkaConfig] =
     Reader(_.akka)
 }
 
 case class HttpConfig(
   port: Int,
-  host: String
+  host: String,
+  requestTimeout: Duration
 )
 
 object HttpConfig {
-  val fromApplicationConfig: Reader[ApplicationConfig, HttpConfig] =
+  val fromApplicationConfig: Reader[HttpApplicationConfig, HttpConfig] =
     Reader(_.http)
 }

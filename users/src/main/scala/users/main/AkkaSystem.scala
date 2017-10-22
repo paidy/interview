@@ -3,15 +3,15 @@ package users.main
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import cats.data.Reader
-import users.config.{AkkaConfig, ApplicationConfig}
+import users.config.{AkkaConfig, HttpApplicationConfig}
 
 object AkkaSystem {
 
   val reader: Reader[AkkaConfig, AkkaSystem] =
     Reader(AkkaSystem(_))
 
-  val fromApplicationConfig: Reader[ApplicationConfig, AkkaSystem] =
-    reader.local[ApplicationConfig](_.akka)
+  val fromApplicationConfig: Reader[HttpApplicationConfig, AkkaSystem] =
+    reader.local[HttpApplicationConfig](_.akka)
 
 }
 

@@ -10,31 +10,14 @@ import scala.concurrent.Future
 
 object Application {
 
-  val reader: Reader[(HttpConfig, AkkaSystem, Apis), Application] =
-    Reader((Application.apply _).tupled)
+  val reader: Reader[Apis, Application] =
+    Reader(Application(_))
 
   val fromApplicationConfig: Reader[ApplicationConfig, Application] =
-    (for {
-      httpConfig <- HttpConfig.fromApplicationConfig
-      akkaSystem <- AkkaSystem.fromApplicationConfig
-      apis <- Apis.fromApplicationConfig
-    } yield (httpConfig, akkaSystem, apis)) andThen reader
+    Apis.fromApplicationConfig andThen reader
 
 }
 
 case class Application(
-    httpConfig: HttpConfig,
-    akkaSystem: AkkaSystem,
-    apis: Apis
-) {
-
-  import akkaSystem._
-
-  def start(): Future[ServerBinding] = {
-
-    Http().bindAndHandle(
-      handler = apis.userRestApi.routes,
-      interface = httpConfig.host,
-      port = httpConfig.port)
-  }
-}
+  apis: Apis
+)

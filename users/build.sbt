@@ -4,7 +4,7 @@ version := "1.0.0"
 scalaVersion := "2.12.4"
 
 val akkaVersion = "2.5.4"
-val circeVersion = "0.8.0"
+val circeVersion = "0.9.0-M1"
 val akkaHttpVersion = "10.0.10"
 
 scalacOptions ++= Seq(
@@ -29,6 +29,8 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
+  "io.circe" %% "circe-java8" % circeVersion,
+  "de.heikoseeberger" %% "akka-http-circe" % "1.18.0",
   "org.scalatest" %% "scalatest" % "3.0.4" % "test",
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test",
   compilerPlugin("org.spire-math" %% "kind-projector" % "0.9.4")

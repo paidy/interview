@@ -1,7 +1,5 @@
 package users.persistence.repositories.users
 
-import cats.implicits._
-
 import users.domain._
 import users.persistence.repositories._
 
@@ -28,7 +26,7 @@ private[users] class InMemoryRepository extends UserRepository {
   def getByUserName(userName: UserName): Future[Option[User]] =
     Future.successful {
       UserMap.collectFirst {
-        case (_, user) if user.userName === userName ⇒ user
+        case (_, user) if user.userName == userName ⇒ user
       }
     }
 

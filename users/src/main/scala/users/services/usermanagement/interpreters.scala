@@ -1,7 +1,7 @@
 package users.services.usermanagement
 
-import java.util.UUID
 import java.time.OffsetDateTime
+import java.util.UUID
 
 import cats.data.EitherT
 import cats.implicits._
@@ -40,7 +40,7 @@ final class DefaultInterpreter private[usermanagement] (
   import User._
 
   def generateId(): Future[Id] =
-    Future.successful(Id(UUID.randomUUID().toString))
+    Future.successful(UserId(UUID.randomUUID().toString))
 
   def get(
       id: Id

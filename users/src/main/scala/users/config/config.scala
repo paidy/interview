@@ -4,7 +4,9 @@ import cats.data._
 
 case class ApplicationConfig(
     executors: ExecutorsConfig,
-    services: ServicesConfig
+    services: ServicesConfig,
+    akka: AkkaConfig,
+    http: HttpConfig
 )
 
 case class ExecutorsConfig(
@@ -32,4 +34,24 @@ object ServicesConfig {
       failureProbability: Double,
       timeoutProbability: Double
   )
+}
+
+
+case class AkkaConfig(
+  name: String
+)
+
+object AkkaConfig {
+  val fromApplicationConfig: Reader[ApplicationConfig, AkkaConfig] =
+    Reader(_.akka)
+}
+
+case class HttpConfig(
+  port: Int,
+  host: String
+)
+
+object HttpConfig {
+  val fromApplicationConfig: Reader[ApplicationConfig, HttpConfig] =
+    Reader(_.http)
 }

@@ -19,7 +19,12 @@ object Main extends App {
         failureProbability = 0.1,
         timeoutProbability = 0.1
       )
-    )
+    ),
+    http = HttpConfig(
+      port = 9000,
+      host = "localhost"
+    ),
+    akka = AkkaConfig("user-management-system")
   )
 
   val application = Application.fromApplicationConfig.run(config)

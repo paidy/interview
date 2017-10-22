@@ -16,7 +16,7 @@ private[users] class InMemoryRepository extends UserRepository {
 
   def insert(user: User): Future[Done] =
     Future.successful {
-      UserMap + (user.id → user)
+      UserMap += (user.id → user)
       Done
     }
 
@@ -32,4 +32,10 @@ private[users] class InMemoryRepository extends UserRepository {
 
   def all(): Future[List[User]] =
     Future.successful(UserMap.values.toList)
+
+  def drop(): Future[Done] =
+    Future.successful {
+      UserMap.clear()
+      Done
+    }
 }

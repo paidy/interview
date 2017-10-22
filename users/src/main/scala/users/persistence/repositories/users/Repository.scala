@@ -9,6 +9,7 @@ private[repositories] trait Repository {
   def get(id: User.Id): Future[Option[User]]
   def getByUserName(userName: UserName): Future[Option[User]]
   def all(): Future[List[User]]
+  def drop(): Future[Done]
 }
 
 object Repository {

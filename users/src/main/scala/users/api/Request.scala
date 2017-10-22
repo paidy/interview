@@ -16,4 +16,4 @@ case class UpdateEmailRequest(
 
 case class UpdatePasswordRequest(
   password: Password
-)
+) extends Request

@@ -29,10 +29,13 @@ final case class Services(
 
   implicit val ec = serviceExecutor
 
-  final val userManagement: UserManagement[Future[?]] =
+  final val defaultUserManagement: UserManagement[Future[?]] =
     UserManagement.unreliable(
       UserManagement.default(userRepository),
       config.users
     )
+
+  final val restrictedUserManagement: UserManagement[Future[?]] =
+    UserManagement.restricted(defaultUserManagement)
 
 }

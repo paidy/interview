@@ -1,16 +1,23 @@
 package users.main
 
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.Http.ServerBinding
 import cats.data._
 import users.config._
+import users.api.UsersRestApi
+
+import scala.concurrent.Future
 
 object Application {
-  val reader: Reader[Services, Application] =
-    Reader(Application.apply)
+
+  val reader: Reader[Apis, Application] =
+    Reader(Application(_))
 
   val fromApplicationConfig: Reader[ApplicationConfig, Application] =
-    Services.fromApplicationConfig andThen reader
+    Apis.fromApplicationConfig andThen reader
+
 }
 
 case class Application(
-    services: Services
+  apis: Apis
 )

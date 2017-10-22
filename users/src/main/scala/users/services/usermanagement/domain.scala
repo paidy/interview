@@ -9,5 +9,6 @@ object Error {
   final case object Active extends Error
   final case object Deleted extends Error
   final case object Blocked extends Error
+  final case object Restricted extends Error
   final case class System(underlying: Throwable) extends Error
 }

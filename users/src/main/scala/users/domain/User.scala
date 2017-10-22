@@ -5,6 +5,7 @@ import java.time.OffsetDateTime
 import cats.kernel.Eq
 import cats.implicits._
 import com.softwaremill.quicklens._
+import shapeless.tag.@@
 
 final case class User(
     id: User.Id,
@@ -48,7 +49,7 @@ object User {
       at: OffsetDateTime
   ): User = User(id, userName, emailAddress, password, Metadata(1, at, at, None, None))
 
-  final case class Id(value: String) extends AnyVal
+  type Id = String @@ User
 
   final case class Metadata(
       version: Int,

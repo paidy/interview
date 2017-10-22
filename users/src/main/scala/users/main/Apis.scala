@@ -17,6 +17,8 @@ case class Apis(
   services: Services
 ) {
 
-  val userRestApi: HttpApi = UsersRestApi(services.userManagement)
-
+  val userRestApi: HttpApi = UsersRestApi(
+    services.defaultUserManagement,
+    services.restrictedUserManagement
+  )
 }

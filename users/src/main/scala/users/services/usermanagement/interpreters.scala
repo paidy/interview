@@ -21,6 +21,14 @@ object Interpreters {
   ): Algebra[Future[?]] =
     new DefaultInterpreter(userRepository)
 
+  def restricted(
+    underlying: Algebra[Future[?]]
+  )(
+    implicit
+    ec: ExecutionContext
+  ): Algebra[Future[?]] =
+    new RestrictedInterpreter(underlying)
+
   def unreliable(
       underlying: Algebra[Future[?]],
       config: ServicesConfig.UsersConfig
@@ -236,4 +244,57 @@ final class UnreliableInterpreter private[usermanagement] (
   private def failOrTimeout[A](f: Future[A]): Future[A] =
     failOrTimeoutWithProbabilities(config.failureProbability, config.timeoutProbability)(f)
 
+}
+
+final class RestrictedInterpreter private[usermanagement] (
+  underlying: Algebra[Future[?]]
+)(
+  implicit
+  ec: ExecutionContext
+) extends Algebra[Future[?]] {
+
+  import User._
+
+  override def generateId(): Future[User.Id] = underlying.generateId()
+
+  override def get(id: Id): Future[Error Either User] = {
+    (for {
+      user <- EitherT(underlying.get(id))
+      result <- EitherT.fromEither[Future] {
+        if(user.isActive) Right(user)
+        else Left[Error, User](Error.NotFound)
+      }
+    } yield result).value
+  }
+
+  override def signUp(
+    userName: UserName,
+    emailAddress: EmailAddress,
+    password: Option[Password]
+  ): Future[Error Either User] =
+    underlying.signUp(userName, emailAddress, password)
+
+  override def updateEmail(id: Id, emailAddress: EmailAddress): Future[Error Either User] =
+    underlying.updateEmail(id, emailAddress)
+
+  override def updatePassword(id: Id, password: Password): Future[Error Either User] =
+    underlying.updatePassword(id, password)
+
+  override def resetPassword(id: Id): Future[Error Either User] =
+    underlying.resetPassword(id)
+
+  override def block(id: Id): Future[Error Either User] = Future.successful(Left(Error.Restricted))
+
+  override def unblock(id: Id): Future[Error Either User] = Future.successful(Left(Error.Restricted))
+
+  override def delete(id: Id): Future[Error Either Done] = Future.successful(Left(Error.Restricted))
+
+  def all(): Future[Error Either List[User]] = {
+    (for {
+      users <- EitherT[Future, Error, List[User]](underlying.all())
+      result <- EitherT.fromEither[Future] {
+        Right[Error, List[User]](users.filter(_.isActive))
+      }
+    } yield result).value
+  }
 }

@@ -22,6 +22,9 @@ The complete specification for this exercise can be found in the [UsersAPI.md](U
 ### 2. [Frontend] Build a SPA that displays weather information
 The complete specification for this exercise can be found in the [Weather.md](Weather.md).
 
+### 3. [Platform] Build a local proxy for currency exchange rates
+The complete specification for this exercise can be found in the [Forex.md](Forex.md).
+
 ## F.A.Q.
 1) _Is it OK to share your solutions publicly?_
 Yes, the questions are not prescriptive, the process and discussion around the code is the valuable part. You do the work, you own the code. Given we are asking you to give up your time, it is entirely reasonable for you to keep and use your solution as you see fit.

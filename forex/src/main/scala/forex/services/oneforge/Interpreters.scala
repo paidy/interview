@@ -20,9 +20,12 @@ final class Dummy[R] private[oneforge] (
     m1: _task[R]
 ) extends Algebra[Eff[R, ?]] {
   override def get(
-      pair: Rate.Pair
-  ): Eff[R, Error Either Rate] =
+      pairs: Set[Rate.Pair]
+  ): Eff[R, Error Either Set[Rate]] = {
     for {
-      result ← fromTask(Task.now(Rate(pair, Price(BigDecimal(100)), Timestamp.now)))
+      result <- fromTask(Task.now(
+        pairs.map(pair => Rate(pair, Price(BigDecimal(100)), Timestamp.now))
+      ))
     } yield Right(result)
+  }
 }

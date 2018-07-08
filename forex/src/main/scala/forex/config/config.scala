@@ -8,7 +8,8 @@ import scala.concurrent.duration.FiniteDuration
 case class ApplicationConfig(
     akka: AkkaConfig,
     api: ApiConfig,
-    executors: ExecutorsConfig
+    executors: ExecutorsConfig,
+    forex: ForexConfig
 )
 
 case class AkkaConfig(
@@ -23,4 +24,8 @@ case class ApiConfig(
 
 case class ExecutorsConfig(
     default: String
+)
+
+case class ForexConfig(
+    delay: FiniteDuration
 )

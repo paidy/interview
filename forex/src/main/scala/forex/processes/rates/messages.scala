@@ -8,6 +8,7 @@ package messages {
   object Error {
     final case object Generic extends Error
     final case class System(underlying: Throwable) extends Error
+    final case object CurrentRateNotAvailable extends Error
   }
 
   final case class GetRequest(

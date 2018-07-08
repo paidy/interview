@@ -1,9 +1,13 @@
 package forex.processes.rates
 
-import cats.Monad
-import cats.data.EitherT
+import cats.syntax.either._
+import cats.syntax.functor._
+import cats.{Applicative, Functor}
 import forex.domain._
+import forex.processes.rates.messages.Error.CurrentRateNotAvailable
 import forex.services._
+
+import scala.collection.concurrent.TrieMap
 
 object Processes {
   def apply[F[_]]: Processes[F] =
@@ -11,18 +15,36 @@ object Processes {
 }
 
 trait Processes[F[_]] {
-  import messages._
   import converters._
+  import messages._
+
+  private val rates: TrieMap[Rate.Pair, Rate] = TrieMap.empty[Rate.Pair, Rate]
+
+  def updateRates(supportedPairs: Set[Rate.Pair])(
+    implicit
+    M: Functor[F],
+    oneForge: OneForge[F]
+  ): F[Either[Error, Unit]] =
+    for {
+      result <- oneForge.get(supportedPairs)
+    } yield store(result)
+
+  private def store(result: Either[OneForgeError, Set[Rate]]
+                   ): Either[Error, Unit] =
+    result match {
+      case Right(newRates) => newRates
+        .foreach(newRate => rates.update(newRate.pair, newRate))
+        .asRight[Error]
+      case Left(error) => toProcessError(error).asLeft[Unit]
+    }
 
   def get(
       request: GetRequest
   )(
       implicit
-      M: Monad[F],
-      OneForge: OneForge[F]
-  ): F[Error Either Rate] =
-    (for {
-      result ← EitherT(OneForge.get(Rate.Pair(request.from, request.to))).leftMap(toProcessError)
-    } yield result).value
+      M: Applicative[F],
+  ): F[Error Either Rate] = {
+    M.pure(Either.fromOption(rates.get(Rate.Pair(request.from, request.to)), CurrentRateNotAvailable))
+  }
 
 }

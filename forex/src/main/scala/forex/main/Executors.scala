@@ -2,10 +2,9 @@ package forex.main
 
 import cats.Eval
 import forex.config._
+import monix.execution.Scheduler
 import org.zalando.grafter._
 import org.zalando.grafter.macros._
-
-import scala.concurrent.ExecutionContext
 
 @readerOf[ApplicationConfig]
 case class Executors(
@@ -14,8 +13,8 @@ case class Executors(
 ) extends Start {
   import actorSystems._
 
-  lazy val default: ExecutionContext =
-    system.dispatchers.lookup(config.default)
+  lazy val default: Scheduler =
+    Scheduler(system.dispatchers.lookup(config.default))
 
   override def start: Eval[StartResult] =
     StartResult.eval("Executors") {

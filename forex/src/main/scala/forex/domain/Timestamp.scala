@@ -3,10 +3,16 @@ package forex.domain
 import io.circe._
 import io.circe.generic.extras.wrapped._
 import io.circe.java8.time._
-
 import java.time.OffsetDateTime
 
-case class Timestamp(value: OffsetDateTime) extends AnyVal
+import scala.concurrent.duration.FiniteDuration
+
+case class Timestamp(value: OffsetDateTime) extends AnyVal {
+
+  def isNotOlderThan(than: FiniteDuration): Boolean = {
+    value.isAfter(OffsetDateTime.now().minusNanos(than.toNanos))
+  }
+}
 
 object Timestamp {
   def now: Timestamp =

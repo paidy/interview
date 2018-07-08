@@ -29,7 +29,7 @@ case class Processes(
       .default
       .scheduleWithFixedDelay(
         0.seconds,
-        forexConfig.delay
+        forexConfig.refreshDelay
       )(
         Rates.updateRates(Rate.Pair.allSupportedPairs)
           .map{

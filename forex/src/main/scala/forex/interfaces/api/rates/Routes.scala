@@ -25,7 +25,7 @@ case class Routes(
         complete {
           runApp(
             Rates
-              .get(toGetRequest(req))
+              .get(toGetRequest(req), processes.forexConfig.maxRateAge)
               .map(_.map(result ⇒ toGetApiResponse(result)))
           )
         }

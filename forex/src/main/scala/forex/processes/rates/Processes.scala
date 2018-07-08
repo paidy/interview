@@ -8,6 +8,7 @@ import forex.processes.rates.messages.Error.CurrentRateNotAvailable
 import forex.services._
 
 import scala.collection.concurrent.TrieMap
+import scala.concurrent.duration.FiniteDuration
 
 object Processes {
   def apply[F[_]]: Processes[F] =
@@ -18,7 +19,7 @@ trait Processes[F[_]] {
   import converters._
   import messages._
 
-  private val rates: TrieMap[Rate.Pair, Rate] = TrieMap.empty[Rate.Pair, Rate]
+  private[rates] val rates: TrieMap[Rate.Pair, Rate] = TrieMap.empty[Rate.Pair, Rate]
 
   def updateRates(supportedPairs: Set[Rate.Pair])(
     implicit
@@ -39,12 +40,22 @@ trait Processes[F[_]] {
     }
 
   def get(
-      request: GetRequest
+      request: GetRequest,
+      maxRateAge: FiniteDuration
   )(
       implicit
       M: Applicative[F],
-  ): F[Error Either Rate] = {
-    M.pure(Either.fromOption(rates.get(Rate.Pair(request.from, request.to)), CurrentRateNotAvailable))
+  ): F[Error Either Rate] = M.pure{
+    for {
+      rate <- Either.fromOption(rates.get(Rate.Pair(request.from, request.to)), CurrentRateNotAvailable)
+      _ <- checkIfNotTooOld(rate, maxRateAge)
+    } yield rate
   }
 
+  private def checkIfNotTooOld(rate: Rate, maxRateAge: FiniteDuration): Either[Error, Unit] =
+    if(rate.timestamp.isNotOlderThan(maxRateAge)) {
+      ().asRight[Error]
+    } else {
+      CurrentRateNotAvailable.asLeft[Unit]
+    }
 }

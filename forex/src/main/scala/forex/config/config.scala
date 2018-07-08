@@ -27,5 +27,6 @@ case class ExecutorsConfig(
 )
 
 case class ForexConfig(
-    delay: FiniteDuration
+    maxRateAge: FiniteDuration,
+    refreshDelay: FiniteDuration
 )

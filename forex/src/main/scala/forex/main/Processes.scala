@@ -15,16 +15,18 @@ import org.atnos.eff.syntax.addon.monix.task._
 case class Processes(
                       forexConfig: ForexConfig,
                       executors: Executors,
-                      caches: Caches
+                      caches: Caches,
+                      actorsSystems: ActorSystems
                     ) extends Start with Stop with LazyLogging {
 
+  import actorsSystems._
+  import executors._
+
   implicit final lazy val _oneForge: s.OneForge[AppEffect] =
-    s.OneForge.dummy[AppStack]
+    s.OneForge.live[AppStack](forexConfig)
 
   implicit final lazy val _ratesCache: s.RatesCache[AppEffect] =
     s.RatesCache.ratesCache[AppStack]
-
-  implicit val _ = executors.default
 
   final val Rates = p.Rates[AppEffect]
 

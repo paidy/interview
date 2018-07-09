@@ -43,5 +43,4 @@ object Currency {
 
   implicit val encoder: Encoder[Currency] =
     Encoder.instance[Currency] { show.show _ andThen Json.fromString }
-
 }

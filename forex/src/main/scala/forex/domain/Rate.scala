@@ -3,6 +3,7 @@ package forex.domain
 import cats.Show
 import io.circe._
 import io.circe.generic.semiauto._
+import cats.syntax.either._
 
 case class Rate(
     pair: Rate.Pair,
@@ -23,6 +24,13 @@ object Rate {
     implicit def show(implicit currencyShow: Show[Currency]): Show[Pair] = Show.show {
       pair =>
         currencyShow.show(pair.from) + currencyShow.show(pair.to)
+    }
+
+    def fromString(s: String): Either[String, Pair] = {
+      (for {
+        from <- Either.catchNonFatal(Currency.fromString(s.take(3)))
+        to <- Either.catchNonFatal(Currency.fromString(s.takeRight(3)))
+      } yield Pair(from, to)).leftMap(t => s)
     }
 
     val allSupportedPairs: Set[Pair] =

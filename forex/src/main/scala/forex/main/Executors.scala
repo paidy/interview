@@ -13,7 +13,7 @@ case class Executors(
 ) extends Start {
   import actorSystems._
 
-  lazy val default: Scheduler =
+  implicit lazy val default: Scheduler =
     Scheduler(system.dispatchers.lookup(config.default))
 
   override def start: Eval[StartResult] =

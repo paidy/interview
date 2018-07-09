@@ -27,6 +27,8 @@ case class ExecutorsConfig(
 )
 
 case class ForexConfig(
-    maxRateAge: FiniteDuration,
-    refreshDelay: FiniteDuration
+                        maxRateAge: FiniteDuration,
+                        refreshDelay: FiniteDuration,
+                        apiKey: String,
+                        quotesEndpointTemplate: String
 )

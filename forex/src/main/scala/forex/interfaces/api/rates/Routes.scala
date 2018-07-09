@@ -1,6 +1,7 @@
 package forex.interfaces.api.rates
 
 import akka.http.scaladsl._
+import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import forex.config._
 import forex.main._
 import forex.interfaces.api.utils._
@@ -23,11 +24,18 @@ case class Routes(
     get {
       getApiRequest { req ⇒
         complete {
-          runApp(
-            Rates
-              .get(toGetRequest(req), processes.forexConfig.maxRateAge)
-              .map(_.map(result ⇒ toGetApiResponse(result)))
-          )
+          if (req.from != req.to) {
+            runApp(
+              Rates
+                .get(toGetRequest(req), processes.forexConfig.maxRateAge)
+                .map(_.map(result ⇒ toGetApiResponse(result)))
+            )
+          } else {
+            HttpResponse(
+              status = StatusCodes.BadRequest,
+              entity = s""""from" should be different than "to", was: from=${req.from}, to=${req.to}"""
+            )
+          }
         }
       }
     }

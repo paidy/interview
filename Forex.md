@@ -33,3 +33,59 @@ Some of the traits/specifics we are looking for using this exercise:
 - How do you work around restrictions;
 - What design choices do you make;
 - How do you think beyond the happy path.
+
+__Solution__
+
+Initial requirements were:
+ - support at least 10k request per day
+ - return rate not older than 5 minutes
+ - support 9 currencies (what gives 72 possible pairs)
+ - limit calls to OneForge to 1000 requests per day
+ 
+To fulfill them I've decided to periodically (every 2 minutes but it's configurable) make a batch call to OneForge API
+to get current quotes for all supported pairs (their API allows this and counts it as 1 request).
+
+Caching individual requests for 5 minutes and only calling OneForge if someone ask for a rate we don't have
+was not an option because in the pessimistic scenario it would require more than 20k calls per day.
+
+__Implementation details__
+
+To cache rates I've added new effect to the stack (Memoized) and created additional service (RatesCache).
+Rates process gets data from it when handles users' requests. 
+At the start of the application cyclic call for current rates is being scheduled and the process of storing new rates is also
+handled by Rates process. As those two tasks (fetching new data and handling users's calls) are done separately
+the only exception (from Rates process) user ever gets is CurrentRateNotAvailable if for some reason rate is not available.
+All exceptions related to calling OneForge and parsing their response are logged.
+I've also added checking if user didn't provide the same currency for "from" and "to" as this is not a valid pair.
+
+
+__How to run tests__
+
+Simply run in console (you have to be in the project folder)
+>sbt test
+
+
+__How to run application__
+
+To run application you have to pass you API key as an environment variable (ONE_FORGE_API_KEY).
+You can do this by typing in console:
+
+On Windows 
+>set ONE_FORGE_API_KEY=<your_api_key>
+
+On Linux/Mac
+>export ONE_FORGE_API_KEY=<your_api_key>
+
+Then you can run your application from console (you have to be in the project folder)
+>sbt run
+
+
+__Future work__
+
+I limited my work on this exercise to the expected 6 hours. Unfortunately in this time I didn't 
+manage to finish everything what I'd like to do. If I had more time I'd:
+ - add integration tests
+ - add unit tests for the api
+ - check if it wouldn't be better to add Either as an effect instead of a result type
+ - try to use State effect instead of Memoized as I have a feeling that I misused it.
+ 

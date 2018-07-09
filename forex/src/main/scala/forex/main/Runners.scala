@@ -6,11 +6,13 @@ import org.atnos.eff.syntax.addon.monix.task._
 import org.zalando.grafter.macros._
 
 @readerOf[ApplicationConfig]
-case class Runners() {
+case class Runners(
+                    caches: Caches
+                  ) {
 
   def runApp[R](
       app: AppEffect[R]
   ): Task[R] =
-    app.runAsync
+    app.runTaskMemo(caches.hashMapRatesCache).runAsync
 
 }

@@ -8,16 +8,15 @@ import forex.domain.Currency.{JPY, USD}
 import forex.domain.{Price, Rate, Timestamp}
 import forex.processes.rates.messages.Error.CurrentRateNotAvailable
 import forex.processes.rates.messages.GetRequest
-import forex.services.oneforge
-import forex.services.oneforge.Algebra
+import forex.services._
+import forex.processes._
 import forex.services.oneforge.Error.Generic
 import org.scalatest.{Matchers, WordSpec}
 
+import scala.collection.mutable
 import scala.concurrent.duration._
 
 class ProcessesSpec extends WordSpec with Matchers {
-
-
 
   "Rates Process" when {
     "updating rates" should {
@@ -27,16 +26,16 @@ class ProcessesSpec extends WordSpec with Matchers {
         val defaultResult = supportedPairs
           .map(pair => Rate(pair, Price(BigDecimal(10)), Timestamp.now))
 
-        implicit val mockedOneForge = new Algebra[Id] {
-          override def get(pairs: Set[Rate.Pair]): Id[Either[oneforge.Error, Set[Rate]]] =
-            defaultResult.asRight[oneforge.Error]
+        implicit val mockedOneForge = new OneForge[Id] {
+          override def get(pairs: Set[Rate.Pair]): Id[Either[OneForgeError, Set[Rate]]] =
+            defaultResult.asRight[OneForgeError]
         }
 
-        cut.rates.isEmpty shouldBe true
+        implicit val mockedRatesCache = emptyCache
 
         cut.updateRates(supportedPairs) shouldEqual Right(())
 
-        cut.rates.toMap shouldEqual defaultResult
+        mockedRatesCache.cache shouldEqual defaultResult
           .map(rate => (rate.pair, rate))
           .toMap
       }
@@ -44,15 +43,16 @@ class ProcessesSpec extends WordSpec with Matchers {
       "return process error when was unable to fetch new rates" in {
         val cut = Processes[Id]
 
-        implicit val mockedOneForge = new Algebra[Id] {
-          override def get(pairs: Set[Rate.Pair]): Id[Either[oneforge.Error, Set[Rate]]] =
+        implicit val mockedOneForge = new OneForge[Id] {
+          override def get(pairs: Set[Rate.Pair]): Id[Either[OneForgeError, Set[Rate]]] =
             Generic.asLeft[Set[Rate]]
         }
 
-        cut.rates.isEmpty shouldBe true
-        cut.updateRates(supportedPairs) shouldEqual Left(messages.Error.Generic)
-        cut.rates.isEmpty shouldBe true
+        implicit val mockedRatesCache = emptyCache
 
+        cut.updateRates(supportedPairs) shouldEqual Left(RatesError.Generic)
+
+        mockedRatesCache.cache.isEmpty shouldBe true
       }
     }
 
@@ -68,7 +68,7 @@ class ProcessesSpec extends WordSpec with Matchers {
       "return CurrentRateNotAvailable exception when doesn't have rate for provided pair" in {
         val cut = Processes[Id]
 
-        cut.rates.isEmpty shouldBe true
+        implicit val mockedRatesCache = emptyCache
 
         cut.get(
           getRequest,
@@ -79,7 +79,8 @@ class ProcessesSpec extends WordSpec with Matchers {
       "return CurrentRateNotAvailable exception when cached rate is older than provided max rate age" in {
         val cut = Processes[Id]
 
-        cut.rates.update(cachedRate.pair, cachedRate)
+        implicit val mockedRatesCache = emptyCache
+        mockedRatesCache.cache.update(cachedRate.pair, cachedRate)
 
         cut.get(
           getRequest,
@@ -90,13 +91,26 @@ class ProcessesSpec extends WordSpec with Matchers {
       "return cached rate if it's not older than provided max rate age" in {
         val cut = Processes[Id]
 
-        cut.rates.update(cachedRate.pair, cachedRate)
+        implicit val mockedRatesCache = emptyCache
+        mockedRatesCache.cache.update(cachedRate.pair, cachedRate)
 
         cut.get(
           getRequest,
           15.minutes
-        ) shouldEqual cachedRate.asRight[Error]
+        ) shouldEqual cachedRate.asRight[RatesError]
       }
     }
+  }
+
+  private def emptyCache = new MockedRatesCache()
+
+  private class MockedRatesCache extends RatesCache[Id] {
+    val cache = mutable.HashMap.empty[Rate.Pair, Rate]
+
+    override def get(pair: Rate.Pair): Id[Option[Rate]] =
+      cache.get(pair)
+
+    override def store(rates: Set[Rate]): Id[Unit] =
+      rates.foreach(rate => cache.update(rate.pair, rate))
   }
 }

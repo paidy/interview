@@ -11,3 +11,4 @@ case class HttpConfig(
     port: Int,
     timeout: FiniteDuration
 )
+

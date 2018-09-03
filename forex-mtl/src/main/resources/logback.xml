@@ -10,4 +10,5 @@
     </root>
 
     <logger name="http4s"/>
-</configuration>
+  </configuration>
+

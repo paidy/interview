@@ -12,7 +12,7 @@ class RatesProgram[F[_]](oneForge: OneForgeClient[F])(implicit M: MonadError[F, 
 
   override def get(request: GetRatesRequest): F[Rate] =
     oneForge.get(Rate.Pair(request.from, request.to)).adaptError {
-      case e => RemoteClientError(e.getMessage)
+      case e => RateError.RemoteClientError(e.getMessage)
     }
 
 }

@@ -3,12 +3,12 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val cats                = "1.1.0"
-    val catsEffect          = "1.0.0-RC2"
-    val fs2                 = "1.0.0-M1"
-    val http4s              = "0.19.0-M1"
+    val cats                = "1.3.1"
+    val catsEffect          = "1.0.0"
+    val fs2                 = "1.0.0-M5"
+    val http4s              = "0.19.0-M2"
     val circe               = "0.10.0-M1"
-    val pureConfig          = "0.9.1"
+    val pureConfig          = "0.9.2"
 
     val betterMonadicFor    = "0.2.4"
     val kindProjector       = "0.9.7"

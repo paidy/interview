@@ -1,11 +1,10 @@
 package forex
 
-import cats.data.OptionT
-import cats.syntax.functor._
 import cats.effect._
+import cats.syntax.functor._
 import forex.config._
 import fs2.Stream
-import org.http4s.server.blaze.BlazeBuilder
+import org.http4s.server.blaze.BlazeServerBuilder
 
 object Main extends IOApp {
 
@@ -20,9 +19,9 @@ class Application[F[_]: ConcurrentEffect: Timer] {
     for {
       config <- Config.stream("app")
       module = new Module[F](config)
-      _ <- BlazeBuilder[F]
+      _ <- BlazeServerBuilder[F]
                     .bindHttp(config.http.port, config.http.host)
-                    .mountService(module.httpApp.mapF(OptionT.liftF(_)))
+                    .withHttpApp(module.httpApp)
                     .serve
     } yield ()
 

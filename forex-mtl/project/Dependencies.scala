@@ -3,19 +3,19 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val cats                = "1.4.0"
-    val catsEffect          = "1.1.0-M1"
-    val fs2                 = "1.0.0"
+    val cats                = "1.6.0"
+    val catsEffect          = "1.2.0"
+    val fs2                 = "1.0.4"
     val http4s              = "0.20.0-M1"
-    val circe               = "0.10.1"
-    val pureConfig          = "0.10.0"
+    val circe               = "0.11.1"
+    val pureConfig          = "0.10.2"
 
     val betterMonadicFor    = "0.2.4"
-    val kindProjector       = "0.9.8"
-    val logback             = "1.2.1"
+    val kindProjector       = "0.9.9"
+    val logback             = "1.2.3"
     val scalaCheck          = "1.14.0"
-    val scalaTest           = "3.0.5"
-    val catsScalaCheck      = "0.1.0"
+    val scalaTest           = "3.0.7"
+    val catsScalaCheck      = "0.1.1"
   }
 
   object Libraries {

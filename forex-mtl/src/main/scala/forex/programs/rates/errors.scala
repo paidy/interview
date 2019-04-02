@@ -1,4 +1,4 @@
-package forex.rates
+package forex.programs.rates
 
 object errors {
 

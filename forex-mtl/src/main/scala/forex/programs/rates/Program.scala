@@ -1,25 +1,23 @@
 package forex.programs.rates
 
-import cats.MonadError
-import cats.syntax.monadError._
+import cats.Functor
+import cats.data.EitherT
 import errors._
 import forex.domain._
 import forex.services.RatesService
 
-class Program[F[_]: MonadError[?[_], Throwable]](
+class Program[F[_]: Functor](
     ratesService: RatesService[F]
 ) extends Algebra[F] {
 
-  override def get(request: Program.GetRatesRequest): F[Rate] =
-    ratesService.get(Rate.Pair(request.from, request.to)).adaptError {
-      case e => RateError.RemoteClientError(e.getMessage)
-    }
+  override def get(request: Program.GetRatesRequest): F[RateError Either Rate] =
+    EitherT(ratesService.get(Rate.Pair(request.from, request.to))).leftMap(toProgramError(_)).value
 
 }
 
 object Program {
 
-  def apply[F[_]: MonadError[?[_], Throwable]](
+  def apply[F[_]: Functor](
     ratesService: RatesService[F]
   ): Algebra[F] = new Program[F](ratesService)
 

@@ -10,7 +10,6 @@ object Dependencies {
     val circe               = "0.11.1"
     val pureConfig          = "0.10.2"
 
-    val betterMonadicFor    = "0.2.4"
     val kindProjector       = "0.9.9"
     val logback             = "1.2.3"
     val scalaCheck          = "1.14.0"
@@ -37,7 +36,6 @@ object Dependencies {
     lazy val pureConfig          = "com.github.pureconfig" %% "pureconfig"                 % Versions.pureConfig
 
     // Compiler plugins
-    lazy val betterMonadicFor    = "com.olegpy"            %% "better-monadic-for"         % Versions.betterMonadicFor
     lazy val kindProjector       = "org.spire-math"        %% "kind-projector"             % Versions.kindProjector
 
     // Runtime

@@ -5,15 +5,26 @@ version := "1.0.0"
 
 scalaVersion := "2.12.8"
 scalacOptions ++= Seq(
-  "-deprecation",
+ "-deprecation",
   "-encoding",
   "UTF-8",
   "-feature",
   "-language:existentials",
-  "-language:higherKinds",
-  "-Ypartial-unification",
   "-language:experimental.macros",
-  "-language:implicitConversions"
+  "-language:higherKinds",
+  "-language:implicitConversions",
+  "-unchecked",
+  "-Xfatal-warnings",
+  "-Xfuture",
+  "-Xlint",
+  "-Ydelambdafy:method",
+  "-Xlog-reflective-calls",
+  "-Yno-adapted-args",
+  "-Ypartial-unification",
+  "-Ywarn-dead-code",
+  "-Ywarn-inaccessible",
+  "-Ywarn-unused-import",
+  "-Ywarn-value-discard"
 )
 
 resolvers +=
@@ -21,7 +32,6 @@ resolvers +=
 
 libraryDependencies ++= Seq(
   compilerPlugin(Libraries.kindProjector),
-  compilerPlugin(Libraries.betterMonadicFor),
   Libraries.cats,
   Libraries.catsEffect,
   Libraries.fs2,

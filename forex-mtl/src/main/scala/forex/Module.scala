@@ -7,7 +7,7 @@ import forex.services._
 import forex.programs._
 import org.http4s._
 import org.http4s.implicits._
-import org.http4s.server.middleware.{AutoSlash, CORS, Timeout}
+import org.http4s.server.middleware.{AutoSlash, Timeout}
 
 class Module[F[_]: Concurrent: Timer](config: ApplicationConfig) {
 
@@ -23,8 +23,6 @@ class Module[F[_]: Concurrent: Timer](config: ApplicationConfig) {
   private val routesMiddleware: PartialMiddleware = {
     { http: HttpRoutes[F] =>
       AutoSlash(http)
-    } andThen { http: HttpRoutes[F] =>
-      CORS(http, CORS.DefaultCORSConfig)
     }
   }
 

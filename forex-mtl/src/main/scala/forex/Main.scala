@@ -20,9 +20,9 @@ class Application[F[_]: ConcurrentEffect: Timer] {
       config <- Config.stream("app")
       module = new Module[F](config)
       _ <- BlazeServerBuilder[F]
-                    .bindHttp(config.http.port, config.http.host)
-                    .withHttpApp(module.httpApp)
-                    .serve
+            .bindHttp(config.http.port, config.http.host)
+            .withHttpApp(module.httpApp)
+            .serve
     } yield ()
 
 }

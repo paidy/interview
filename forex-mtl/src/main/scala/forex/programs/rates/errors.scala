@@ -1,15 +1,15 @@
 package forex.programs.rates
 
-import forex.services.rates.errors.{ RateError => ServiceRateError}
+import forex.services.rates.errors.{ Error => RatesServiceError }
 
 object errors {
 
-  sealed trait RateError extends Exception
-  object RateError {
-    final case class RemoteClientError(msg: String) extends RateError
+  sealed trait Error extends Exception
+  object Error {
+    final case class RateLookupFailed(msg: String) extends Error
   }
 
-  def toProgramError(error: ServiceRateError): RateError = error match {
-    case ServiceRateError.RemoteClientError(msg) => RateError.RemoteClientError(msg)
+  def toProgramError(error: RatesServiceError): Error = error match {
+    case RatesServiceError.OneForgeLookupFailed(msg) => Error.RateLookupFailed(msg)
   }
 }

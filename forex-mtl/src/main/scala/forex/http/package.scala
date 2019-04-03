@@ -19,4 +19,3 @@ package object http {
   implicit def jsonEncoder[A <: Product: Encoder, F[_]: Sync]: EntityEncoder[F, A] = jsonEncoderOf[F, A]
 
 }
-

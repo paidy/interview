@@ -4,5 +4,5 @@ import cats.Applicative
 import interpreters._
 
 object Interpreters {
-  def dummy[F[_]: Applicative](): Algebra[F] = new OneForgeDummy[F]()
+  def dummy[F[_]: Applicative](): Algebra[F] = new OneFrameDummy[F]()
 }

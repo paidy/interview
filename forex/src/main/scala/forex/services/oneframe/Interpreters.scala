@@ -1,4 +1,4 @@
-package forex.services.oneforge
+package forex.services.oneframe
 
 import java.time.OffsetDateTime
 
@@ -15,7 +15,7 @@ object Interpreters {
   ): Algebra[Eff[R, ?]] = new Dummy[R]
 }
 
-final class Dummy[R] private[oneforge] (
+final class Dummy[R] private[oneframe] (
     implicit
     m1: _task[R]
 ) extends Algebra[Eff[R, ?]] {

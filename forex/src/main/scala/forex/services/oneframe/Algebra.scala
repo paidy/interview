@@ -1,4 +1,4 @@
-package forex.services.oneforge
+package forex.services.oneframe
 
 import forex.domain._
 

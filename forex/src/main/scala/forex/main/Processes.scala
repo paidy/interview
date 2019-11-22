@@ -8,8 +8,8 @@ import org.zalando.grafter.macros._
 @readerOf[ApplicationConfig]
 case class Processes() {
 
-  implicit final lazy val _oneForge: s.OneForge[AppEffect] =
-    s.OneForge.dummy[AppStack]
+  implicit final lazy val _oneFrame: s.OneFrame[AppEffect] =
+    s.OneFrame.dummy[AppStack]
 
   final val Rates = p.Rates[AppEffect]
 

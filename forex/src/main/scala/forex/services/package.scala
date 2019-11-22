@@ -2,9 +2,9 @@ package forex
 
 package object services {
 
-  type OneForge[F[_]] = oneforge.Algebra[F]
-  final val OneForge = oneforge.Interpreters
-  type OneForgeError = oneforge.Error
-  final val OneForgeError = oneforge.Error
+  type OneFrame[F[_]] = oneframe.Algebra[F]
+  final val OneFrame = oneframe.Interpreters
+  type OneFrameError = oneframe.Error
+  final val OneFrameError = oneframe.Error
 
 }

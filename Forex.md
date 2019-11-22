@@ -12,7 +12,7 @@ We provide you with an initial scaffold for the application with some dummy inte
 
 In practice, this should require the following 2 points:
 
-1. Create a `live` interpreter for the `oneframe` service. This should consume the [on-frame API](https://hub.docker.com/r/paidyinc/one-frame).
+1. Create a `live` interpreter for the `oneframe` service. This should consume the [one-frame API](https://hub.docker.com/r/paidyinc/one-frame).
 
 2. Adapt the `rates` processes (if necessary) to make sure you cover the requirements of the use case, and work around possible limitations of the third-party provider.
 

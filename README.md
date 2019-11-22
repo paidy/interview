@@ -1,10 +1,10 @@
 # Paidy Take-Home Coding Exercises
 
 ## What to expect?
-We expect that the amount of effort to do any of these exercises is in the range of about 4-6 hours of actual work. We also understand that your time is valuable, and in anyone's busy schedule that constitutes a fairly substantial chunk of time, so we really appreciate any effort you put in to helping us build a solid team.
+We understand that your time is valuable, and in anyone's busy schedule solving these exercises may constitute a fairly substantial chunk of time, so we really appreciate any effort you put in to helping us build a solid team.
 
 ## What we are looking for?
-**Keep it simple**. Really. 4-6 hours isn't a lot of time and we really don't want you spending too much more time on it than that.
+**Keep it simple**. Read the requirements and restrictions carefully and focus on solving the problem.
 
 **Treat it like production code**. That is, develop your software in the same way that you would for any code that is intended to be deployed to production. These may be toy exercises, but we really would like to get an idea of how you build code on a day-to-day basis.
 
@@ -33,7 +33,7 @@ The complete specification for this exercise can be found in the [GroupedCardVie
 Yes, the questions are not prescriptive, the process and discussion around the code is the valuable part. You do the work, you own the code. Given we are asking you to give up your time, it is entirely reasonable for you to keep and use your solution as you see fit.
 
 2) _Should I do X?_
-For any value of X, it is up to you, we intentionally leave the problem a little open-ended and will leave it up to you to provide us with what you see as important. Just remember the rough time frame of the project. If it is going to take you a couple of days, it isn't essential.
+For any value of X, it is up to you, we intentionally leave the problem a little open-ended and will leave it up to you to provide us with what you see as important. Just remember to keep it simple. If it's a feature that is going to take you a couple of days, it's not essential.
 
 3) _Something is ambiguous, and I don't know what to do?_
 The first thing is: don't get stuck. We really don't want to trip you up intentionally, we are just attempting to see how you approach problems. That said, there are intentional ambiguities in the specifications, mainly to see how you fill in those gaps, and how you make design choices.

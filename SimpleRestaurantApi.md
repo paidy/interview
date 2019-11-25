@@ -72,17 +72,17 @@ application must then store the item along with a countdown for the item to be r
 must be able to give a quick snapshot of any or all items on its list at any time.  It must also be able to remove 
 specific orders from the list of orders on demand.
 
-# System Actors
+## System Actors
 
-## The application
+### The application
 Running on a “server” and accepting calls from devices carried by restaurant staff to process guest’s 
 menu orders.  This is where the bulk of time should be spent.
 
-## The client 
+### The client 
 Multiple "tablets" carried by restaurant staff to take orders.  These will send requests to the “server”
 to add, remove, and query menu items for each table.  Please make this as simple as possible.
 
-# Requirements
+## Requirements
 
 * The client (the restaurant staff “devices” making the requests) MUST be able to: add one or more items with a 
 table number, remove an item for a table, and query the items still remaining for a table.
@@ -95,7 +95,7 @@ table number, remove an item for a table, and query the items still remaining fo
 * The application MAY keep the length of time for the item to prepare static (in other words, the time does not have 
 to be counted down in real time, only upon item creation and then removed with the item upon item deletion).
 
-## Allowed Assumptions
+### Allowed Assumptions
 
 You may have your application assume the following to simplify the solution, if desired:
 

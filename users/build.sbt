@@ -35,6 +35,13 @@ libraryDependencies ++= Seq(
   // required for building app
   "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided",
 
+  // spray json
+  "io.spray" %%  "spray-json" % "1.3.5",
+
+  // scalatest
+  "org.scalatest" %% "scalatest" % "3.0.8" % Test,
+  "junit" % "junit" % "4.12" % Test,
+
   "com.softwaremill.quicklens" %% "quicklens" % "1.4.11",
   "org.typelevel"              %% "cats-core" % "1.0.0-MF",
   compilerPlugin("org.spire-math" %% "kind-projector" % "0.9.4"),

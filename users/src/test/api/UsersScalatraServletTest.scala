@@ -2,7 +2,7 @@
 import users.api.{ApiUtils, Keys, UsersScalatraServlet}
 import org.scalatra.test.specs2._
 import akka.actor.ActorSystem
-import org.apache.http.client.methods.{HttpGet, HttpPost, HttpPut}
+import org.apache.http.client.methods.{CloseableHttpResponse, HttpEntityEnclosingRequestBase, HttpGet, HttpPost, HttpPut}
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.util.EntityUtils
@@ -38,17 +38,21 @@ class UsersScalatraServletTest extends MutableScalatraSpec {
         request.setEntity(new StringEntity(dataActual))
 
         val response = client.execute(request)
-
-        response.getAllHeaders.foreach(arg => println(arg))
         val dataExpected = EntityUtils.toString(response.getEntity())
         println(dataExpected)
 
-        val keysToCompare = List(Keys.userName, Keys.emailAddress, Keys.password)
-        compareJsonKeys(keysToCompare, dataActual, dataExpected)
+        // compare data if status code is OK
+        if (response.getStatusLine.getStatusCode == 200) {
+          val keysToCompare = List(Keys.userName, Keys.emailAddress, Keys.password)
+          compareJsonKeys(keysToCompare, dataActual, dataExpected)
+        }
+        else {
+          false
+        }
+
       }
     }
   }
-
 
   /**
    * Function compares all 'keys' of two json strings.

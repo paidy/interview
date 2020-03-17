@@ -25,6 +25,7 @@ libraryDependencies ++= Seq(
 
   // integrates the scalatest testing libraries
   "org.scalatra" %% "scalatra-scalatest" % ScalatraVersion % "test",
+  "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",
 
   // basic logging functionality
   "ch.qos.logback" % "logback-classic" % "1.2.3" % "runtime",
@@ -41,6 +42,10 @@ libraryDependencies ++= Seq(
   // scalatest
   "org.scalatest" %% "scalatest" % "3.0.8" % Test,
   "junit" % "junit" % "4.12" % Test,
+
+  // akka
+  "com.typesafe.akka" %% "akka-actor" % "2.4.12",
+  "net.databinder.dispatch" %% "dispatch-core" % "0.12.0",
 
   "com.softwaremill.quicklens" %% "quicklens" % "1.4.11",
   "org.typelevel"              %% "cats-core" % "1.0.0-MF",

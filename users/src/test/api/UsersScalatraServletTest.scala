@@ -11,7 +11,7 @@ class UsersScalatraServletTest extends MutableScalatraSpec {
 
 
   val system = ActorSystem()
-  val pathPrefix = "/users"
+  val pathPrefix = "/user"
 
   addServlet(new UsersScalatraServlet(system), "/*")
 

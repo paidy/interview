@@ -80,11 +80,17 @@ API is implemented in the file `UsersScalatraServlet` in directory `users/src/ma
 
 There are several bash scripts in the directory `scripts` that can be used for testing purposes. They contain `curl` commands. Some of them take input parameters. Scripts will do something only if the server is running.
 
-To run a script open a terminal in the `script` folder and use command `./name-of-the-script.sh`
+To run a script open a terminal in the `script` folder and use command 
+
+`./name-of-the-script.sh`
 
 For running with parameters use command `./name-of-the-script.sh param1 param2`
 
-It might be necessary to make the script executable. Then use command `chmod +x name-of-the-script.sh`
+It might be necessary to make the script executable. Then use command 
+
+`chmod +x name-of-the-script.sh`
+
+Scripts in the folder:
 
 * `getid.sh`
 	- takes parameter `userId`
@@ -118,3 +124,14 @@ It might be necessary to make the script executable. Then use command `chmod +x 
 
 ## How to run
 
+From directory `jetty` run Jetty launcher with command
+
+`java -jar jetty-launcher.jar`
+
+Jetty server will start at port 8080. 
+
+Access it in a browser at URL `http://localhost:8080`.
+
+For testing purposes can be used prepared [scipts](#scripts).
+
+All users are available at `http://localhost:8080/users`.

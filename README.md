@@ -9,6 +9,7 @@ Table of contents
   * [User representation](#user)
   * [API](#api)
   * [Scripts](#scripts)
+  * [How to run](#howtorun)
 
 
 <a name="tech" />
@@ -70,8 +71,8 @@ API is implemented in the file `UsersScalatraServlet` in directory `users/src/ma
 * `post(/user/unblock)` - unblocks user
 * `post(/user/update/email)` - updates user's email
 * `post(/user/update/password)` - updated user's password
-* `delete(/user/password)` - removes user's password
-* `delete(/user)` - deletes user
+* `delete(/user/password/delete)` - removes user's password
+* `delete(/user/delete)` - deletes user
 
 <a name="scripts" />
 
@@ -112,3 +113,8 @@ It might be necessary to make the script executable. Then use command `chmod +x 
 * `delete.sh`
 	- takes parameters `userId`
 	- returns status 200 if user was deleted
+
+<a name="howtorun" />
+
+## How to run
+

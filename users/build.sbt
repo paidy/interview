@@ -31,7 +31,7 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3" % "runtime",
 
   // embedded servlet container used by the web plugin
-  "org.eclipse.jetty" % "jetty-webapp" % "9.4.19.v20190610" % "container",
+  "org.eclipse.jetty" % "jetty-webapp" % "9.4.19.v20190610" % "container;compile",
 
   // required for building app
   "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided",
@@ -53,3 +53,18 @@ libraryDependencies ++= Seq(
 )
 
 enablePlugins(ScalatraPlugin)
+
+// assembly
+lazy val commonSettings = Seq(
+  organization := "users.api",
+  version := "0.1.0"
+)
+
+lazy val app = (project in file(".")).
+  settings(commonSettings: _*).
+  settings(
+    mainClass in assembly := Some("users.api.JettyLauncher"),
+    assemblyJarName in assembly := "jetty-launcher.jar"
+  )
+
+enablePlugins(AssemblyPlugin)

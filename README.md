@@ -7,6 +7,7 @@ Table of contents
 
   * [Technologies](#tech)
   * [User representation](#user)
+  * [API](#api)
   * [Scripts](#scripts)
 
 
@@ -52,7 +53,25 @@ Server - [Jetty](https://www.eclipse.org/jetty/)
 }
 ```
 
-Serialization and deserialization is implemented in `UserJsonProtocol` in directory `users/src/main/scala/users/api/json`.
+Serialization and deserialization is implemented in the file `UserJsonProtocol` in directory `users/src/main/scala/users/api/json`.
+
+<a name="api" />
+
+## API
+
+API is implemented in the file `UsersScalatraServlet` in directory `users/src/main/scala/users/api`. All routes start with prefix `/user`.
+
+### Routes:
+
+* `GET(/users)`
+* `PUT(/user/signup)`
+* `GET(/user/:id)`
+* `POST(/user/block)`
+* `POST(/user/unblock)`
+* `POST(/user/update/email)`
+* `POST(/user/update/password)`
+* `DELETE(/user/password/:id)`
+* `DELETE(/user/:id)`
 
 <a name="scripts" />
 
@@ -71,25 +90,25 @@ It might be necessary to make the script executable. Then use command `chmod +x 
 	- returns json with user information
 * `signup.sh`
 	- takes no parameter, alredy contais data for mock user John
-	- returns signed up user
+	- returns json of signed up user
 * `signup_params.sh`
 	- takes parameters `userName`, `email`, `password`
-	- returns signed up user
+	- returns json of signed up user
 * `update_email.sh`
 	- takes parameters `userId`, `newEmail`
-	- returns user with updated email
+	- returns json of user with updated email
 * `update_pass.sh`
 	- takes parameters `userId`, `newPassword`
-	- returns user with updated password
+	- returns json of user with updated password
 * `reset_pass.sh`
 	- takes parameters `userId`
-	- returns user with empty password
+	- returns json of user with empty password
 * `block.sh`
 	- takes parameters `userId`
-	- returns user with changed `blockedAt` timestamp
+	- returns json of user with changed `blockedAt` timestamp
 * `unblock.sh`
 	- takes parameters `userId`
-	- returns user with empty `blockedAt` timestamp
+	- returns json of user with empty `blockedAt` timestamp
 * `delete.sh`
 	- takes parameters `userId`
 	- returns status 200 if user was deleted

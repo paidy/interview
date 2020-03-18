@@ -1,4 +1,70 @@
-# Paidy Take-Home Coding Exercises
+# Paidy Take-Home Coding Exercises - API for managing users
+
+The complete specification for this exercise can be found in the [UsersAPI.md](UsersAPI.md).
+
+Table of contents
+------------------
+
+  * [Technologies](#tech)
+  * [Scripts](#scripts)
+
+
+<a name="tech" />
+## Technologies
+
+IDE - IntelliJ IDEA
+
+Web framework - [Scalatra](https://scalatra.org/)
+
+Server - [Jetty](https://www.eclipse.org/jetty/)
+
+### Why Scalatra
+
+* open source framework
+* great for beginners
+* active community
+* easy to set up
+* extensive documentation
+
+<a name="scripts" />
+## Scripts
+
+There are several bash scripts in the directory `scripts` that can be used for application testing. They contain `curl` commands. Some of them take input parameters.
+
+To run a script open a terminal in the `script` folder and use command `./name-of-the-script.sh`
+
+For running with parameters use command `./name-of-the-script.sh param1 param2`
+
+It might be necessary to make the script executable. Then use command `chmod +x name-of-the-script.sh`
+
+* `getid.sh`
+	- takes parameter `userId`
+	- returns json with user information
+* `signup.sh`
+	- takes no parameter, alredy contais data for mock user John
+	- returns signed up user
+* `signup_params.sh`
+	- takes parameters `userName`, `email`, `password`
+	- returns signed up user
+* `update_email.sh`
+	- takes parameters `userId`, `newEmail`
+	- returns user with updated email
+* `update_pass.sh`
+	- takes parameters `userId`, `newPassword`
+	- returns user with updated password
+* `reset_pass.sh`
+	- takes parameters `userId`
+	- returns user with empty password
+* `block.sh`
+	- takes parameters `userId`
+	- returns user with changed `blockedAt` timestamp
+* `unblock.sh`
+	- takes parameters `userId`
+	- returns user with empty `blockedAt` timestamp
+* `delete.sh`
+	- takes parameters `userId`
+	- returns status 200 if user was deleted
+
 
 ## What to expect?
 We understand that your time is valuable, and in anyone's busy schedule solving these exercises may constitute a fairly substantial chunk of time, so we really appreciate any effort you put in to helping us build a solid team.

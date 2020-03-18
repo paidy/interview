@@ -10,13 +10,24 @@ import scala.concurrent.{ExecutionContext, Future}
 import spray.json._
 import users.api.json.UserJsonProtocol._
 
+object UsersScalatraServlet {
+
+  val pathPrefix = "/user"
+
+  def getInternalServerErrorResponse(msg: users.services.usermanagement.Error): ActionResult = {
+    InternalServerError(s"Something went wrong \n\n $msg")
+  }
+
+  def getRequestParams(body: String): Map[String, JsValue] = {
+    ApiUtils.jsonToMap(body)
+  }
+
+}
 
 class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with FutureSupport {
 
   protected implicit def executor: ExecutionContext = system.dispatcher
-
   val interpreter = UserManagement.default(userRepository = Repository.inMemory())(executor)
-  val pathPrefix = "/user"
 
   before() {
     contentType = "application/json"
@@ -25,11 +36,11 @@ class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with Fut
   /**
    * Returns all users as json.
    */
- get(s"${pathPrefix}s") {
+ get(s"${UsersScalatraServlet.pathPrefix}s") {
    val allUsers: Future[Either[usermanagement.Error, List[User]]] = interpreter.all()
 
    allUsers.map {
-     case Left(msg) => InternalServerError(s"Something went wrong \n\n $msg")
+     case Left(msg) => UsersScalatraServlet.getInternalServerErrorResponse(msg)
      case Right(users) => {
        val usersJson = users.map(_.toJson) // map every user to json
        Ok(usersJson)
@@ -40,9 +51,8 @@ class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with Fut
   /**
    * Returns signed up user.
    */
-  put(s"$pathPrefix/signup") {
-    val paramsJson = request.body
-    val params = ApiUtils.jsonToMap(paramsJson)
+  put(s"${UsersScalatraServlet.pathPrefix}/signup") {
+    val params = UsersScalatraServlet.getRequestParams(request.body)
 
     val signup: Future[Either[usermanagement.Error, User]] = interpreter.signUp(
       ApiUtils.getUserName(params),
@@ -50,7 +60,7 @@ class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with Fut
       ApiUtils.getOptionPassword(params))
 
     signup.map {
-      case Left(msg) => InternalServerError(s"Something went wrong \n\n $msg")
+      case Left(msg) => UsersScalatraServlet.getInternalServerErrorResponse(msg)
       case Right(user) => {
         val userJson = user.toJson
         Ok(userJson)
@@ -61,12 +71,12 @@ class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with Fut
   /**
    * Returns user with a specific ID.
    */
-  get(s"$pathPrefix/:id") {
+  get(s"${UsersScalatraServlet.pathPrefix}/:id") {
     val userId = params("id")
     val user: Future[Either[usermanagement.Error, User]] = interpreter.get(User.Id(userId))
 
     user.map {
-      case Left(msg) => InternalServerError(s"Something went wrong \n\n $msg")
+      case Left(msg) => UsersScalatraServlet.getInternalServerErrorResponse(msg)
       case Right(u) => {
         val userJson = u.toJson
         Ok(userJson)
@@ -77,12 +87,12 @@ class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with Fut
   /**
    * Returns blocked user.
    */
-  get(s"$pathPrefix/block/:id") {
-    val userId = params("id")
-    val user: Future[Either[usermanagement.Error, User]] = interpreter.block(User.Id(userId))
+  post(s"${UsersScalatraServlet.pathPrefix}/block") {
+    val params = UsersScalatraServlet.getRequestParams(request.body)
+    val user: Future[Either[usermanagement.Error, User]] = interpreter.block(ApiUtils.getUserId(params))
 
     user.map {
-      case Left(msg) => InternalServerError(s"Something went wrong \n\n $msg")
+      case Left(msg) => UsersScalatraServlet.getInternalServerErrorResponse(msg)
       case Right(u) => {
         val userJson = u.toJson
         Ok(userJson)
@@ -93,12 +103,12 @@ class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with Fut
   /**
    * Returns unblocked user.
    */
-  get(s"$pathPrefix/unblock/:id") {
-    val userId = params("id")
-    val user: Future[Either[usermanagement.Error, User]] = interpreter.unblock(User.Id(userId))
+  post(s"${UsersScalatraServlet.pathPrefix}/unblock") {
+    val params = UsersScalatraServlet.getRequestParams(request.body)
+    val user: Future[Either[usermanagement.Error, User]] = interpreter.unblock(ApiUtils.getUserId(params))
 
     user.map {
-      case Left(msg) => InternalServerError(s"Something went wrong \n\n $msg")
+      case Left(msg) => UsersScalatraServlet.getInternalServerErrorResponse(msg)
       case Right(u) => {
         val userJson = u.toJson
         Ok(userJson)
@@ -109,16 +119,15 @@ class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with Fut
   /**
    * Returns user with updated email.
    */
-  post(s"$pathPrefix/update/email") {
-    val paramsJson = request.body
-    val params = ApiUtils.jsonToMap(paramsJson)
+  post(s"${UsersScalatraServlet.pathPrefix}/update/email") {
+    val params = UsersScalatraServlet.getRequestParams(request.body)
 
     val update: Future[Either[usermanagement.Error, User]] = interpreter.updateEmail(
       ApiUtils.getUserId(params),
       ApiUtils.getEmailAddress(params))
 
     update.map {
-      case Left(msg) => InternalServerError(s"Something went wrong \n\n $msg")
+      case Left(msg) => UsersScalatraServlet.getInternalServerErrorResponse(msg)
       case Right(user) => {
         val userJson = user.toJson
         Ok(userJson)
@@ -129,16 +138,15 @@ class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with Fut
   /**
    * Returns user with updated password.
    */
-  post(s"$pathPrefix/update/password") {
-    val paramsJson = request.body
-    val params = ApiUtils.jsonToMap(paramsJson)
+  post(s"${UsersScalatraServlet.pathPrefix}/update/password") {
+    val params = UsersScalatraServlet.getRequestParams(request.body)
 
     val update: Future[Either[usermanagement.Error, User]] = interpreter.updatePassword(
       ApiUtils.getUserId(params),
       ApiUtils.getPassword(params))
 
     update.map {
-      case Left(msg) => InternalServerError(s"Something went wrong \n\n $msg")
+      case Left(msg) => UsersScalatraServlet.getInternalServerErrorResponse(msg)
       case Right(user) => {
         val userJson = user.toJson
         Ok(userJson)
@@ -149,13 +157,13 @@ class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with Fut
   /**
    * Returns user with reset password.
    */
-  delete(s"$pathPrefix/password/:id") {
+  delete(s"${UsersScalatraServlet.pathPrefix}/password/:id") {
     val userId = params("id")
 
     val reset: Future[Either[usermanagement.Error, User]] = interpreter.resetPassword(User.Id(userId))
 
     reset.map {
-      case Left(msg) => InternalServerError(s"Something went wrong \n\n $msg")
+      case Left(msg) => UsersScalatraServlet.getInternalServerErrorResponse(msg)
       case Right(user) => {
         val userJson = user.toJson
         Ok(userJson)
@@ -166,12 +174,12 @@ class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with Fut
   /**
    * Returns 200 if user is deleted.
    */
-  delete(s"$pathPrefix/:id") {
+  delete(s"${UsersScalatraServlet.pathPrefix}/:id") {
     val userId = params("id")
 
     val done: Future[Either[usermanagement.Error, Done]] = interpreter.delete(User.Id(userId))
     done.map {
-      case Left(msg) => InternalServerError(s"Something went wrong \n\n $msg")
+      case Left(msg) => UsersScalatraServlet.getInternalServerErrorResponse(msg)
       case Right(_) => Ok(userId)
     }
   }

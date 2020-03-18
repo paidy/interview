@@ -157,10 +157,10 @@ class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with Fut
   /**
    * Returns user with reset password.
    */
-  delete(s"${UsersScalatraServlet.pathPrefix}/password/:id") {
-    val userId = params("id")
+  delete(s"${UsersScalatraServlet.pathPrefix}/password") {
+    val params = UsersScalatraServlet.getRequestParams(request.body)
 
-    val reset: Future[Either[usermanagement.Error, User]] = interpreter.resetPassword(User.Id(userId))
+    val reset: Future[Either[usermanagement.Error, User]] = interpreter.resetPassword(ApiUtils.getUserId(params))
 
     reset.map {
       case Left(msg) => UsersScalatraServlet.getInternalServerErrorResponse(msg)
@@ -174,10 +174,11 @@ class UsersScalatraServlet(system: ActorSystem) extends ScalatraServlet with Fut
   /**
    * Returns 200 if user is deleted.
    */
-  delete(s"${UsersScalatraServlet.pathPrefix}/:id") {
-    val userId = params("id")
+  delete(s"${UsersScalatraServlet.pathPrefix}") {
+    val params = UsersScalatraServlet.getRequestParams(request.body)
+    val userId: User.Id = ApiUtils.getUserId(params)
 
-    val done: Future[Either[usermanagement.Error, Done]] = interpreter.delete(User.Id(userId))
+    val done: Future[Either[usermanagement.Error, Done]] = interpreter.delete(userId)
     done.map {
       case Left(msg) => UsersScalatraServlet.getInternalServerErrorResponse(msg)
       case Right(_) => Ok(userId)

@@ -3,4 +3,5 @@
 curl \
  --header "Content-type: application/json" \
  --request DELETE \
- http://localhost:8080/user/$1
+ --data '{"id":"'$1'"}' \
+ http://localhost:8080/user

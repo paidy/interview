@@ -59,19 +59,19 @@ Serialization and deserialization is implemented in the file `UserJsonProtocol` 
 
 ## API
 
-API is implemented in the file `UsersScalatraServlet` in directory `users/src/main/scala/users/api`. All routes start with prefix `/user`.
+API is implemented in the file `UsersScalatraServlet` in directory `users/src/main/scala/users/api`. All routes start with prefix `/user`. Content type is json by default.
 
 ### Routes:
 
-* `GET(/users)`
-* `PUT(/user/signup)`
-* `GET(/user/:id)`
-* `POST(/user/block)`
-* `POST(/user/unblock)`
-* `POST(/user/update/email)`
-* `POST(/user/update/password)`
-* `DELETE(/user/password/:id)`
-* `DELETE(/user/:id)`
+* `get(/users)` - returns all users
+* `put(/user/signup)` - sign uo a new user
+* `get(/user/:id)` - returns user with specific id
+* `post(/user/block)` - blocks user
+* `post(/user/unblock)` - unblocks user
+* `post(/user/update/email)` - updates user's email
+* `post(/user/update/password)` - updated user's password
+* `delete(/user/password)` - removes user's password
+* `delete(/user)` - deletes user
 
 <a name="scripts" />
 

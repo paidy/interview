@@ -4,11 +4,11 @@
 
 You can choose either Rust or Scala as the programming language to complete the test.  
 
-Please try to spend only acounr 4-6 hours on this maximum.  The focus will be on data structure choice, API design and 
+Please try to spend at most 4-6 hours on this test.  The focus will be on data structure choice, API design and 
 implementation, internal implementation (especially regarding data correctness, multi-threaded capacity, and 
 proper unit testing).  How "functional" the solution is coded will also be a strong factor.  Please learn and use all 
 of the functional programming skills you can to complete this test, along with a good sense of when and where to apply 
-them.  Knowing when to try to stay pure functional and when to deviate to a more procedural mindset is a 
+them.  Knowing when to try to stay purely functional and when to deviate to a more procedural mindset is a 
 skill which will come in handy for this test.
 
 Please keep everything simple and focus on making each piece as solid as possible.  The parts that are in the 
@@ -53,6 +53,7 @@ Examples of Rust libraries which are okay to use:
 Examples of Scala libraries which are okay to use:
 * Akka (both HTTP and actor)
 * cats (pure functional programming library)
+* cats-effect (the IO monad for scala)
 * Anything in standard scala library
 * Any library which doesn’t do data manipulation for you
 

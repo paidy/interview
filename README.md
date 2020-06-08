@@ -1,3 +1,6 @@
+<img src="/paidy.png?raw=true" width=200 height=106>
+
+
 # Paidy Take-Home Coding Exercises
 
 ## What to expect?

@@ -1,17 +1,21 @@
 package forex
 
-import cats.effect.{ Concurrent, Timer }
-import forex.config.ApplicationConfig
+import cats.effect.{ConcurrentEffect, Timer}
+import forex.config.{ApplicationConfig, Dummy, Simple}
 import forex.http.rates.RatesHttpRoutes
 import forex.services._
 import forex.programs._
+import forex.services.rates.Interpreters
 import org.http4s._
 import org.http4s.implicits._
-import org.http4s.server.middleware.{ AutoSlash, Timeout }
+import org.http4s.server.middleware.{AutoSlash, Timeout}
 
-class Module[F[_]: Concurrent: Timer](config: ApplicationConfig) {
+class Module[F[_]: ConcurrentEffect: Timer](config: ApplicationConfig) {
 
-  private val ratesService: RatesService[F] = RatesServices.dummy[F]
+  private val ratesService: RatesService[F] = config.source match {
+    case Dummy => Interpreters.dummy()
+    case Simple(uri, token) => Interpreters.simple(uri.getUri, token)
+  }
 
   private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService)
 

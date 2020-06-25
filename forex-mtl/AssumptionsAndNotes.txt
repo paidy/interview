@@ -1,0 +1,25 @@
+The assumptions I had during implementation
+1. Each request regardless of number of currency pairs is one use of the source service
+2. Values are not inverses of each other, i.e USDJPY != 1/ JPYUSD
+3. Try to minimize the use of the source service
+4. Giving users fresh data, i.e. as fresh as possible is low priority
+5. do not reinvent the wheel, pull in dependencies if it is easier
+
+To accommodate this I setup a simple cache where the contents expire after certain time.
+If the contents expire a request is made to the source service about all currency pairs.
+Assuming an expiry time of 4 minutes there should about 360 calls made at most in a day way below the limit
+
+There are two "live" implementations (the two commits roughly correspond to these):
+- simple does not do any caching, does not satisfy the design requirements
+- cached is the proper implementation using a caffeine cache
+
+Error handling
+- the service handles and communicates errors to the users during source lookup
+- minimal input validation; correct currency strings and checks if the two currencies are the same
+
+TODOs
+- automated integration testing, unit tests could also be useful, but they would mostly test outside libraries
+- Better token handling - currently the service only uses a single token, which is OK because daily requests are less than 1000.
+  However this assumes only this service is using the token. A more sophisticated implementation would enable using multiple tokens in case of issues,
+  or injection of new tokens during running
+- clean up the code - I am not used to the Cats ecosystem which uses implicits so heavily, I feel I was pretty heavy handed when using it

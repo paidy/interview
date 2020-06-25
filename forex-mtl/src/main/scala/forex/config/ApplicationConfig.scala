@@ -19,6 +19,7 @@ case class HttpConfig(
 sealed trait RateSource
 case object Dummy extends RateSource
 case class Simple(uriInfo: UriInfo, token: String) extends RateSource
+case class Cached(uriInfo: UriInfo, token: String, refreshTime: Int) extends RateSource
 
 sealed trait UriInfo{
   def getUri: Uri

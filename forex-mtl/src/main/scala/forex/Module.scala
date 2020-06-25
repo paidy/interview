@@ -1,7 +1,7 @@
 package forex
 
 import cats.effect.{ConcurrentEffect, Timer}
-import forex.config.{ApplicationConfig, Dummy, Simple}
+import forex.config.{ApplicationConfig, Cached, Dummy, Simple}
 import forex.http.rates.RatesHttpRoutes
 import forex.services._
 import forex.programs._
@@ -15,6 +15,7 @@ class Module[F[_]: ConcurrentEffect: Timer](config: ApplicationConfig) {
   private val ratesService: RatesService[F] = config.source match {
     case Dummy => Interpreters.dummy()
     case Simple(uri, token) => Interpreters.simple(uri.getUri, token)
+    case Cached(uri, token, refreshTime) => Interpreters.live(uri.getUri, token, refreshTime)
   }
 
   private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService)

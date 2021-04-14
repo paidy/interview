@@ -3,9 +3,9 @@ import Dependencies._
 name := "forex"
 version := "1.0.1"
 
-scalaVersion := "2.12.10"
+scalaVersion := "2.13.2"
 scalacOptions ++= Seq(
- "-deprecation",
+  "-deprecation",
   "-encoding",
   "UTF-8",
   "-feature",
@@ -15,15 +15,13 @@ scalacOptions ++= Seq(
   "-language:implicitConversions",
   "-unchecked",
   "-Xfatal-warnings",
-  "-Xfuture",
-  "-Xlint",
+  "-Xlint:adapted-args",
+  "-Xlint:byname-implicit",
+  "-Xlint:inaccessible",
   "-Ydelambdafy:method",
   "-Xlog-reflective-calls",
-  "-Yno-adapted-args",
-  "-Ypartial-unification",
   "-Ywarn-dead-code",
-  "-Ywarn-inaccessible",
-  "-Ywarn-unused-import",
+  "-Ywarn-unused:imports",
   "-Ywarn-value-discard"
 )
 
@@ -42,7 +40,6 @@ libraryDependencies ++= Seq(
   Libraries.circeGeneric,
   Libraries.circeGenericExt,
   Libraries.circeParser,
-  Libraries.circeJava8,
   Libraries.pureConfig,
   Libraries.logback,
   Libraries.scalaTest        % Test,

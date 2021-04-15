@@ -3,18 +3,18 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val cats                = "2.1.0"
-    val catsEffect          = "2.0.0"
-    val fs2                 = "2.1.0"
-    val http4s              = "0.20.15"
-    val circe               = "0.11.1"
-    val pureConfig          = "0.12.1"
+    val cats                = "2.5.0"
+    val catsEffect          = "2.4.1"
+    val fs2                 = "2.5.4"
+    val http4s              = "0.21.22"
+    val circe               = "0.13.0"
+    val pureConfig          = "0.14.1"
 
-    val kindProjector       = "0.9.10"
+    val kindProjector       = "0.10.3"
     val logback             = "1.2.3"
-    val scalaCheck          = "1.14.3"
-    val scalaTest           = "3.1.0"
-    val catsScalaCheck      = "0.2.0"
+    val scalaCheck          = "1.15.3"
+    val scalaTest           = "3.2.7"
+    val catsScalaCheck      = "0.3.0"
   }
 
   object Libraries {
@@ -32,11 +32,10 @@ object Dependencies {
     lazy val circeGeneric        = circe("circe-generic")
     lazy val circeGenericExt     = circe("circe-generic-extras")
     lazy val circeParser         = circe("circe-parser")
-    lazy val circeJava8          = circe("circe-java8")
     lazy val pureConfig          = "com.github.pureconfig" %% "pureconfig"                 % Versions.pureConfig
 
     // Compiler plugins
-    lazy val kindProjector       = "org.spire-math"        %% "kind-projector"             % Versions.kindProjector
+    lazy val kindProjector       = "org.typelevel"         %% "kind-projector"             % Versions.kindProjector
 
     // Runtime
     lazy val logback             = "ch.qos.logback"        %  "logback-classic"            % Versions.logback

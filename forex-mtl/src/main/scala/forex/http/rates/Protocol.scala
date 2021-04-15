@@ -5,10 +5,12 @@ import forex.domain.Currency.show
 import forex.domain.Rate.Pair
 import forex.domain._
 import io.circe._
-import io.circe.generic.semiauto._
-import io.circe.java8.time._
+import io.circe.generic.extras.Configuration
+import io.circe.generic.extras.semiauto.deriveConfiguredEncoder
 
 object Protocol {
+
+  implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
   final case class GetApiRequest(
       from: Currency,
@@ -26,12 +28,12 @@ object Protocol {
     Encoder.instance[Currency] { show.show _ andThen Json.fromString }
 
   implicit val pairEncoder: Encoder[Pair] =
-    deriveEncoder[Pair]
+    deriveConfiguredEncoder[Pair]
 
   implicit val rateEncoder: Encoder[Rate] =
-    deriveEncoder[Rate]
+    deriveConfiguredEncoder[Rate]
 
   implicit val responseEncoder: Encoder[GetApiResponse] =
-    deriveEncoder[GetApiResponse]
+    deriveConfiguredEncoder[GetApiResponse]
 
 }

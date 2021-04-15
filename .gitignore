@@ -1,5 +1,6 @@
 project/boot
 target
+.bsp
 .ensime
 .ensime_lucene
 .ensime_cache

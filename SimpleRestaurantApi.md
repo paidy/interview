@@ -38,24 +38,6 @@ tools).
 Note: Libraries which deal with threading, thread channels, TCP/IP streaming, HTTP processing, REST 
 webserver endpoints, and other functionality which bring the data into your app are fine, as long as we can still 
 examine how you update the database and process the information given to you from those low-level libraries.
-Examples of Rust libraries which are okay to use: 
-
-* hyper (HTTP)
-* threadpool (threading)
-* rocket or iron (webserver)
-* serde/json (for JSON serialization)
-* riker (actor system)
-* futures/tokio (futures)
-* lazy_static (statics which can be initialized at runtime)
-* anything from std
-* Most libraries which don’t do data manipulation for you
-
-Examples of Scala libraries which are okay to use:
-* Akka (both HTTP and actor)
-* cats (pure functional programming library)
-* cats-effect (the IO monad for scala)
-* Anything in standard scala library
-* Any library which doesn’t do data manipulation for you
 
 Good luck!
 

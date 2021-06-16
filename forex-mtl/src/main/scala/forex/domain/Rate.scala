@@ -10,5 +10,7 @@ object Rate {
   final case class Pair(
       from: Currency,
       to: Currency
-  )
+  ) {
+    def generateKey: String = s"${from}_$to"
+  }
 }

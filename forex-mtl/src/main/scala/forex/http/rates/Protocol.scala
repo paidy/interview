@@ -1,12 +1,16 @@
 package forex.http
 package rates
 
+import java.time.OffsetDateTime
+
+import forex.client.errors.OneFrameClientResponseError
 import forex.domain.Currency.show
 import forex.domain.Rate.Pair
 import forex.domain._
 import io.circe._
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto.deriveConfiguredEncoder
+import io.circe.generic.semiauto.deriveDecoder
 
 object Protocol {
 
@@ -35,5 +39,20 @@ object Protocol {
 
   implicit val responseEncoder: Encoder[GetApiResponse] =
     deriveConfiguredEncoder[GetApiResponse]
+
+  implicit val rateDecoder: Decoder[Rate] = (cursor: HCursor) =>
+    for {
+      from <- cursor.downField("from").as[Currency]
+      to <- cursor.downField("to").as[Currency]
+      price <- cursor.downField("price").as[BigDecimal]
+      timestamp <- cursor.downField("time_stamp").as[OffsetDateTime]
+    } yield {
+      Rate(Rate.Pair(from, to), Price(price), Timestamp(timestamp))
+  }
+
+  implicit val errorResponseDecoder: Decoder[OneFrameClientResponseError] = deriveDecoder[OneFrameClientResponseError]
+
+  implicit val rateOrErrorDecoder: Decoder[Either[OneFrameClientResponseError, List[Rate]]] =
+    errorResponseDecoder.either(Decoder.decodeList(rateDecoder))
 
 }

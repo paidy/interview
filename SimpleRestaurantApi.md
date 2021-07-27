@@ -25,10 +25,10 @@ software engineering skills.  In addition, other basic software engineering skil
 familiarity with the actual programming language used for implementation.
 
 The solution should be designed to be production-ready as you would normally do for a real business application.
-However, you can keep it simple, and focus to solve the problem, just be ready to explain how you could scale it if/when needed. 
-Try to make it as clean as you can (deployable, tested, documented, etc.), please bear in mind that the point of this is to showcase your skills, 
-particularly with functional programming, API design, data structure choice, and data manipulation techniques. 
-The desire to use third-party tools to perform data updating, table and database management, etc. 
+However, you can keep it simple, and focus to solve the problem, just be ready to explain how you could scale it 
+if/when needed. Try to make it as clean as you can (deployable, tested, documented, etc.), please bear in mind that 
+the point of this is to showcase your skills, particularly with functional programming, API design, data structure choice, 
+and data manipulation techniques. The desire to use third-party tools to perform data updating, table and database management, etc. 
 which would ordinarily be in a production-ready design is much appreciated and understood, 
 however, these tools hide your skills behind already-built libraries, and make it difficult for us to 
 understand your level with regards to skills vital to success at Paidy.  

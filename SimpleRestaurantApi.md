@@ -24,16 +24,18 @@ even if the code isn’t mastery-level and doesn’t include super high-powered 
 software engineering skills.  In addition, other basic software engineering skills will be on display regardless of your
 familiarity with the actual programming language used for implementation.
 
-The solution should be as clean as you can make it (deployable, tested, documented, etc.), however, please bear in mind 
-that the point of this is to showcase your skills, particularly with functional programming, API design, data 
-structure choice, and data manipulation techniques.  The desire to use third-party tools to perform data updating, 
-table and database management, etc. which would ordinarily be in a production-ready design is much appreciated and 
-understood, however, these tools hide your skills behind already-built libraries, and make it difficult for us to 
+The solution should be designed to be production-ready as you would normally do for a real business application.
+However, you can keep it simple, and focus to solve the problem, just be ready to explain how you could scale it 
+if/when needed. Try to make it as clean as you can (deployable, tested, documented, etc.), please bear in mind that 
+the point of this is to showcase your skills, particularly with functional programming, API design, data structure choice, 
+and data manipulation techniques. The desire to use third-party tools to perform data updating, table and database management, etc. 
+which would ordinarily be in a production-ready design is much appreciated and understood, 
+however, these tools hide your skills behind already-built libraries, and make it difficult for us to 
 understand your level with regards to skills vital to success at Paidy.  
 
 So, please refrain from using tools which perform API and data structure design for you, or hide the data 
-manipulation behind third-party library calls (such as Python’s Django, Java’s Spring/Hibernate, and other similar 
-tools).  
+manipulation behind third-party library calls such as ORM tools (JPA, Hibernate, SQLAlchemy, etc...), 
+API generation tools (OpenAPI generator, etc.).  
 
 Note: Libraries which deal with threading, thread channels, TCP/IP streaming, HTTP processing, REST 
 webserver endpoints, and other functionality which bring the data into your app are fine, as long as we can still 
@@ -50,7 +52,7 @@ please provide a README file to indicate how to build and run your source as wel
 
 *Business Case*
 
-Create a restaurant application which accepts menu items from various serviing staff in the restaurant.  This 
+Create a restaurant application which accepts menu items from various serving staff in the restaurant.  This 
 application must then store the item along with a countdown for the item to be ready to serve.  The application 
 must be able to give a quick snapshot of any or all items on its list at any time.  It must also be able to remove 
 specific orders from the list of orders on demand.

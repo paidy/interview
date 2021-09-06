@@ -31,6 +31,9 @@ The complete specification for this exercise can be found in the [Forex.md](Fore
 ### 4. [Mobile] Create a Grouped Card View
 The complete specification for this exercise can be found in the [GroupedCardView.md](GroupedCardView.md).
 
+### 5. [Platform] Build an API for managing a restaurant
+The complete specification for this exercise can be found at [SimpleRestaurantApi.md](SimpleRestaurantApi.md)
+
 ## F.A.Q.
 1) _Is it OK to share your solutions publicly?_
 Yes, the questions are not prescriptive, the process and discussion around the code is the valuable part. You do the work, you own the code. Given we are asking you to give up your time, it is entirely reasonable for you to keep and use your solution as you see fit.

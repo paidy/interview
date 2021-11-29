@@ -16,7 +16,7 @@ Please note the following drawback of the [One-Frame service](https://hub.docker
 
 ## Guidance
 
-In practice, this should require the following 2 points:
+In practice, this should require the following points:
 
 1. Create a `live` interpreter for the `oneframe` service. This should consume the [One-Frame API](https://hub.docker.com/r/paidyinc/one-frame).
 

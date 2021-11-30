@@ -39,3 +39,24 @@ Some of the traits/specifics we are looking for using this exercise:
 - How do you work around restrictions;
 - What design choices do you make;
 - How do you think beyond the happy path.
+
+### The One-Frame service
+
+#### How to run locally
+
+* Pull the docker image with `docker pull paidyinc/one-frame`
+* Run the service locally on port 8080 with `docker run -p 8080:8080 paidyinc/one-frame
+
+#### Usage
+__API__
+`GET /rates?pair={currency_pair_0}&pair={currency_pair_1}&...pair={currency_pair_n}`
+pair: Required query parameter that is the concatenation of two different currency codes, e.g. USDJPY. One or more pairs per request are allowed.
+token: Header required for authentication. 10dc303535874aeccc86a8251e6992f5 is the only accepted value in the current implementation.
+
+__Example cURL request__
+```
+$ curl -H "token: 10dc303535874aeccc86a8251e6992f5" 'localhost:8080/rates?pair=USDJPY'
+
+[{"from":"USD","to":"JPY","bid":0.61,"ask":0.82,"price":0.71,"time_stamp":"2019-01-01T00:00:00.000"}]
+```
+

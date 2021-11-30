@@ -1,5 +1,4 @@
-<img src="/paidy.png?raw=true" width=200 height=106>
-
+<img src="/paidy.png?raw=true" width=300 style="background-color:white;">
 
 # Paidy Take-Home Coding Exercises
 

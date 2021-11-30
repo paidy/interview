@@ -49,9 +49,12 @@ Some of the traits/specifics we are looking for using this exercise:
 
 #### Usage
 __API__
+
 `GET /rates?pair={currency_pair_0}&pair={currency_pair_1}&...pair={currency_pair_n}`
-pair: Required query parameter that is the concatenation of two different currency codes, e.g. USDJPY. One or more pairs per request are allowed.
-token: Header required for authentication. 10dc303535874aeccc86a8251e6992f5 is the only accepted value in the current implementation.
+
+pair: Required query parameter that is the concatenation of two different currency codes, e.g. `USDJPY`. One or more pairs per request are allowed.
+
+token: Header required for authentication. `10dc303535874aeccc86a8251e6992f5` is the only accepted value in the current implementation.
 
 __Example cURL request__
 ```

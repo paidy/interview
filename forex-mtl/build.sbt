@@ -3,7 +3,7 @@ import Dependencies._
 name := "forex"
 version := "1.0.1"
 
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.7"
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
   "-encoding",
@@ -67,3 +67,4 @@ libraryDependencies ++= Seq(
   Libraries.scalaCheck       % Test,
   Libraries.catsScalaCheck   % Test
 )
+addCommandAlias("make-idea", ";updateClassifiers; updateSbtClassifiers;")

@@ -4,6 +4,7 @@ import scala.concurrent.duration.FiniteDuration
 
 case class ApplicationConfig(
     http: HttpConfig,
+    pollDuration: FiniteDuration
 )
 
 case class HttpConfig(

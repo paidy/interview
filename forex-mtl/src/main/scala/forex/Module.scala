@@ -1,15 +1,15 @@
 package forex
 
-import cats.effect.{ Dispatcher, Temporal }
+import cats.effect.{Async, Concurrent, Temporal}
 import forex.config.ApplicationConfig
 import forex.http.rates.RatesHttpRoutes
 import forex.services._
 import forex.programs._
 import org.http4s._
 import org.http4s.implicits._
-import org.http4s.server.middleware.{ AutoSlash, Timeout }
+import org.http4s.server.middleware.{AutoSlash, Timeout}
 
-class Module[F[_]: Concurrent: Temporal](config: ApplicationConfig) {
+class Module[F[_]: Async : Temporal : Concurrent](config: ApplicationConfig) {
 
   private val ratesService: RatesService[F] = RatesServices.dummy[F]
 

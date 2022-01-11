@@ -50,9 +50,34 @@ token: Header required for authentication. `10dc303535874aeccc86a8251e6992f5` is
 
 __Example cURL request__
 ```
-$ curl -H "token: 10dc303535874aeccc86a8251e6992f5" 'localhost:8080/streaming/rates?pair=USDJPY'
+$ curl --no-buffer -s -H "token: 10dc303535874aeccc86a8251e6992f5" 'localhost:8080/streaming/rates?pair=USDJPY'
 
-[{"from":"USD","to":"JPY","bid":0.61,"ask":0.82,"price":0.71,"time_stamp":"2019-01-01T00:00:00.000"}]
+[{"from":"USD","to":"JPY","bid":0.6118225421857174,"ask":0.8243869101616611,"price":0.71810472617368925,"time_stamp":"2022-01-11T07:47:40.734Z"}][{"from":"USD","to":"JPY","bid":0.8435259660697864,"ask":0.4175532166907524,"price":0.6305395913802694,"time_stamp":"2022-01-11T07:47:41.739Z"}][{"from":"USD","to":"JPY","bid":0.1350922166954046,"ask":0.13871074418376472,"price":0.13690148043958466,"time_stamp":"2022-01-11T07:47:42.74Z"}]
+
+$ curl --no-buffer -s -H "token: 10dc303535874aeccc86a8251e6992f5" 'localhost:8080/streaming/rates?pair=USDJPY' | jq
+
+
+[
+  {
+    "from": "USD",
+    "to": "JPY",
+    "bid": 0.6118225421857174,
+    "ask": 0.8243869101616611,
+    "price": 0.7181047261736893,
+    "time_stamp": "2022-01-11T07:48:09.94Z"
+  }
+]
+[
+  {
+    "from": "USD",
+    "to": "JPY",
+    "bid": 0.8435259660697864,
+    "ask": 0.4175532166907524,
+    "price": 0.6305395913802694,
+    "time_stamp": "2022-01-11T07:48:10.943Z"
+  }
+]
+
 ```
 
 ## F.A.Q.

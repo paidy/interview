@@ -13,7 +13,7 @@ We understand that your time is valuable, and in anyone's busy schedule solving 
 ## How to submit?
 You can do this however you see fit - you can email us a tarball, a pointer to download your code from somewhere or just a link to a source control repository. Make sure your submission includes a small **README**, documenting any assumptions, simplifications and/or choices you made, as well as a short description of how to run the code and/or tests. Finally, to help us review your code, please split your commit history in sensible chunks (at least separate the initial provided code from your personal additions).
 
-# An in-browser Forex rates
+# An in-browser Forex rates SPA
 
 Build a Single Page Application displaying Forex rates information which you get through an api.
 

@@ -40,6 +40,8 @@ Amongst others, we at least expect the following to be addressed:
 #### Usage
 __API__
 
+This is a never ending streaming API, after opening a connection the API will keep returning new exchange rates for the queried currency pairs.
+
 `GET /streaming/rates?pair={currency_pair_0}&pair={currency_pair_1}&...pair={currency_pair_n}`
 
 pair: Required query parameter that is the concatenation of two different currency codes, e.g. `USDJPY`. One or more pairs per request are allowed.

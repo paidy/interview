@@ -40,7 +40,7 @@ Amongst others, we at least expect the following to be addressed:
 #### Usage
 __API__
 
-This is a never ending streaming API, after opening a connection the API will keep returning new exchange rates for the queried currency pairs.
+The One-Frame API offers two different APIs, for this exercise please use the streaming one, This is a never ending streaming API, after opening a connection the API will keep returning new exchange rates for the queried currency pairs until the connection is closed.
 
 `GET /streaming/rates?pair={currency_pair_0}&pair={currency_pair_1}&...pair={currency_pair_n}`
 

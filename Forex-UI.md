@@ -2,9 +2,6 @@
 
 # Paidy Take-Home Coding Exercises
 
-## What to expect?
-We understand that your time is valuable, and in anyone's busy schedule solving these exercises may constitute a fairly substantial chunk of time, so we really appreciate any effort you put in to helping us build a solid team.
-
 ## What we are looking for?
 **Keep it simple**. Read the requirements and restrictions carefully and focus on solving the problem.
 
@@ -91,5 +88,7 @@ For any value of X, it is up to you, we intentionally leave the problem a little
 The first thing is: don't get stuck. We really don't want to trip you up intentionally, we are just attempting to see how you approach problems. That said, there are intentional ambiguities in the specifications, mainly to see how you fill in those gaps, and how you make design choices.
 If you really feel stuck, our first preference is for you to make a decision and document it with your submission - in this case there is really no wrong answer. If you feel it is not possible to do this, just send us an email and we will try to clarify or correct the question for you.
 
+
+We understand that your time is valuable, and in anyone’s busy schedule solving these exercises may constitute a fairly substantial chunk of time, so we really appreciate any effort you put in to helping us build a solid team.
 Good luck!
 

@@ -37,13 +37,15 @@ Amongst others, we at least expect the following to be addressed:
 #### Usage
 __API__
 
-The One-Frame API offers two different APIs, for this exercise please use the streaming one, This is a never ending streaming API, after opening a connection the API will keep returning new exchange rates for the queried currency pairs until the connection is closed.
+The One-Frame API offers two different APIs, for this exercise please use the streaming one, This is a never ending stream, after opening a connection the API will keep returning new exchange rates for the queried currency pairs until the connection is closed.
 
-`GET /streaming/rates?pair={currency_pair_0}&pair={currency_pair_1}&...pair={currency_pair_n}`
+```
+GET /streaming/rates?pair={currency_pair_0}&pair={currency_pair_1}&...pair={currency_pair_n}
+```
 
-pair: Required query parameter that is the concatenation of two different currency codes, e.g. `USDJPY`. One or more pairs per request are allowed.
+* `pair`: Required query parameter that is the concatenation of two different currency codes, e.g. `USDJPY`. One or more pairs per request are allowed.
 
-token: Header required for authentication. `10dc303535874aeccc86a8251e6992f5` is the only accepted value in the current implementation.
+* `token`: Header required for authentication. `10dc303535874aeccc86a8251e6992f5` is the only accepted value in the current implementation.
 
 __Example cURL request__
 ```

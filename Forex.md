@@ -65,6 +65,8 @@ Some of the traits/specifics we are looking for using this exercise:
 #### Usage
 __API__
 
+The One-Frame API offers two different APIs, for this exercise please use the `GET /rates` one.
+
 `GET /rates?pair={currency_pair_0}&pair={currency_pair_1}&...pair={currency_pair_n}`
 
 pair: Required query parameter that is the concatenation of two different currency codes, e.g. `USDJPY`. One or more pairs per request are allowed.

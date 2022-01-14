@@ -21,14 +21,11 @@ The interview will cover a wide range of technical and social aspects relevant t
 ### 1. [Platform] Build an API for managing users
 The complete specification for this exercise can be found in the [UsersAPI.md](UsersAPI.md).
 
-### 2. [Frontend] Build a SPA that displays weather information
-The complete specification for this exercise can be found in the [Weather.md](Weather.md).
+### 2. [Frontend] Build a SPA that displays currency exchange rates
+The complete specification for this exercise can be found in the [Forex-UI.md](Forex-UI.md).
 
 ### 3. [Platform] Build a local proxy for currency exchange rates
 The complete specification for this exercise can be found in the [Forex.md](Forex.md).
-
-### 4. [Mobile] Create a Grouped Card View
-The complete specification for this exercise can be found in the [GroupedCardView.md](GroupedCardView.md).
 
 ### 5. [Platform] Build an API for managing a restaurant
 The complete specification for this exercise can be found at [SimpleRestaurantApi.md](SimpleRestaurantApi.md)

@@ -32,7 +32,7 @@ Amongst others, we at least expect the following to be addressed:
 #### How to run locally
 
 * Pull the docker image with `docker pull paidyinc/one-frame`
-* Run the service locally on port 8080 with `docker run -p 8080:8080 paidyinc/one-frame
+* Run the service locally on port 8080 with `docker run -p 8080:8080 paidyinc/one-frame`
 
 #### Usage
 __API__

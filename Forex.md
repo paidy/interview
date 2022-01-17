@@ -60,7 +60,7 @@ Some of the traits/specifics we are looking for using this exercise:
 #### How to run locally
 
 * Pull the docker image with `docker pull paidyinc/one-frame`
-* Run the service locally on port 8080 with `docker run -p 8080:8080 paidyinc/one-frame
+* Run the service locally on port 8080 with `docker run -p 8080:8080 paidyinc/one-frame`
 
 #### Usage
 __API__

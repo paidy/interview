@@ -25,7 +25,7 @@ We provide you with an initial scaffold for the application with some dummy inte
 
 * The service returns an exchange rate when provided with 2 supported currencies 
 * The rate should not be older than 5 minutes
-* The service should support 10,000 successful requests per day with 1 API token
+* The service should support at least 10,000 successful requests per day with 1 API token
 
 Please note the following drawback of the [One-Frame service](https://hub.docker.com/r/paidyinc/one-frame): 
 

@@ -3,7 +3,7 @@ import Dependencies._
 name := "forex"
 version := "1.0.1"
 
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.8"
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
   "-encoding",
@@ -49,21 +49,5 @@ scalacOptions ++= Seq(
 resolvers +=
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-libraryDependencies ++= Seq(
-  compilerPlugin(Libraries.kindProjector),
-  Libraries.cats,
-  Libraries.catsEffect,
-  Libraries.fs2,
-  Libraries.http4sDsl,
-  Libraries.http4sServer,
-  Libraries.http4sCirce,
-  Libraries.circeCore,
-  Libraries.circeGeneric,
-  Libraries.circeGenericExt,
-  Libraries.circeParser,
-  Libraries.pureConfig,
-  Libraries.logback,
-  Libraries.scalaTest        % Test,
-  Libraries.scalaCheck       % Test,
-  Libraries.catsScalaCheck   % Test
-)
+lazy val root = (project in file("."))
+  .settings(libraryDependencies ++= Libraries.All)

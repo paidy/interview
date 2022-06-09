@@ -45,6 +45,7 @@ object Dependencies {
     lazy val scalaTest      = "org.scalatest"     %% "scalatest"                      % Versions.scalaTest
     lazy val scalaCheck     = "org.scalacheck"    %% "scalacheck"                     % Versions.scalaCheck
     lazy val catsScalaCheck = "io.chrisdavenport" %% "cats-scalacheck"                % Versions.catsScalaCheck
+    lazy val scalaTestPlus  = "org.scalatestplus" %% "scalatestplus-scalacheck"       % "3.1.0.0-RC2"
     lazy val docker         = "com.dimafeng"      %% "testcontainers-scala-scalatest" % "0.40.7"
 
     val All: Seq[ModuleID] = Seq(
@@ -62,6 +63,7 @@ object Dependencies {
       Libraries.circeParser,
       Libraries.pureConfig,
       Libraries.logback,
+      Libraries.scalaTestPlus  % Test,
       Libraries.scalaTest      % Test,
       Libraries.scalaCheck     % Test,
       Libraries.catsScalaCheck % Test,

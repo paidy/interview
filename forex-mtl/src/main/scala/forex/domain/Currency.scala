@@ -5,6 +5,7 @@ import cats.Show
 sealed trait Currency
 
 object Currency {
+
   case object AUD extends Currency
   case object CAD extends Currency
   case object CHF extends Currency
@@ -38,5 +39,7 @@ object Currency {
     case "SGD" => SGD
     case "USD" => USD
   }
+
+  val Values = Set(AUD, CAD, CHF, EUR, GBP, NZD, JPY, SGD, USD)
 
 }

@@ -6,7 +6,7 @@ import forex.domain.Rate.Pair
 import forex.domain._
 import io.circe._
 import io.circe.generic.extras.Configuration
-import io.circe.generic.extras.semiauto.deriveConfiguredEncoder
+import io.circe.generic.extras.semiauto.{deriveConfiguredDecoder, deriveConfiguredEncoder}
 
 object Protocol {
 
@@ -26,12 +26,18 @@ object Protocol {
 
   implicit val currencyEncoder: Encoder[Currency] =
     Encoder.instance[Currency] { show.show _ andThen Json.fromString }
+  implicit val currencyDeoder: Decoder[Currency] =
+    Decoder[String].map(Currency.fromString)
 
   implicit val pairEncoder: Encoder[Pair] =
     deriveConfiguredEncoder[Pair]
+  implicit val pairDecoder: Decoder[Pair] =
+    deriveConfiguredDecoder[Pair]
 
   implicit val rateEncoder: Encoder[Rate] =
     deriveConfiguredEncoder[Rate]
+  implicit val rateDecoder: Decoder[Rate] =
+    deriveConfiguredDecoder[Rate]
 
   implicit val responseEncoder: Encoder[GetApiResponse] =
     deriveConfiguredEncoder[GetApiResponse]

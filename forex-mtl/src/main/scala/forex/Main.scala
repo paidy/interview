@@ -3,6 +3,7 @@ package forex
 import scala.concurrent.ExecutionContext
 
 import cats.effect._
+import cats.implicits._
 import forex.config._
 import fs2.Stream
 import org.http4s.server.blaze.BlazeServerBuilder
@@ -20,9 +21,10 @@ class Application[F[_]: ConcurrentEffect: Timer] {
     for {
       config <- Config.stream("app")
       module = new Module[F](config)
+      http <- Stream.eval(module.httpApp)
       _ <- BlazeServerBuilder[F](ec)
             .bindHttp(config.http.port, config.http.host)
-            .withHttpApp(module.httpApp)
+            .withHttpApp(http)
             .serve
     } yield ()
 

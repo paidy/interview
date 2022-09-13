@@ -39,4 +39,17 @@ object Currency {
     case "USD" => USD
   }
 
+  // The following could be automated with reflection
+  val currencies = Seq[Currency](
+    Currency.AUD,
+    Currency.CAD,
+    Currency.CHF,
+    Currency.EUR,
+    Currency.GBP,
+    Currency.NZD,
+    Currency.JPY,
+    Currency.SGD,
+    Currency.USD,
+  )
+
 }

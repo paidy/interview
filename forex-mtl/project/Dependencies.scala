@@ -5,6 +5,7 @@ object Dependencies {
   object Versions {
     val cats                = "2.5.0"
     val catsEffect          = "2.4.1"
+    val catsEffectTesting   = "0.5.2"
     val fs2                 = "2.5.4"
     val http4s              = "0.21.22"
     val circe               = "0.13.0"
@@ -45,6 +46,7 @@ object Dependencies {
     lazy val scalaTest           = "org.scalatest"         %% "scalatest"                  % Versions.scalaTest
     lazy val scalaCheck          = "org.scalacheck"        %% "scalacheck"                 % Versions.scalaCheck
     lazy val catsScalaCheck      = "io.chrisdavenport"     %% "cats-scalacheck"            % Versions.catsScalaCheck
+    lazy val catsEffectTesting   = "com.codecommit"        %% "cats-effect-testing-scalatest" % Versions.catsEffectTesting
   }
 
 }

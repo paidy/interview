@@ -6,6 +6,7 @@ import cats.effect.concurrent.{Ref, Semaphore}
 import cats.syntax.all._
 import forex.domain.Rate.Pair
 import forex.domain.{Currency, Price, Rate, Timestamp}
+import forex.services.rates.interpreters.OneFrameCached.CachedRate
 import forex.services.rates.interpreters._
 import io.circe.generic.extras.JsonKey
 

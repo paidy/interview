@@ -7,6 +7,7 @@ import forex.domain.Currency.currencies
 import forex.domain.Rate
 import forex.domain.Rate.Pair
 import forex.services.rates.errors.Error
+import forex.services.rates.interpreters.OneFrameCached.{CachedRate, allCurrencyCombinations, ratesToCacheMap}
 import forex.services.rates.{Algebra, BatchedAlgebra}
 
 import java.time.{Duration, Instant}
@@ -42,10 +43,6 @@ class OneFrameCached[F[_]: Concurrent](
     })
   } yield possibleRate
 
-  def ratesToCacheMap(rates: Seq[Rate]): Map[Pair, CachedRate] = {
-    rates.map(rate => rate.pair -> CachedRate(rate.timestamp.value.toInstant, rate)).toMap
-  }
-
   def currentCachedValue(pair: Rate.Pair, cachedValues: Map[Pair, CachedRate]): Option[Rate] = {
     cachedValues.get(pair).filter(canReturnRate).map(_.rate)
   }
@@ -53,6 +50,10 @@ class OneFrameCached[F[_]: Concurrent](
   def canReturnRate(possibleRate: CachedRate): Boolean = {
     possibleRate.cacheTime > Instant.now().minus(Duration.ofMinutes(5L))
   }
+}
+
+object OneFrameCached {
+  case class CachedRate(cacheTime: Instant, rate: Rate)
 
   // This code assumes that the exchange rate of Currencies A->B is not necessarily
   // a mathematical inverse of the of the exchange rate of B->A
@@ -62,6 +63,8 @@ class OneFrameCached[F[_]: Concurrent](
       Pair(from = currencyPair.tail.head, to = currencyPair.head)
     )
   }).toSeq
-}
 
-case class CachedRate(cacheTime: Instant, rate: Rate)
+  def ratesToCacheMap(rates: Seq[Rate]): Map[Pair, CachedRate] = {
+    rates.map(rate => rate.pair -> CachedRate(rate.timestamp.value.toInstant, rate)).toMap
+  }
+}

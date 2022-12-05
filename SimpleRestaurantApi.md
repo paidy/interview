@@ -22,12 +22,13 @@ In general, consider your final solution to be a "production-ready" application,
 
 ## Important Notes: 
 
-Please don't fret too much about a lack of experience in a particular coding language.  Regard this as a chance to showcase your 
-ability to pick up a new language, understand its basics, and apply that understanding in a short amount of time.  
-Picking a new language and showing that you can write some basic code using the strengths of that language, 
+Please don't fret too much about a lack of experience in the programming language specified in the Job Description. 
+Regard this as a chance to showcase your ability to pick up a new language, understand its basics, and apply that understanding 
+in a short amount of time. Picking a new language and showing that you can write some basic code using the strengths of that language, 
 even if the code isn’t mastery-level and doesn’t include super high-powered features, is a powerful showcase of your 
 software engineering skills.  In addition, other basic software engineering skills will be on display regardless of your
-familiarity with the actual programming language used for implementation.
+familiarity with the actual programming language used for implementation. Alternatively, you may use a language you are familiar with 
+as long as it isn't too obscure!
 
 The solution should be designed to be production-ready as you would normally do for a real business application.
 However, you can keep it simple, and focus to solve the problem, just be ready to explain how you could scale it 

@@ -27,8 +27,11 @@ Regard this as a chance to showcase your ability to pick up a new language, unde
 in a short amount of time. Picking a new language and showing that you can write some basic code using the strengths of that language, 
 even if the code isn’t mastery-level and doesn’t include super high-powered features, is a powerful showcase of your 
 software engineering skills.  In addition, other basic software engineering skills will be on display regardless of your
-familiarity with the actual programming language used for implementation. Alternatively, you may use a language you are familiar with 
-as long as it isn't too obscure!
+familiarity with the actual programming language used for implementation. If the Paidy stack is really out of your comfort zone, please
+feel free to submit a solution in one of these accepted languages:
+* Java
+* Kotlin
+* Python
 
 The solution should be designed to be production-ready as you would normally do for a real business application.
 However, you can keep it simple, and focus to solve the problem, just be ready to explain how you could scale it 

@@ -9,6 +9,7 @@ object Dependencies {
     val http4s              = "0.21.22"
     val circe               = "0.13.0"
     val pureConfig          = "0.14.1"
+    val redis4cats          = "0.14.0"
 
     val kindProjector       = "0.10.3"
     val logback             = "1.2.3"
@@ -27,12 +28,15 @@ object Dependencies {
 
     lazy val http4sDsl           = http4s("http4s-dsl")
     lazy val http4sServer        = http4s("http4s-blaze-server")
+    lazy val http4sClient        = http4s("http4s-blaze-client")
     lazy val http4sCirce         = http4s("http4s-circe")
     lazy val circeCore           = circe("circe-core")
     lazy val circeGeneric        = circe("circe-generic")
     lazy val circeGenericExt     = circe("circe-generic-extras")
     lazy val circeParser         = circe("circe-parser")
     lazy val pureConfig          = "com.github.pureconfig" %% "pureconfig"                 % Versions.pureConfig
+    lazy val redis4catsEffects   = "dev.profunktor"        %% "redis4cats-effects"         % Versions.redis4cats
+    lazy val redis4catsLog4cats  = "dev.profunktor"        %% "redis4cats-log4cats"        % Versions.redis4cats
 
     // Compiler plugins
     lazy val kindProjector       = "org.typelevel"         %% "kind-projector"             % Versions.kindProjector

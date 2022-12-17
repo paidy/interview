@@ -11,3 +11,14 @@ case class HttpConfig(
     port: Int,
     timeout: FiniteDuration
 )
+
+case class OneFrameConfig(
+  host: String,
+  port: Int
+)
+
+case class RedisConfig(
+  host: String,
+  port: Int
+)
+

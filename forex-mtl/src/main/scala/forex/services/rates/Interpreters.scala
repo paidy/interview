@@ -5,4 +5,6 @@ import interpreters._
 
 object Interpreters {
   def dummy[F[_]: Applicative]: Algebra[F] = new OneFrameDummy[F]()
+
+  def http[F[_]: Applicative]: Algebra[F] = ???
 }

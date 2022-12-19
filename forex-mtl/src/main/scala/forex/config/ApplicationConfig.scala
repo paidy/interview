@@ -3,22 +3,24 @@ package forex.config
 import scala.concurrent.duration.FiniteDuration
 
 case class ApplicationConfig(
-    http: HttpConfig,
+  httpServer: HttpServerConfig,
+  httpClient: HttpClientConfig,
+  oneFrame: OneFrameConfig
 )
 
-case class HttpConfig(
-    host: String,
-    port: Int,
-    timeout: FiniteDuration
+case class HttpServerConfig(
+  host: String,
+  port: Int,
+  timeout: FiniteDuration
+)
+
+case class HttpClientConfig(
+  timeout: FiniteDuration,
+  idleTimePool: FiniteDuration
 )
 
 case class OneFrameConfig(
   host: String,
-  port: Int
+  port: Int,
+  token: String
 )
-
-case class RedisConfig(
-  host: String,
-  port: Int
-)
-

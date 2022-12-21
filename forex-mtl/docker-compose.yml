@@ -1,0 +1,13 @@
+services:
+  OneFrame:
+    restart: always
+    image: paidyinc/one-frame
+    ports:
+      - "8081:8080"
+  Redis:
+    restart: always
+    image: redis:6.2.0
+    ports:
+      - "6379:6379"
+    environment:
+      - DEBUG=false

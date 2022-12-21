@@ -10,6 +10,7 @@ object Dependencies {
     val circe               = "0.13.0"
     val pureConfig          = "0.14.1"
     val redis4cats          = "0.14.0"
+    val log4cats            = "1.5.1"
 
     val kindProjector       = "0.10.3"
     val logback             = "1.2.3"
@@ -21,6 +22,7 @@ object Dependencies {
   object Libraries {
     def circe(artifact: String): ModuleID = "io.circe"    %% artifact % Versions.circe
     def http4s(artifact: String): ModuleID = "org.http4s" %% artifact % Versions.http4s
+    def redis4cats(artifact: String): ModuleID = "dev.profunktor" %% artifact % Versions.redis4cats
 
     lazy val cats                = "org.typelevel"         %% "cats-core"                  % Versions.cats
     lazy val catsEffect          = "org.typelevel"         %% "cats-effect"                % Versions.catsEffect
@@ -35,8 +37,9 @@ object Dependencies {
     lazy val circeGenericExt     = circe("circe-generic-extras")
     lazy val circeParser         = circe("circe-parser")
     lazy val pureConfig          = "com.github.pureconfig" %% "pureconfig"                 % Versions.pureConfig
-    lazy val redis4catsEffects   = "dev.profunktor"        %% "redis4cats-effects"         % Versions.redis4cats
-    lazy val redis4catsLog4cats  = "dev.profunktor"        %% "redis4cats-log4cats"        % Versions.redis4cats
+    lazy val redis4catsEffects   = redis4cats("redis4cats-effects")
+    lazy val redis4catsLog4cats  = redis4cats("redis4cats-log4cats")
+    lazy val log4cats            = "org.typelevel"         %% "log4cats-slf4j"             % Versions.log4cats
 
     // Compiler plugins
     lazy val kindProjector       = "org.typelevel"         %% "kind-projector"             % Versions.kindProjector

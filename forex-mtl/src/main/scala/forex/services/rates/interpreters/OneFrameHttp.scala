@@ -25,7 +25,7 @@ class OneFrameHttp[F[_]: Sync](
       .flatMap { uri =>
         val uriWithPathAndQuery = uri
           .withPath("/rates")
-          .withQueryParam("pair", pair.from.show + pair.to.show)
+          .withQueryParam("pair", pair.show)
         val headers = Headers.of(
           Header("token", cfg.token)
         )

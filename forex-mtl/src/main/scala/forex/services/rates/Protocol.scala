@@ -33,5 +33,5 @@ object Protocol {
   implicit val timestampDecoder: Decoder[Timestamp] = deriveUnwrappedDecoder[Timestamp]
   implicit val priceDecoder: Decoder[Price] = deriveUnwrappedDecoder[Price]
   implicit val exchangeRateDecoder: Decoder[ExchangeRate] = deriveConfiguredDecoder[ExchangeRate]
-  implicit val oneFrameResponseDecoder: Decoder[OneFrameResponse] = deriveConfiguredDecoder[OneFrameResponse]
+  implicit val oneFrameResponseDecoder: Decoder[OneFrameResponse] = deriveUnwrappedDecoder[OneFrameResponse]
 }

@@ -17,6 +17,7 @@ object Dependencies {
     val scalaCheck          = "1.15.3"
     val scalaTest           = "3.2.7"
     val catsScalaCheck      = "0.3.0"
+    val weaver              = "0.6.15"
   }
 
   object Libraries {
@@ -51,6 +52,9 @@ object Dependencies {
     lazy val scalaTest           = "org.scalatest"         %% "scalatest"                  % Versions.scalaTest
     lazy val scalaCheck          = "org.scalacheck"        %% "scalacheck"                 % Versions.scalaCheck
     lazy val catsScalaCheck      = "io.chrisdavenport"     %% "cats-scalacheck"            % Versions.catsScalaCheck
+    lazy val weaverCats          = "com.disneystreaming"   %% "weaver-cats"                % Versions.weaver
+    lazy val weaverScalaCheck    = "com.disneystreaming"   %% "weaver-scalacheck"          % Versions.weaver
+    lazy val log4catsNoOp        = "org.typelevel"         %% "log4cats-noop"              % Versions.log4cats
   }
 
 }

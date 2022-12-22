@@ -69,5 +69,10 @@ libraryDependencies ++= Seq(
   Libraries.redis4catsLog4cats,
   Libraries.scalaTest        % Test,
   Libraries.scalaCheck       % Test,
-  Libraries.catsScalaCheck   % Test
+  Libraries.catsScalaCheck   % Test,
+  Libraries.weaverCats       % Test,
+  Libraries.weaverScalaCheck % Test,
+  Libraries.log4catsNoOp     % Test
 )
+
+testFrameworks += new TestFramework("weaver.framework.CatsEffect")

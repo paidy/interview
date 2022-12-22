@@ -35,13 +35,15 @@ class OneFrameHttp[F[_]: Sync](
           headers = headers
         )
         client.run(request).use {
-            case Status.Successful(resp) =>
-              resp.asJsonDecode[List[ExchangeRate]].map(x => Right(x.head.toRate))
-            case resp =>
-              resp.as[String]
-                .map(b => Left(
-                  errors.Error.OneFrameLookupFailed(s"Failed with code: ${resp.status.code} and body $b"))
+          case Status.Successful(resp) =>
+            resp.asJsonDecode[OneFrameResponse].map(x => Right(x.rates.head.toRate))
+          case resp =>
+            resp.as[String]
+              .map { b =>
+                Left(
+                  errors.Error.OneFrameLookupFailed(s"Failed with code: ${resp.status.code} and body $b")
                 )
+              }
           }
         }
     }

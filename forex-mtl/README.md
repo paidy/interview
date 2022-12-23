@@ -18,7 +18,7 @@ Please note the following drawback of the [One-Frame service](https://hub.docker
 
 ## Anaylsis
 
-TL;DR, we can add a configurable cache layer to achieve the requirements.
+In short, we can add a configurable cache layer to achieve the requirements.
 
 According to the requirements, I know that 1000 requests limitation per one token per day. However, this local proxy will provide more than 10000 requests daily.
 If we assume the token is used for an external commercial API service, the naive idea is to buy more quotas or more tokens. But that raises the cost and may not be the expectation of an engineer.
@@ -81,24 +81,26 @@ Thus, let's add and implement a cache layer into the solution.
 
 ## What could be improved?
 
-    The first thing I would like to mention regarding the current status of the forex-mtl project is the dependencies should be upgraded. At least from Cats Effect 2 to 3.
-    During the development, I always need to seek back the older document and lose the newer version's convenience features.
-    However, migrating CE2 to CE3 is complex work. Before that, we will need more plans to do it. For instance, to ensure all the current dependencies can upgrade, we have to check the implementation detail is also able to upgrade.
+The first thing I would like to mention regarding the current status of the forex-mtl project is the dependencies should be upgraded. At least from Cats Effect 2 to 3.
 
-    The test coverage is still low; I only add some test suites, like the demonstration, due to the time restriction.
+During the development, I always need to seek back the older document and lose the newer version's convenience features.
+
+However, migrating CE2 to CE3 is complex work. Before that, we will need more plans to do it. For instance, to ensure all the current dependencies can upgrade, we have to check the implementation detail is also able to upgrade.
+
+The test coverage is still low; I only add some test suites, like the demonstration, due to the time restriction.
 
 
 ## Open Discussion
 
-    * Enoder/Decoder of the domain objects
+* Should we have the Enoder/Decoder with domain objects together?
     
-        We can see many different Protocol objects containing encoders and decoders for the module. These Protocol objects are boilerplate code or repeating work. I understand that each module may need different encode/decode implementations. But for these commonly used domain objects, we can define encoder and encoder where it describes or even derivates them.
+    We can see many different Protocol objects containing encoders and decoders for the module. These Protocol objects are boilerplate code or repeating work. I understand that each module may need different encode/decode implementations. But for these commonly used domain objects, we can define encoder and encoder where it describes or even derivates them.
 
-    * Where should we keep the token of external service?
+* How should we keep the token of external service?
 
-        Currently, I made the token an explicit value in the configuration.
-        The choice could be to let our downstream proxy user keep the token. And we receive it from the request and pass it to external service.
-        Or I store it somewhere implicitly; for instance, if we deploy the proxy app with k8s, the token should be a k8s secret.
+    Currently, I made the token an explicit value in the configuration.
+    The choice could be to let our downstream proxy user keep the token. And we receive it from the request and pass it to external service.
+    Or I store it somewhere implicitly; for instance, if we deploy the proxy app with k8s, the token should be a k8s secret.
     
 
     

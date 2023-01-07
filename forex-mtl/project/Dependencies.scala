@@ -11,6 +11,7 @@ object Dependencies {
     val pureConfig          = "0.14.1"
     val redis4cats          = "0.14.0"
     val log4cats            = "1.5.1"
+    val enumeratumVersion   = "1.7.2"
 
     val kindProjector       = "0.10.3"
     val logback             = "1.2.3"
@@ -41,6 +42,7 @@ object Dependencies {
     lazy val redis4catsEffects   = redis4cats("redis4cats-effects")
     lazy val redis4catsLog4cats  = redis4cats("redis4cats-log4cats")
     lazy val log4cats            = "org.typelevel"         %% "log4cats-slf4j"             % Versions.log4cats
+    lazy val enumeratum          = "com.beachape"          %% "enumeratum"                 % Versions.enumeratumVersion
 
     // Compiler plugins
     lazy val kindProjector       = "org.typelevel"         %% "kind-projector"             % Versions.kindProjector

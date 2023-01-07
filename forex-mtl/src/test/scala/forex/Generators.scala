@@ -1,6 +1,8 @@
 package forex
 
 
+import cats.data.NonEmptyList
+
 import java.time.OffsetDateTime
 import org.scalacheck.Gen
 import forex.domain._
@@ -14,17 +16,7 @@ object Generators {
   val redisStatusGen: Gen[RedisStatus] = statusGen.map(RedisStatus)
   val appStatusGen: Gen[AppStatus] = redisStatusGen.map(AppStatus)
 
-  val currencyGen: Gen[Currency] = Gen.oneOf( // Currency could be a Enum
-    Currency.AUD,
-    Currency.CAD,
-    Currency.CHF,
-    Currency.EUR,
-    Currency.GBP,
-    Currency.NZD,
-    Currency.JPY,
-    Currency.SGD,
-    Currency.USD
-  )
+  val currencyGen: Gen[Currency] = Gen.oneOf(Currency.values)
   val pairGen: Gen[Rate.Pair] =
     for {
       a <- currencyGen
@@ -51,5 +43,19 @@ object Generators {
     } yield ExchangeRate(from, to, bid, ask, price, timeStamp)
 
   val oneFrameResponseGen: Gen[OneFrameResponse] =
-    exchangeRateGen.map(exchangeRate => OneFrameResponse(exchangeRate :: Nil))
+    exchangeRateGen.map(exchangeRate => OneFrameResponse(NonEmptyList.fromListUnsafe(exchangeRate :: Nil)))
+
+  val randomMsgGen: Gen[String] = Gen.asciiPrintableStr
+
+  val oneFrameResponseWithRandomMsgGen: Gen[(OneFrameResponse, String)] =
+    for {
+      response <- oneFrameResponseGen
+      msg <- randomMsgGen
+    } yield (response, msg)
+
+  val oneFrameResponseManyGen: Gen[OneFrameResponse] =
+    Gen.nonEmptyListOf(exchangeRateGen).map {
+      exchangeRates => OneFrameResponse(NonEmptyList.fromListUnsafe(exchangeRates))
+    }
+
 }

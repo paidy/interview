@@ -16,7 +16,7 @@ Please note the following drawback of the [One-Frame service](https://hub.docker
 
 > The One-Frame service supports a maximum of 1000 requests per day for any given authentication token.
 
-## Anaylsis
+## Analysis
 
 In short, we can add a configurable cache layer to achieve the requirements.
 
@@ -102,6 +102,14 @@ The test coverage is still low; I only add some test suites, like the demonstrat
     The choice could be to let our downstream proxy user keep the token. And we receive it from the request and pass it to external service.
     Or I store it somewhere implicitly; for instance, if we deploy the proxy app with k8s, the token should be a k8s secret.
     
+---
 
-    
+## Addition Update on 7th Jan.
 
+After received the feedback on 4th Jan, I found my original solution could not fulfill the requirement if the server gets arbitrary currency pair during the cache expiration period.
+Thus, I updated my solution as follows.
+* Make the One-Frame rates requests ask for all the combinations of supported currency and cache it.
+* One-Frame returns nothing if the currency combination is self-repeated; for instance, pair=USDUSD
+* Introduce the `enumeratum` library to the original Currency implementation for convenient Enum operation.
+* Add RatesHttpRoute test suite.
+* Improve the information when receiving an invalidated request.

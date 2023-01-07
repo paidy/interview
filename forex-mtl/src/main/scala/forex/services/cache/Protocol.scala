@@ -10,7 +10,7 @@ import forex.domain._
 
 object Protocol {
 
-  implicit val currencyDecoder: Decoder[Currency] = Decoder.decodeString.map(Currency.fromString)
+  implicit val currencyDecoder: Decoder[Currency] = Decoder.decodeString.map(Currency.withName)
   implicit val currencyEncoder: Encoder[Currency] = Encoder.instance[Currency] {show.show _ andThen Json.fromString}
 
   implicit val pairEncoder: Encoder[Pair] = deriveEncoder

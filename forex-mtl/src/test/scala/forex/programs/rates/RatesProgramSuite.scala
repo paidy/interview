@@ -1,6 +1,7 @@
 package forex.programs.rates
 
 import cats.Show
+import cats.data.NonEmptyList
 import cats.effect._
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
@@ -10,23 +11,29 @@ import forex.services.rates.errors
 import forex.Generators._
 import forex.programs.rates.Protocol.GetRatesRequest
 import forex.programs.rates.errors.Error.RateLookupFailed
+import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.noop.NoOpLogger
 
 
 object RatesProgramSuite extends SimpleIOSuite with Checkers {
 
-  implicit val logger = NoOpLogger[IO]
+  implicit val logger: SelfAwareStructuredLogger[IO] = NoOpLogger[IO]
 
   implicit val showAppStatus: Show[Rate] = Show.fromToString
 
   def successRateService(rate: Rate): RatesService[IO] =
     new RatesService[IO] {
       override def get(pair: Rate.Pair): IO[Either[errors.Error, Rate]] = IO.pure(Right(rate))
+      override def getMany(pairs: NonEmptyList[Rate.Pair]): IO[Either[errors.Error, NonEmptyList[Rate]]] =
+        IO.pure(Right(NonEmptyList.fromListUnsafe(rate :: Nil)))
     }
 
   def failedRateService: RatesService[IO] =
     new RatesService[IO] {
       override def get(pair: Rate.Pair): IO[Either[errors.Error, Rate]] =
+        IO.pure(Left(errors.Error.OneFrameLookupFailed("Dummy failed")))
+
+      override def getMany(pairs: NonEmptyList[Rate.Pair]): IO[Either[errors.Error, NonEmptyList[Rate]]] =
         IO.pure(Left(errors.Error.OneFrameLookupFailed("Dummy failed")))
     }
 
@@ -34,12 +41,14 @@ object RatesProgramSuite extends SimpleIOSuite with Checkers {
     new CacheService[IO] {
       override def get(pair: Rate.Pair): IO[Option[Rate]] = IO.pure(Some(rate))
       override def set(pair: Rate.Pair, rate: Rate): IO[Boolean] = IO.pure(true)
+      override def setMany(pairRates: Map[Rate.Pair, Rate]): IO[Boolean] = IO.pure(true)
     }
 
   def failedCacheService: CacheService[IO] =
     new CacheService[IO] {
       override def get(pair: Rate.Pair): IO[Option[Rate]] = IO.pure(None)
       override def set(pair: Rate.Pair, rate: Rate): IO[Boolean] = IO.pure(true)
+      override def setMany(pairRates: Map[Rate.Pair, Rate]): IO[Boolean] = IO.pure(true)
     }
 
   test("Cache: O, Service: X should return the rate") {

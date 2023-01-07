@@ -1,10 +1,12 @@
 package forex.services.rates
 
+import cats.data.NonEmptyList
 import forex.domain._
 import io.circe._
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto.deriveConfiguredDecoder
 import io.circe.generic.extras.semiauto.deriveUnwrappedDecoder
+
 
 object Protocol {
 
@@ -26,10 +28,10 @@ object Protocol {
   }
 
   case class OneFrameResponse(
-    rates: List[ExchangeRate]
+    rates: NonEmptyList[ExchangeRate]
   )
 
-  implicit val currencyDecoder: Decoder[Currency] = Decoder.decodeString.map(Currency.fromString)
+  implicit val currencyDecoder: Decoder[Currency] = Decoder.decodeString.map(Currency.withName)
   implicit val timestampDecoder: Decoder[Timestamp] = deriveUnwrappedDecoder[Timestamp]
   implicit val priceDecoder: Decoder[Price] = deriveUnwrappedDecoder[Price]
   implicit val exchangeRateDecoder: Decoder[ExchangeRate] = deriveConfiguredDecoder[ExchangeRate]

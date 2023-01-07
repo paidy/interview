@@ -67,6 +67,7 @@ libraryDependencies ++= Seq(
   Libraries.log4cats,
   Libraries.redis4catsEffects,
   Libraries.redis4catsLog4cats,
+  Libraries.enumeratum,
   Libraries.scalaTest        % Test,
   Libraries.scalaCheck       % Test,
   Libraries.catsScalaCheck   % Test,

@@ -16,7 +16,11 @@ class TableService(
     fun create(table: Table) = tableRepository.save(table)
     fun update(id: Int, request: TableUpdateRequest) = tableRepository.findById(id)
         .flatMap { table ->
-            tableRepository.save(table.copy(name = request.name ?: table.name, capacity = request.capacity ?: table.capacity, updatedAt = LocalDateTime.now()))
+            tableRepository.save(table.copy(
+                name = request.name ?: table.name,
+                capacity = request.capacity ?: table.capacity,
+                updatedAt = LocalDateTime.now()
+            ))
         }
         .switchIfEmpty(Mono.empty())
     fun deleteById(id: Int) = tableRepository.deleteById(id)

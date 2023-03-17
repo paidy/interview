@@ -1,8 +1,8 @@
-package com.example.simplerestaurantapi.handlers
+package com.example.simplerestaurantapi.handlers.v1
 
-import com.example.simplerestaurantapi.data.MenuUpdateRequest
-import com.example.simplerestaurantapi.entity.Menu
-import com.example.simplerestaurantapi.services.MenuService
+import com.example.simplerestaurantapi.data.TableUpdateRequest
+import com.example.simplerestaurantapi.entity.Table
+import com.example.simplerestaurantapi.services.TableService
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
@@ -16,25 +16,29 @@ import reactor.core.publisher.Mono
 
 @Component
 class TableHandler(
-    private val menuService: MenuService
+    private val tableService: TableService
 ) {
-    fun all(request: ServerRequest): Mono<ServerResponse> = ok().body(menuService.findAll())
+    fun all(request: ServerRequest): Mono<ServerResponse> = ok().body(tableService.findAll())
+
     fun create(request: ServerRequest): Mono<ServerResponse> =
-        request.bodyToMono<Menu>().flatMap(menuService::create)
+        request.bodyToMono<Table>().flatMap(tableService::create)
             .flatMap {
                 created(UriComponentsBuilder.fromPath("/" + it.id).build().toUri())
                     .body(Mono.just(it))
             }
-    fun getById(request: ServerRequest): Mono<ServerResponse> =
-        menuService.findById(request.pathVariable("id").toInt())
+
+    fun findById(request: ServerRequest): Mono<ServerResponse> =
+        tableService.findById(request.pathVariable("id").toInt())
             .flatMap { ok().body(Mono.just(it)) }
             .switchIfEmpty(notFound().build())
-    fun updateById(request: ServerRequest): Mono<ServerResponse> = request.bodyToMono<MenuUpdateRequest>()
-        .flatMap { menuService.update(request.pathVariable("id").toInt(), it) }
+
+    fun updateById(request: ServerRequest): Mono<ServerResponse> = request.bodyToMono<TableUpdateRequest>()
+        .flatMap { tableService.update(request.pathVariable("id").toInt(), it) }
         .flatMap { ok().body(Mono.just(it)) }
         .switchIfEmpty(notFound().build())
+
     fun deleteById(request: ServerRequest): Mono<ServerResponse> =
-        menuService.deleteById(request.pathVariable("id").toInt())
+        tableService.deleteById(request.pathVariable("id").toInt())
             .flatMap { ok().build() }
 
 }

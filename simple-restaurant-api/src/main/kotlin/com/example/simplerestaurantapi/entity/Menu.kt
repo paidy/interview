@@ -7,7 +7,7 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 
-@Table("menu")
+@Table(Menu.TABLE_NAME)
 data class Menu (
     @Id
     var id: Int = 0,
@@ -21,4 +21,8 @@ data class Menu (
     @LastModifiedDate
     @Column("updated_at")
     var updatedAt: LocalDateTime = LocalDateTime.now()
-)
+) {
+    companion object {
+        const val TABLE_NAME = "menu"
+    }
+}

@@ -16,7 +16,11 @@ class MenuService(
     fun create(menu: Menu) = menuRepository.save(menu)
     fun update(id: Int, request: MenuUpdateRequest) = menuRepository.findById(id)
         .flatMap { menu ->
-            menuRepository.save(menu.copy(name = request.name ?: menu.name, cookingTimeSec = request.cookingTimeSec ?: menu.cookingTimeSec, updatedAt = LocalDateTime.now()))
+            menuRepository.save(menu.copy(
+                name = request.name ?: menu.name,
+                cookingTimeSec = request.cookingTimeSec ?: menu.cookingTimeSec,
+                updatedAt = LocalDateTime.now()
+            ))
         }
         .switchIfEmpty(Mono.empty())
     fun deleteById(id: Int) = menuRepository.deleteById(id)

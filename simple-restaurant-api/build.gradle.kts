@@ -29,8 +29,9 @@ dependencies {
 	testCompileOnly("org.projectlombok:lombok:1.18.26")
 	testAnnotationProcessor("org.projectlombok:lombok:1.18.26")
 
-	implementation("dev.miku:r2dbc-mysql:0.8.2.RELEASE")
-	implementation("mysql:mysql-connector-java:8.0.23")
+	runtimeOnly("mysql:mysql-connector-java:8.0.23")
+
+	implementation("com.github.jasync-sql:jasync-r2dbc-mysql:2.1.16")
 	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

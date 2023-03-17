@@ -11,8 +11,8 @@ class TableRouter {
     @Bean
     fun tableRoutes(handler: TableHandler) = router {
         (accept(MediaType.APPLICATION_JSON) and "/v1/tables").nest {
-            GET("/").invoke(handler::all)
-            POST("/").invoke(handler::create)
+            GET("").invoke(handler::all)
+            POST("").invoke(handler::create)
             GET("/{id}").invoke(handler::findById)
             PUT("/{id}").invoke(handler::updateById)
             DELETE("/{id}").invoke(handler::deleteById)

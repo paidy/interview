@@ -30,9 +30,10 @@ class OrderHandler(
             .switchIfEmpty(notFound().build())
 
     fun create(request: ServerRequest): Mono<ServerResponse> =
-        request.bodyToMono<OrderCreateRequest>()
-            .flatMap { orderService.create(it) }
-            .flatMap { ok().body(Mono.just(it)) }
+        ok().body(
+            request.bodyToFlux<OrderCreateRequest>()
+                .flatMap { orderService.create(it) }
+        )
 
     fun updateById(request: ServerRequest): Mono<ServerResponse> =
         request.bodyToMono<OrderUpdateRequest>()

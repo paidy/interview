@@ -12,14 +12,14 @@ class OrderRouter {
     @Bean
     fun orderRoutes(handler: OrderHandler) = router {
         (accept(MediaType.APPLICATION_JSON) and "/v1/orders").nest {
-            GET("/").invoke(handler::all)
-            GET("/", all()
+            GET("").invoke(handler::all)
+            GET("", all()
                 .and(queryParam("table") { true }),
                 handler::findByTableId)
             GET("/{id}").invoke(handler::findById)
-            POST("/").invoke(handler::create)
+            POST("").invoke(handler::create)
             PUT("/{id}").invoke(handler::updateById)
-            DELETE("/").invoke(handler::deleteByTableId)
+            DELETE("").invoke(handler::deleteByTableId)
             DELETE("/{id}").invoke(handler::deleteById)
         }
     }

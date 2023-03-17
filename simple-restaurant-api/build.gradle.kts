@@ -3,10 +3,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "2.7.9"
 	id("io.spring.dependency-management") version "1.0.15.RELEASE"
-	id("org.flywaydb.flyway") version "8.2.0"
+	id("org.flywaydb.flyway") version "7.15.0"
 	kotlin("jvm") version "1.6.21"
 	kotlin("plugin.spring") version "1.6.21"
-	kotlin("plugin.jpa") version "1.6.21"
 }
 
 group = "com.example"
@@ -14,9 +13,9 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 flyway {
-	url = "jdbc:mysql://localhost:3306/restaurant"
-	user = "test"
-	password = "test"
+	url = "jdbc:mysql://${System.getenv("DB_HOST")?:"localhost"}:${System.getenv("DB_PORT")?:3306}/${System.getenv("DB_NAME")?:"restaurant"}"
+	user = System.getenv("DB_USERNAME")?:"test"
+	password = System.getenv("DB_PASSWORD")?:"test"
 }
 
 repositories {
@@ -39,7 +38,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-core:7.15.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("com.ninja-squad:springmockk:3.0.0")

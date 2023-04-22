@@ -28,10 +28,3 @@ class OneFrameHttpClient[F[_]: Sync](token: String, httpClient: Client[F])(
       .map(_.map(_.asRate))
   }
 }
-
-object OneFrameHttpClient {
-  def apply[F[_]: Sync](token: String, httpClient: Client[F])(
-      implicit applicativeError: ApplicativeError[F, Throwable]
-  ): OneFrameHttpClient[F] =
-    new OneFrameHttpClient[F](token, httpClient)
-}

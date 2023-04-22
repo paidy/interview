@@ -3,7 +3,6 @@ package forex.programs.rates
 import cats.Functor
 import cats.data.EitherT
 import errors._
-import forex.domain._
 import forex.domain.model.Rate
 import forex.services.RatesService
 

@@ -1,6 +1,7 @@
 package forex.http.rates
 
 import forex.domain._
+import forex.domain.model.Rate
 
 object Converters {
   import Protocol._

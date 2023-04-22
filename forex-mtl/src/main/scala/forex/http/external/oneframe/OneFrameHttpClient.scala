@@ -16,7 +16,7 @@ class OneFrameHttpClient[F[_]: Sync](token: String, httpClient: Client[F])(
   private val baseUri   = Uri.unsafeFromString("http://localhost:8080")
   private val authToken = Header("token", token)
 
-  def getRates(pairs: Seq[Rate.Pair]): F[List[Rate]] = {
+  def getRates(pairs: Seq[Rate.Pair]): F[Seq[Rate]] = {
     val uri     = baseUri.withPath("/rates").withQueryParam("pair", pairs.mkString("&pair="))
     val request = Request[F](Method.GET, uri).withHeaders(authToken)
 

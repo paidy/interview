@@ -86,8 +86,8 @@ class CurrencyPairListTest extends AnyFunSpec with Matchers {
 
       CurrencyPairList.all should contain theSameElementsAs expectedPairs
     }
-    it("should have 9 pairs with AUD") {
-      currencyPairList.count(_.from == Currency.AUD) shouldBe 9
+    it("should have 8 pairs with AUD") {
+      currencyPairList.count(_.from == Currency.AUD) shouldBe 8
     }
 
   }

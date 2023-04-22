@@ -1,6 +1,6 @@
 package forex.http.rates
 
-import forex.domain.Currency
+import forex.domain.model.Currency
 import org.http4s.QueryParamDecoder
 import org.http4s.dsl.impl.QueryParamDecoderMatcher
 

@@ -1,9 +1,10 @@
 package forex.http
 package rates
 
-import forex.domain.Currency.show
-import forex.domain.Rate.Pair
+import forex.domain.model.Currency.show
+import forex.domain.model.Rate.Pair
 import forex.domain._
+import forex.domain.model.{Currency, Price, Rate, Timestamp}
 import io.circe._
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto.deriveConfiguredEncoder

@@ -1,4 +1,4 @@
-package forex.domain
+package forex.domain.model
 
 case class Rate(
     pair: Rate.Pair,

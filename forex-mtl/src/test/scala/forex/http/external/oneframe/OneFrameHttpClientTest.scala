@@ -33,11 +33,11 @@ class OneFrameHttpClientTest extends AsyncFunSpec with AsyncIOSpec with Matchers
       val pairs = Seq(Rate.Pair(USD, JPY), Rate.Pair(EUR, USD))
       client.getRates(pairs).asserting { rates =>
         rates.length shouldEqual 2
-        rates.head.from shouldEqual "USD"
-        rates.head.to shouldEqual "JPY"
+        rates.head.pair.from shouldEqual USD
+        rates.head.pair.to shouldEqual JPY
 
-        rates.last.from shouldEqual "EUR"
-        rates.last.to shouldEqual "USD"
+        rates.last.pair.from shouldEqual EUR
+        rates.last.pair.to shouldEqual USD
       }
     }
   }

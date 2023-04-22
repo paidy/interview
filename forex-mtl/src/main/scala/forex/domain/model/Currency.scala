@@ -26,6 +26,7 @@ object Currency {
     case SGD => "SGD"
     case USD => "USD"
   }
+  val all: Seq[Currency] = Vector(AUD, CAD, CHF, EUR, GBP, NZD, JPY, SGD, USD)
 
   def fromString(s: String): Currency = s.toUpperCase match {
     case "AUD" => AUD

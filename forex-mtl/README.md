@@ -59,3 +59,10 @@ sequenceDiagram
     end
     ForexApp->>User: Return exchange rate
 ```
+
+## Technical Compromises Made for this Project
+
+ - Ideally, Redis would be used to store the cache, but due to time constraints for this technical challenge, only an in-memory cache will be used.
+    - The cache will be stored in memory, so it will be lost when the application is restarted.
+ - Similar to the One-Frame service, only one type of API token will be available, and an endpoint for issuing new tokens will not be supported.
+ - Currencies will be limited in the listed currencies of `Currency.scala`

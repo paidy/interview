@@ -28,3 +28,8 @@ class OneFrameHttpClient[F[_]: Sync](token: String, httpClient: Client[F])(
       .map(_.map(_.asRate))
   }
 }
+
+object OneFrameHttpClient {
+  def apply[F[_]: Sync](token: String, httpClient: Client[F]): OneFrameClient[F] =
+    new OneFrameHttpClient[F](token, httpClient)
+}

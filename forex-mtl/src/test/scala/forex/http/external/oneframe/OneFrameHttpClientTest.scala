@@ -2,7 +2,7 @@ package forex.http.external.oneframe
 
 import cats.effect._
 import cats.effect.testing.scalatest.AsyncIOSpec
-import forex.domain.model.Currency.{ EUR, JPY, USD }
+import forex.domain.model.Currency.{EUR, JPY, USD}
 import forex.domain.model.Rate
 import org.http4s._
 import org.http4s.client.Client
@@ -18,7 +18,7 @@ class OneFrameHttpClientTest extends AsyncFunSpec with AsyncIOSpec with Matchers
       val pairs = req.multiParams.getOrElse("pair", List.empty)
       if (pairs.nonEmpty) {
         Ok("""
-            [{"from":"USD","to":"JPY","bid":0.61,"ask":0.82,"price":0.71,"time_stamp":"2019-01-01T00:00:00.000"},{"from":"EUR","to":"USD","bid":0.68,"ask":0.80,"price":0.68,"time_stamp":"2019-01-01T00:00:00.000"}]
+            [{"from":"USD","to":"JPY","bid":0.61,"ask":0.82,"price":0.71,"time_stamp":"2019-01-01T00:00:00.000Z"},{"from":"EUR","to":"USD","bid":0.68,"ask":0.80,"price":0.68,"time_stamp":"2019-01-01T00:00:00.000Z"}]
           """)
       } else {
         BadRequest("No pair query parameter provided")

@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+
+  postgres:
+    image: postgres:14.4
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_USER: "root"
+      POSTGRES_DB: "forex_rates"
+    volumes:
+      - ./src/main/resources/db/forex_rates_cache.sql:/docker-entrypoint-initdb.d/forex_rates_cache.sql
+  paidyinc_one_frame:
+    image: paidyinc/one-frame
+    restart: always
+    ports:
+      - "8080:8080"

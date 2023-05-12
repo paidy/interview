@@ -1,42 +1,31 @@
 package forex.domain
 
-import cats.Show
+import enumeratum.values.{ Circe, StringEnum, StringEnumEntry }
+import io.circe.Codec
 
-sealed trait Currency
+import scala.collection.immutable
 
-object Currency {
-  case object AUD extends Currency
-  case object CAD extends Currency
-  case object CHF extends Currency
-  case object EUR extends Currency
-  case object GBP extends Currency
-  case object NZD extends Currency
-  case object JPY extends Currency
-  case object SGD extends Currency
-  case object USD extends Currency
+sealed abstract class Currency(val value: String) extends StringEnumEntry
 
-  implicit val show: Show[Currency] = Show.show {
-    case AUD => "AUD"
-    case CAD => "CAD"
-    case CHF => "CHF"
-    case EUR => "EUR"
-    case GBP => "GBP"
-    case NZD => "NZD"
-    case JPY => "JPY"
-    case SGD => "SGD"
-    case USD => "USD"
-  }
+object Currency extends StringEnum[Currency] {
+  case object AUD extends Currency("AUD")
+  case object CAD extends Currency("CAD")
+  case object CHF extends Currency("CHF")
+  case object EUR extends Currency("EUR")
+  case object GBP extends Currency("GBP")
+  case object NZD extends Currency("NZD")
+  case object JPY extends Currency("JPY")
+  case object SGD extends Currency("SGD")
+  case object USD extends Currency("USD")
 
-  def fromString(s: String): Currency = s.toUpperCase match {
-    case "AUD" => AUD
-    case "CAD" => CAD
-    case "CHF" => CHF
-    case "EUR" => EUR
-    case "GBP" => GBP
-    case "NZD" => NZD
-    case "JPY" => JPY
-    case "SGD" => SGD
-    case "USD" => USD
-  }
+  override def values: immutable.IndexedSeq[Currency] = findValues
+
+  implicit def stringEnumCodec[T <: StringEnumEntry](implicit enum: StringEnum[T]): Codec[T] =
+    Codec.from(Circe.decoder[String, T](enum), Circe.encoder[String, T](enum))
+
+  val permutationsPairsString: Seq[(String, String)] = for {
+    curA <- values
+    curB <- values.filterNot(_ == curA)
+  } yield ("pair", s"${curA.toString}${curB.toString}")
 
 }

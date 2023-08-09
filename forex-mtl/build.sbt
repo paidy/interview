@@ -54,6 +54,8 @@ libraryDependencies ++= Seq(
   Libraries.cats,
   Libraries.catsEffect,
   Libraries.fs2,
+  Libraries.scalaCacheEffect,
+  Libraries.scalaCacheCaffeine,
   Libraries.http4sDsl,
   Libraries.http4sServer,
   Libraries.http4sCirce,
@@ -63,7 +65,9 @@ libraryDependencies ++= Seq(
   Libraries.circeParser,
   Libraries.pureConfig,
   Libraries.logback,
-  Libraries.scalaTest        % Test,
-  Libraries.scalaCheck       % Test,
-  Libraries.catsScalaCheck   % Test
+  Libraries.scalaTest           % Test,
+  Libraries.scalaCheck          % Test,
+  Libraries.catsScalaCheck      % Test,
+  Libraries.testContainers      % Test,
+  Libraries.catsEffectScalaTest % Test
 )

@@ -1,5 +1,4 @@
-package forex.http
-package rates
+package forex.http.rates
 
 import cats.effect.Sync
 import cats.syntax.flatMap._

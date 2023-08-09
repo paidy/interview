@@ -7,6 +7,7 @@ import cats.syntax.either._
 import forex.domain.{ Price, Rate, Timestamp }
 import forex.services.rates.errors._
 
+//TODO: delete
 class OneFrameDummy[F[_]: Applicative] extends Algebra[F] {
 
   override def get(pair: Rate.Pair): F[Error Either Rate] =

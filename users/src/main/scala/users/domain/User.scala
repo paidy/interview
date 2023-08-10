@@ -2,17 +2,19 @@ package users.domain
 
 import java.time.OffsetDateTime
 
+import com.softwaremill.quicklens.*
+
+import cats.implicits.*
 import cats.kernel.Eq
-import cats.implicits._
-import com.softwaremill.quicklens._
 
 final case class User(
-    id: User.Id,
-    userName: UserName,
-    emailAddress: EmailAddress,
-    password: Option[Password],
-    metadata: User.Metadata
+  id: User.Id,
+  userName: UserName,
+  emailAddress: EmailAddress,
+  password: Option[Password],
+  metadata: User.Metadata
 ) {
+
   def status: User.Status =
     User.status(this)
 
@@ -40,29 +42,31 @@ final case class User(
 }
 
 object User {
+
   def apply(
-      id: User.Id,
-      userName: UserName,
-      emailAddress: EmailAddress,
-      password: Option[Password],
-      at: OffsetDateTime
+    id: User.Id,
+    userName: UserName,
+    emailAddress: EmailAddress,
+    password: Option[Password],
+    at: OffsetDateTime
   ): User = User(id, userName, emailAddress, password, Metadata(1, at, at, None, None))
 
   final case class Id(value: String) extends AnyVal
 
   final case class Metadata(
-      version: Int,
-      createdAt: OffsetDateTime,
-      updatedAt: OffsetDateTime,
-      blockedAt: Option[OffsetDateTime],
-      deletedAt: Option[OffsetDateTime]
+    version: Int,
+    createdAt: OffsetDateTime,
+    updatedAt: OffsetDateTime,
+    blockedAt: Option[OffsetDateTime],
+    deletedAt: Option[OffsetDateTime]
   )
 
   sealed trait Status
+
   object Status {
-    final case object Active extends Status
-    final case object Blocked extends Status
-    final case object Deleted extends Status
+    case object Active extends Status
+    case object Blocked extends Status
+    case object Deleted extends Status
 
     implicit val eq: Eq[Status] =
       Eq.fromUniversalEquals

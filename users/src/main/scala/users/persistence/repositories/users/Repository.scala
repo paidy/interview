@@ -1,17 +1,14 @@
 package users.persistence.repositories.users
 
-import users.domain._
+import cats.Applicative
 
-import scala.concurrent.Future
+import users.domain.*
 
-private[repositories] trait Repository {
-  def insert(user: User): Future[Done]
-  def get(id: User.Id): Future[Option[User]]
-  def getByUserName(userName: UserName): Future[Option[User]]
-  def all(): Future[List[User]]
-}
+private[repositories] trait Repository[F[_]]:
+  def insert(user: User): F[Done]
+  def get(id: User.Id): F[Option[User]]
+  def getByUserName(userName: UserName): F[Option[User]]
+  def all(): F[List[User]]
 
-object Repository {
-  def inMemory(): Repository =
-    new InMemoryRepository()
-}
+object Repository:
+  def inMemory[F[_]: Applicative](): Repository[F] = new InMemoryRepository[F]()

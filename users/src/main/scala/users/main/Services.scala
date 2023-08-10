@@ -1,35 +1,38 @@
 package users.main
 
-import cats.data._
+import cats.data.*
 
-import users.config._
-import users.services._
-
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
+import users.config.*
+import users.services.*
+
 object Services {
+
   val reader: Reader[(ServicesConfig, Executors, Repositories), Services] =
-    Reader((Services.apply _).tupled)
+    Reader(Services.apply.tupled)
 
   val fromApplicationConfig: Reader[ApplicationConfig, Services] =
     (for {
-      config ← ServicesConfig.fromApplicationConfig
-      executors ← Executors.fromApplicationConfig
-      repositories ← Repositories.fromApplicationConfig
-    } yield (config, executors, repositories)) andThen reader
+      config <- ServicesConfig.fromApplicationConfig
+      executors <- Executors.fromApplicationConfig
+      repositories <- Repositories.fromApplicationConfig
+    } yield (config, executors, repositories)).andThen(reader)
 }
 
 final case class Services(
-    config: ServicesConfig,
-    executors: Executors,
-    repositories: Repositories
+  config: ServicesConfig,
+  executors: Executors,
+  repositories: Repositories
 ) {
-  import executors._
-  import repositories._
 
-  implicit val ec = serviceExecutor
+  import executors.*
+  import repositories.*
 
-  final val userManagement: UserManagement[Future[?]] =
+  implicit val ec: ExecutionContext = serviceExecutor
+
+  final val userManagement: UserManagement[Future[*]] =
     UserManagement.unreliable(
       UserManagement.default(userRepository),
       config.users

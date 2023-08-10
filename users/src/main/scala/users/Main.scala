@@ -1,10 +1,7 @@
 package users
 
-import cats.data._
-import cats.implicits._
-
-import users.config._
-import users.main._
+import users.config.*
+import users.main.*
 
 object Main extends App {
 

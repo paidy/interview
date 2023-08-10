@@ -3,13 +3,15 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val cats       = "2.5.0"
-    val catsEffect = "2.5.3"
-    val fs2        = "2.5.4"
-    val http4s     = "0.21.22"
-    val circe      = "0.13.0"
-    val pureConfig = "0.14.1"
-    val scalaCache = "0.28.0"
+    val cats        = "2.5.0"
+    val catsEffect  = "2.5.3"
+    val fs2         = "2.5.4"
+    val sttpBackend = "3.3.6"
+    val http4s      = "0.21.22"
+    val circe       = "0.13.0"
+    val pureConfig  = "0.14.1"
+    val scalaCache  = "0.28.0"
+    val enumeratum  = "1.7.3"
 
     val kindProjector  = "0.10.3"
     val logback        = "1.2.3"
@@ -21,13 +23,17 @@ object Dependencies {
   }
 
   object Libraries {
-    def circe(artifact: String): ModuleID      = "io.circe"         %% artifact % Versions.circe
-    def http4s(artifact: String): ModuleID     = "org.http4s"       %% artifact % Versions.http4s
-    def scalaCache(artifact: String): ModuleID = "com.github.cb372" %% artifact % Versions.scalaCache
+    def circe(artifact: String): ModuleID       = "io.circe"                      %% artifact % Versions.circe
+    def http4s(artifact: String): ModuleID      = "org.http4s"                    %% artifact % Versions.http4s
+    def scalaCache(artifact: String): ModuleID  = "com.github.cb372"              %% artifact % Versions.scalaCache
+    def sttpBackend(artifact: String): ModuleID = "com.softwaremill.sttp.client3" %% artifact % Versions.sttpBackend
 
-    lazy val cats       = "org.typelevel" %% "cats-core"   % Versions.cats
-    lazy val catsEffect = "org.typelevel" %% "cats-effect" % Versions.catsEffect
-    lazy val fs2        = "co.fs2"        %% "fs2-core"    % Versions.fs2
+    lazy val cats           = "org.typelevel" %% "cats-core" % Versions.cats
+    lazy val catsEffect     = "org.typelevel" %% "cats-effect" % Versions.catsEffect
+    lazy val fs2            = "co.fs2" %% "fs2-core" % Versions.fs2
+    lazy val fs2SttpBackend = sttpBackend("async-http-client-backend-fs2-ce2")
+    lazy val sttpCirce      = sttpBackend("circe")
+    lazy val enumeratum     = "com.beachape" %% "enumeratum" % Versions.enumeratum
 
     lazy val scalaCacheEffect   = scalaCache("scalacache-cats-effect")
     lazy val scalaCacheCaffeine = scalaCache("scalacache-caffeine")

@@ -2,7 +2,6 @@ package forex.services.storage.interpreters
 
 import cats.effect.Async
 import cats.syntax.all._
-import forex.services.storage.errors
 import forex.domain.Rate
 import forex.services.storage.Algebra
 import scalacache.Entry
@@ -22,16 +21,10 @@ class InMemoryCache[F[_]: Async](config: StorageConfig) extends Algebra[F] {
 
   private val cache: CaffeineCache[Rate] = CaffeineCache(underlyingCaffeineCache)
 
-  override def get(pair: Rate.Pair): F[errors.Error Either Rate] =
-    cache
-      .doGet(pair)
-      .map {
-        case Some(r) => r.asRight[errors.Error]
-        case None    => errors.Error.PairLookupFailed(s"Failed to get rate for the pair ${pair.show}").asLeft[Rate]
-      }
+  override def get(pair: Rate.Pair): F[Option[Rate]] = cache.doGet(pair)
 
-  override def put(rate: Rate): F[errors.Error Either Unit] =
-    cache.doPut(rate.pair, rate, None).void.map(_.asRight[errors.Error])
+  override def putAll(rates: List[Rate]): F[Unit] =
+    rates.traverse(rate => cache.doPut(rate.pair, rate, Some(config.expireAfter))).void
 
   private implicit def pairToString(pair: Rate.Pair): String = pair.show
 }

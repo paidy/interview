@@ -5,7 +5,7 @@ import forex.domain.Rate.Pair
 import forex.domain._
 import io.circe._
 import io.circe.generic.extras.Configuration
-import io.circe.generic.extras.semiauto.deriveConfiguredEncoder
+import io.circe.generic.extras.semiauto.deriveConfiguredCodec
 
 object Protocol {
 
@@ -18,21 +18,24 @@ object Protocol {
       timestamp: Timestamp
   )
 
-  implicit val timestampEncoder: Encoder[Timestamp] =
-    deriveConfiguredEncoder[Timestamp]
+  implicit val timestampEncoder: Codec[Timestamp] =
+    deriveConfiguredCodec[Timestamp]
 
-  implicit val priceEncoder: Encoder[Price] = deriveConfiguredEncoder[Price]
+  implicit val priceEncoder: Codec[Price] = deriveConfiguredCodec[Price]
 
-  implicit val currencyEncoder: Encoder[Currency] =
-    Encoder.instance[Currency] { show.show _ andThen Json.fromString }
+  implicit val currencyEncoder: Codec[Currency] =
+    Codec.from(
+      Decoder.decodeString.map(Currency.fromString),
+      Encoder.instance[Currency] { show.show _ andThen Json.fromString }
+    )
 
-  implicit val pairEncoder: Encoder[Pair] =
-    deriveConfiguredEncoder[Pair]
+  implicit val pairEncoder: Codec[Pair] =
+    deriveConfiguredCodec[Pair]
 
-  implicit val rateEncoder: Encoder[Rate] =
-    deriveConfiguredEncoder[Rate]
+  implicit val rateEncoder: Codec[Rate] =
+    deriveConfiguredCodec[Rate]
 
-  implicit val responseEncoder: Encoder[GetApiResponse] =
-    deriveConfiguredEncoder[GetApiResponse]
+  implicit val responseEncoder: Codec[GetApiResponse] =
+    deriveConfiguredCodec[GetApiResponse]
 
 }

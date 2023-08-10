@@ -1,7 +1,8 @@
 package forex.http.rates
 
+import cats.implicits._
 import cats.effect.Sync
-import cats.syntax.flatMap._
+import cats.data.Validated._
 import forex.programs.RatesProgram
 import forex.programs.rates.{ Protocol => RatesProgramProtocol }
 import org.http4s.HttpRoutes
@@ -16,9 +17,18 @@ class RatesHttpRoutes[F[_]: Sync](rates: RatesProgram[F]) extends Http4sDsl[F] {
 
   private val httpRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root :? FromQueryParam(from) +& ToQueryParam(to) =>
-      rates.get(RatesProgramProtocol.GetRatesRequest(from, to)).flatMap(Sync[F].fromEither).flatMap { rate =>
-        Ok(rate.asGetApiResponse)
-      }
+      (from, to).tupled.fold(
+        err => BadRequest(err.map(_.message).mkString_("\n")),
+        validated => {
+          val (from, to) = validated
+          rates
+            .get(RatesProgramProtocol.GetRatesRequest(from, to))
+            .flatMap {
+              case Right(rate) => Ok(rate.asGetApiResponse)
+              case Left(err)   => UnprocessableEntity(err.msg)
+            }
+        }
+      )
   }
 
   val routes: HttpRoutes[F] = Router(

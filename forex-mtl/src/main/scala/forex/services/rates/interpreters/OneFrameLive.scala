@@ -20,7 +20,7 @@ class OneFrameLive[F[_]: Monad](config: ProviderConfig, backend: SttpBackend[F, 
 
   private val pairs = for {
     from <- Currency.values
-    to <- Currency.values
+    to <- Currency.values if from != to
   } yield Rate.Pair(from, to)
 
   private val baseUri = uri"${config.uri}/rates"

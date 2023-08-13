@@ -5,7 +5,7 @@ import cats.effect.testing.scalatest.AsyncIOSpec
 import com.dimafeng.testcontainers.scalatest.TestContainerForAll
 import com.dimafeng.testcontainers.GenericContainer
 import forex.config.{ ApplicationConfig, HttpConfig, ProviderConfig, StorageConfig }
-import forex.domain.Currency
+import forex.domain.{ Currency, Price }
 import org.http4s.implicits._
 import org.http4s.{ Method, Request, Status }
 import sttp.client3.asynchttpclient.fs2.AsyncHttpClientFs2Backend
@@ -68,6 +68,30 @@ class ModuleSpec extends AsyncWordSpecLike with AsyncIOSpec with Matchers with E
               data.from shouldBe Currency.USD
               data.to shouldBe Currency.JPY
             }
+          }
+        }
+      }
+    }
+
+    "return 1 for equal currencies without request" in {
+      val config = ApplicationConfig(
+        HttpConfig("localhost", 8080, 40.seconds),
+        StorageConfig(3.minutes, 1000),
+        providerConfig(0)
+      )
+      (for {
+        blocker <- Blocker.apply[IO]
+        backend <- AsyncHttpClientFs2Backend.resource[IO](blocker)
+      } yield backend).use { backend =>
+        val module = new forex.Module[IO](config, backend)
+
+        module.httpApp.run(Request(method = Method.GET, uri = uri"/rates/?from=USD&to=USD")).flatMap { response =>
+          response.status shouldBe Status.Ok
+
+          response.as[GetApiResponse].map { data =>
+            data.from shouldBe Currency.USD
+            data.to shouldBe Currency.USD
+            data.price shouldBe Price(1)
           }
         }
       }

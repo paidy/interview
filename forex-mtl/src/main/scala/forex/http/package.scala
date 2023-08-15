@@ -16,6 +16,6 @@ package object http {
   implicit def enumDecoder[A: EnumerationDecoder]: Decoder[A] = implicitly
 
   implicit def jsonDecoder[A <: Product: Decoder, F[_]: Sync]: EntityDecoder[F, A] = jsonOf[F, A]
-  implicit def jsonEncoder[A <: Product: Encoder, F[_]]: EntityEncoder[F, A] = jsonEncoderOf[F, A]
+  implicit def jsonEncoder[A <: Product: Encoder, F[_]]: EntityEncoder[F, A]       = jsonEncoderOf[F, A]
 
 }

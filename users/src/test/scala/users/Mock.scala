@@ -18,9 +18,25 @@ import users.services.UserManagement
 
 trait Mock:
 
-  def userManagementMock: UserManagement[IO] = new:
+  trait HasAdminHelper:
+    def genAdmin(): IO[User]
+
+  def userManagementMock: UserManagement[IO] with HasAdminHelper = new UserManagement[IO] with HasAdminHelper:
 
     private val storage: TrieMap[Id, User] = TrieMap.empty
+
+    def genAdmin(): IO[User] =
+      User(
+        User.Id.gen,
+        userName = UserName("admin"),
+        emailAddress = EmailAddress("admin@test.com"),
+        None,
+        User.Metadata(1, OffsetDateTime.now, OffsetDateTime.now, None, None),
+        isAdmin = true
+      ).pure[IO].map { u =>
+        storage.put(u.id, u)
+        u
+      }
 
     override def all(): IO[Either[usermanagement.Error, List[User]]] =
       storage.values.toList.asRight[usermanagement.Error].pure[IO]

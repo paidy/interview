@@ -12,10 +12,7 @@ import org.scalatest.wordspec.AsyncWordSpecLike
 import org.scalatest.EitherValues
 import org.scalatest.OptionValues
 import org.typelevel.ci.CIString
-import org.typelevel.log4cats.slf4j.Slf4jLogger
-import org.typelevel.log4cats.SelfAwareStructuredLogger
 
-import cats.data.OptionT
 import cats.effect.testing.scalatest.AsyncIOSpec
 import cats.effect.IO
 import cats.implicits.*
@@ -24,7 +21,6 @@ import io.circe.literal.*
 
 import users.domain.*
 import users.http.dto.*
-import users.services.UserManagement
 import users.Mock
 
 class UserRoutesSpec
@@ -33,69 +29,56 @@ class UserRoutesSpec
     with Matchers
     with Mock
     with EitherValues
-    with OptionValues:
-
-  implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
+    with OptionValues
+    with Helpers:
 
   "UserRoutes" should {
     "return Forbidden for auth protected urls" in {
-      val storage = userManagementMock
-      val routes = UserRoutes.make[IO](storage)
-
-      routes.routes
+      userRoutes(userManagementMock)
         .run(Request[IO](Method.GET, uri"/me"))
-        .assert(_.status shouldBe Forbidden)
+        .asserting(_.status shouldBe Forbidden)
     }
 
     "return BadRequest with error for incorrect json" in {
-      val storage = userManagementMock
-      val routes = UserRoutes.make[IO](storage)
-
-      routes.routes
+      userRoutes(userManagementMock)
         .run(Request[IO](Method.POST, uri"/signup").withEntity(json"""{"test": "json"}"""))
-        .assert(_.status shouldBe BadRequest)
+        .asserting(_.status shouldBe BadRequest)
     }
 
     "return BadRequest with error for incorrect email" in {
-      val storage = userManagementMock
-      val routes = UserRoutes.make[IO](storage)
       val signupForm = SignupForm(
         UserName("test-user"),
         EmailAddress("test-test.com"),
         None
       )
 
-      routes.routes
+      userRoutes(userManagementMock)
         .run(Request[IO](Method.POST, uri"/signup").withEntity[IO, SignupForm](signupForm))
-        .assert(_.status shouldBe BadRequest)
+        .asserting(_.status shouldBe BadRequest)
     }
 
     "create a user" in {
       val storage = userManagementMock
-      val routes = UserRoutes.make[IO](storage)
       val signupForm = SignupForm(
         UserName("test-user"),
         EmailAddress("test@test.com"),
         None
       )
 
-      routes.routes
-        .run(Request[IO](Method.POST, uri"/signup").withEntity(signupForm))
-        .assertF { r =>
-          r.status shouldBe Ok
-          val id = User.Id(r.headers.get(CIString("token")).value.head.value)
-          r.as[UserInfo].flatMap { u =>
-            u.email shouldBe signupForm.emailAddress
-            u.username shouldBe signupForm.userName
-
-            storage.get(id).map(_.value.short shouldBe u)
-          }
-        }
+      (for
+        response <- userRoutes(storage).run(Request[IO](Method.POST, uri"/signup").withEntity(signupForm))
+        id = User.Id(response.headers.get(CIString("token")).value.head.value)
+        persistedUser <- storage.get(id)
+        userResponse <- response.as[UserInfo]
+      yield (persistedUser, userResponse)).asserting { case (persistedUser, userResponse) =>
+        userResponse.email shouldBe signupForm.emailAddress
+        userResponse.username shouldBe signupForm.userName
+        persistedUser.value.short shouldBe userResponse
+      }
     }
 
     "update email for a user" in {
       val storage = userManagementMock
-      val routes = UserRoutes.make[IO](storage)
 
       val newEmail = EmailAddress("test.new@test.com")
 
@@ -105,8 +88,7 @@ class UserRoutesSpec
                  .withEntity(UpdateEmail(newEmail))
                  .withHeaders(tokenHeader(user.id))
                  .pure[IO]
-        response <- routes.routes.run(req).map(_.as[UserInfo]).value
-        userInfo <- response.value
+        userInfo <- userRoutes(storage).run(req).flatMap(_.as[UserInfo])
       yield userInfo).asserting { r =>
         r.email shouldBe newEmail
       }
@@ -114,7 +96,6 @@ class UserRoutesSpec
 
     "update password for a user" in {
       val storage = userManagementMock
-      val routes = UserRoutes.make[IO](storage)
 
       val newPassword = Password("123")
 
@@ -124,17 +105,16 @@ class UserRoutesSpec
                  .withEntity(UpdatePassword(newPassword))
                  .withHeaders(tokenHeader(user.id))
                  .pure[IO]
-        response <- routes.routes.run(req).value
+        response <- userRoutes(storage).run(req)
         updatedUser <- storage.get(user.id).map(_.value)
       yield (response, updatedUser)).asserting { case (r, updatedUser) =>
-        r.value.status shouldBe Ok
+        r.status shouldBe Ok
         updatedUser.password.value shouldBe newPassword
       }
     }
 
     "reset password for a user" in {
       val storage = userManagementMock
-      val routes = UserRoutes.make[IO](storage)
 
       (for
         user <- initUser(storage)
@@ -142,27 +122,11 @@ class UserRoutesSpec
         req <- Request[IO](Method.POST, uri"/reset-password")
                  .withHeaders(tokenHeader(user.id))
                  .pure[IO]
-        response <- routes.routes.run(req).value
+        response <- userRoutes(storage).run(req)
         updatedUser <- storage.get(user.id).map(_.value)
       yield (response, updatedUser)).asserting { case (r, updatedUser) =>
-        r.value.status shouldBe Ok
+        r.status shouldBe Ok
         updatedUser.password shouldBe Symbol("Empty")
       }
     }
   }
-
-  private def initUser(service: UserManagement[IO]): IO[User] =
-    service.signUp(UserName("test-user"), EmailAddress("test@test.com"), None).map(_.value)
-
-  private def tokenHeader(id: User.Id): Header.Raw = Header.Raw(CIString("token"), id.value)
-
-  extension (response: OptionT[IO, Response[IO]])
-
-    def assert(check: Response[IO] => Assertion): IO[Assertion] =
-      response.value.asserting(r => check(r.value))
-
-    def assertF(check: Response[IO] => IO[Assertion]): IO[Assertion] =
-      response.value.flatMap {
-        case Some(r) => check(r)
-        case None => IO.pure(fail("No response"))
-      }

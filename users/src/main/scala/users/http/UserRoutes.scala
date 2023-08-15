@@ -5,7 +5,6 @@ import org.http4s.circe.CirceEntityDecoder.*
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.dsl
 import org.http4s.dsl.Http4sDsl
-import org.typelevel.ci.CIString
 import org.typelevel.log4cats.Logger
 
 import cats.*
@@ -25,11 +24,10 @@ object UserRoutes:
 final class UserRoutes[F[_]: Async: Logger](val userService: UserManagement[F])
     extends Routes[F]
     with Http4sDsl[F]
-    with Auth[F]:
+    with Auth[F]
+    with RouteHelpers[F]:
 
   import users.domain.Protocol.*
-
-  private val tokenHeader: User.Id => Header.Raw = id => Header.Raw(CIString("token"), id.value)
 
   private val publicRoutes = HttpRoutes.of[F] { case req @ POST -> Root / "signup" =>
     val f: EitherT[F, ValidationError, User] = for
@@ -83,14 +81,5 @@ final class UserRoutes[F[_]: Async: Logger](val userService: UserManagement[F])
         u => Response(headers = Headers(tokenHeader(u.id))).withEntity(u.short).pure[F]
       )
   }
-
-  private def errorToResponse(error: ValidationError): F[Response[F]] = error match
-    case InvalidEmail => BadRequest(InvalidEmail.error)
-    case InvalidRequest => BadRequest(InvalidRequest.error)
-    case UnprocessableRequest(error) => BadRequest(error)
-    case UserNotFound => BadRequest(UserNotFound.error)
-    case err: InternalError =>
-      Logger[F].error(err.underlying)(s"Failed to handle request due to error: ${err.underlying.getMessage()}") *>
-        UnprocessableEntity(err.error)
 
   val routes = publicRoutes <+> authMiddleware(authedRoutes)

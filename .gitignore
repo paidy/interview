@@ -26,3 +26,4 @@ docs/src/main/tut/contributing.md
 .vscode
 .metals
 metals.sbt
+logs/

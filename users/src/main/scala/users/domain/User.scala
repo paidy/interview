@@ -1,6 +1,7 @@
 package users.domain
 
 import java.time.OffsetDateTime
+import java.util.UUID
 
 import com.softwaremill.quicklens.*
 
@@ -12,7 +13,8 @@ final case class User(
   userName: UserName,
   emailAddress: EmailAddress,
   password: Option[Password],
-  metadata: User.Metadata
+  metadata: User.Metadata,
+  isAdmin: Boolean = false
 ) {
 
   def status: User.Status =
@@ -50,6 +52,10 @@ object User {
     password: Option[Password],
     at: OffsetDateTime
   ): User = User(id, userName, emailAddress, password, Metadata(1, at, at, None, None))
+
+  object Id {
+    def gen = Id(UUID.randomUUID().toString())
+  }
 
   final case class Id(value: String) extends AnyVal
 

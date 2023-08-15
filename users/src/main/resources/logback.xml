@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+
+    <!--
+      NOTE: the logback-test.xml takes precedence over logback-test.xml when running the
+      app with "scala:run". It is an issue with maven scala plugin's classpath handling.
+      As this page says: http://scala-tools.org/mvnsites/maven-scala-plugin/usage_run.html
+      "scala:run" uses the test classpath.
+     -->
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d %highlight([%level]) %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/api.log</file>
+        <encoder>
+            <pattern>%d [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

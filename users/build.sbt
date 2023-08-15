@@ -5,8 +5,7 @@ inThisBuild(
     scalaVersion := "3.3.0",
     semanticdbEnabled := true,
     name := "users",
-    version := "1.0.0",
-    scalacOptions ++= Seq("-source:future", "-Xmax-inlines", "50")
+    version := "1.0.0"
   )
 )
 
@@ -16,5 +15,8 @@ resolvers +=
 libraryDependencies ++= Seq(
   Dependencies.CatsCore,
   Dependencies.CatsEffect,
-  Dependencies.QuickLens
-)
+  Dependencies.QuickLens,
+  Dependencies.Logback
+) ++ Dependencies.Http4s ++
+  Dependencies.Circe ++
+  Dependencies.Tests

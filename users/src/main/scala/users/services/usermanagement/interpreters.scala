@@ -6,10 +6,10 @@ import java.util.UUID
 import scala.util.Random
 
 import cats.data.EitherT
+import cats.effect.Async
 import cats.implicits.*
 import cats.Monad
-
-import scala.concurrent.*
+import cats.MonadThrow
 
 import users.config.*
 import users.domain.*
@@ -17,17 +17,17 @@ import users.persistence.repositories.*
 
 object Interpreters:
 
-  def default[F[_]: Monad](userRepository: UserRepository[F])(implicit ec: ExecutionContext): Algebra[F] =
+  def default[F[_]: Monad](userRepository: UserRepository[F]): Algebra[F] =
     new DefaultInterpreter(userRepository)
 
-  def unreliable(
-    underlying: Algebra[Future[*]],
+  def unreliable[F[_]: Async](
+    underlying: Algebra[F[*]],
     config: ServicesConfig.UsersConfig
-  )(implicit ec: ExecutionContext): Algebra[Future[*]] = new UnreliableInterpreter(underlying, config)
+  ): Algebra[F[*]] = new UnreliableInterpreter[F](underlying, config)
 
 final class DefaultInterpreter[F[_]: Monad] private[usermanagement] (
   userRepository: UserRepository[F]
-) extends Algebra[F] {
+) extends Algebra[F]:
   import User.*
 
   def generateId(): F[Id] =
@@ -128,81 +128,60 @@ final class DefaultInterpreter[F[_]: Monad] private[usermanagement] (
     for result <- userRepository.insert(user)
     yield result.asRight[Error]
 
-}
+object UnreliableInterpreter:
 
-object UnreliableInterpreter {
+  private final def nonCompletingFuture[F[_]: Async, A]: F[A] = Async[F].never[A]
 
-  private final def nonCompletingFuture[A] = Promise[A]().future
+  private def failWithProbability[F[_]: MonadThrow, A](probability: Double)(f: F[A]) =
+    if (Random.nextDouble < probability) MonadThrow[F].raiseError(new Exception) else f
 
-  private def failWithProbability[A](probability: Double)(f: Future[A]) =
-    if (Random.nextDouble < probability) Future.failed(new Exception) else f
+  private def timeoutWithProbability[F[_]: Async, A](probability: Double)(f: F[A]) =
+    if (Random.nextDouble < probability) nonCompletingFuture[F, A] else f
 
-  private def timeoutWithProbability[A](probability: Double)(f: Future[A]) =
-    if (Random.nextDouble < probability) nonCompletingFuture[A] else f
-
-  private def failOrTimeoutWithProbabilities[A](fail: Double, timeout: Double)(f: Future[A]) =
+  private def failOrTimeoutWithProbabilities[F[_]: Async, A](fail: Double, timeout: Double)(f: F[A]) =
     failWithProbability(fail)(timeoutWithProbability(timeout)(f))
-}
 
-final class UnreliableInterpreter private[usermanagement] (
-  underlying: Algebra[Future[*]],
+final class UnreliableInterpreter[F[_]: Async] private[usermanagement] (
+  underlying: Algebra[F],
   config: ServicesConfig.UsersConfig)
-    extends Algebra[Future[*]] {
+    extends Algebra[F]:
 
   import UnreliableInterpreter.*
   import User.*
 
-  def generateId(): Future[Id] =
+  def generateId(): F[Id] =
     underlying.generateId()
 
-  def get(
-    id: Id
-  ): Future[Error Either User] =
+  def get(id: Id): F[Error Either User] =
     failOrTimeout(underlying.get(id))
 
   def signUp(
     userName: UserName,
     emailAddress: EmailAddress,
     password: Option[Password]
-  ): Future[Error Either User] =
+  ): F[Error Either User] =
     failOrTimeout(underlying.signUp(userName, emailAddress, password))
 
-  def updateEmail(
-    id: Id,
-    emailAddress: EmailAddress
-  ): Future[Error Either User] =
+  def updateEmail(id: Id, emailAddress: EmailAddress): F[Error Either User] =
     failOrTimeout(underlying.updateEmail(id, emailAddress))
 
-  def updatePassword(
-    id: Id,
-    password: Password
-  ): Future[Error Either User] =
+  def updatePassword(id: Id, password: Password): F[Error Either User] =
     failOrTimeout(underlying.updatePassword(id, password))
 
-  def resetPassword(
-    id: Id
-  ): Future[Error Either User] =
+  def resetPassword(id: Id): F[Error Either User] =
     failOrTimeout(underlying.resetPassword(id))
 
-  def block(
-    id: Id
-  ): Future[Error Either User] =
+  def block(id: Id): F[Error Either User] =
     failOrTimeout(underlying.block(id))
 
-  def unblock(
-    id: Id
-  ): Future[Error Either User] =
+  def unblock(id: Id): F[Error Either User] =
     failOrTimeout(underlying.unblock(id))
 
-  def delete(
-    id: Id
-  ): Future[Error Either Done] =
+  def delete(id: Id): F[Error Either Done] =
     failOrTimeout(underlying.delete(id))
 
-  def all(): Future[Error Either List[User]] =
+  def all(): F[Error Either List[User]] =
     failOrTimeout(underlying.all())
 
-  private def failOrTimeout[A](f: Future[A]): Future[A] =
+  private def failOrTimeout[A](f: F[A]): F[A] =
     failOrTimeoutWithProbabilities(config.failureProbability, config.timeoutProbability)(f)
-
-}

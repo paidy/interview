@@ -1,15 +1,17 @@
 package forex
 
-import cats.effect.Async
+import cats.data.OptionT
+import cats.effect.{Async, Sync}
+import com.typesafe.scalalogging.LazyLogging
 import forex.config.ApplicationConfig
 import forex.http.rates.RatesHttpRoutes
 import forex.services._
 import forex.programs._
 import org.http4s._
 import org.http4s.implicits._
-import org.http4s.server.middleware.{ AutoSlash, Timeout }
+import org.http4s.server.middleware.{AutoSlash, ErrorAction, ErrorHandling, Timeout}
 
-class Module[F[_]: Async](config: ApplicationConfig) {
+class Module[F[_]: Async](config: ApplicationConfig) extends LazyLogging{
 
   private val ratesService: RatesService[F] = RatesServices.dummy[F]
 
@@ -30,7 +32,15 @@ class Module[F[_]: Async](config: ApplicationConfig) {
     Timeout(config.http.timeout)(http)
   }
 
-  private val http: HttpRoutes[F] = ratesHttpRoutes
+  private val logError: (Throwable, => String) => OptionT[F,Unit] = (t, msg) =>
+    OptionT(Sync[F].delay {
+      logger.error(msg, t)
+      Some(())
+    })
+
+  private val http: HttpRoutes[F] = ErrorHandling.Recover.total(
+    ErrorAction.log(ratesHttpRoutes, logError, logError)
+  )
 
   val httpApp: HttpApp[F] = appMiddleware(routesMiddleware(http).orNotFound)
 

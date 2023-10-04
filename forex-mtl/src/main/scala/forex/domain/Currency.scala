@@ -1,42 +1,26 @@
 package forex.domain
 
 import cats.Show
+import org.http4s.ParseFailure
 
-sealed trait Currency
+import scala.util.{Failure, Try}
 
-object Currency {
-  case object AUD extends Currency
-  case object CAD extends Currency
-  case object CHF extends Currency
-  case object EUR extends Currency
-  case object GBP extends Currency
-  case object NZD extends Currency
-  case object JPY extends Currency
-  case object SGD extends Currency
-  case object USD extends Currency
 
-  implicit val show: Show[Currency] = Show.show {
-    case AUD => "AUD"
-    case CAD => "CAD"
-    case CHF => "CHF"
-    case EUR => "EUR"
-    case GBP => "GBP"
-    case NZD => "NZD"
-    case JPY => "JPY"
-    case SGD => "SGD"
-    case USD => "USD"
-  }
+object Currency extends Enumeration {
 
-  def fromString(s: String): Currency = s.toUpperCase match {
-    case "AUD" => AUD
-    case "CAD" => CAD
-    case "CHF" => CHF
-    case "EUR" => EUR
-    case "GBP" => GBP
-    case "NZD" => NZD
-    case "JPY" => JPY
-    case "SGD" => SGD
-    case "USD" => USD
-  }
+  val AUD = Value("AUD")
+  val CAD = Value("CAD")
+  val CHF = Value("CHF")
+  val EUR = Value("EUR")
+  val GBP = Value("GBP")
+  val NZD = Value("NZD")
+  val JPY = Value("JPY")
+  val SGD = Value("SGD")
+  val USD = Value("USD")
 
+  implicit val show: Show[Currency.Value] = Show.show(_.toString)
+
+  def fromString(s: String): Try[Currency.Value] = Try(this.withName(s.toUpperCase()))
+    .recoverWith( _ => Failure(new ParseFailure(
+      s"'$s' is non valid currency ID, use one of: ${this.values.mkString(", ")}", "")))
 }

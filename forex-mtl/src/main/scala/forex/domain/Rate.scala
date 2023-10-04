@@ -8,7 +8,7 @@ case class Rate(
 
 object Rate {
   final case class Pair(
-      from: Currency,
-      to: Currency
+      from: Currency.Value,
+      to: Currency.Value
   )
 }

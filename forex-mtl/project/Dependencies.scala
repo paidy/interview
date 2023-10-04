@@ -8,13 +8,13 @@ object Dependencies {
     val fs2                 = "2.5.4"
     val http4s              = "0.21.22"
     val circe               = "0.13.0"
-    val pureConfig          = "0.14.1"
+    val pureConfig          = "0.17.4"
 
     val kindProjector       = "0.10.3"
-    val logback             = "1.2.3"
-    val scalaCheck          = "1.15.3"
-    val scalaTest           = "3.2.7"
-    val catsScalaCheck      = "0.3.0"
+    val logback             = "1.4.7"
+    val scalaCheck          = "1.17.0"
+    val scalaTest           = "3.2.15"
+    val catsScalaCheck      = "0.3.2"
   }
 
   object Libraries {

@@ -1,7 +1,7 @@
 package forex.http.rates
 
 import forex.domain.Currency
-import org.http4s.{ParseFailure, QueryParamDecoder}
+import org.http4s.QueryParamDecoder
 import org.http4s.dsl.impl.QueryParamDecoderMatcher
 
 object QueryParams {

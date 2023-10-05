@@ -3,6 +3,8 @@ package forex
 import cats.arrow.FunctionK
 import cats.effect.{Async, Sync}
 import com.typesafe.scalalogging.LazyLogging
+import forex.cache.RatesCache
+import forex.clients.RatesClient
 import forex.config.ApplicationConfig
 import forex.http.rates.RatesHttpRoutes
 import forex.services._
@@ -14,9 +16,13 @@ import org.http4s.server.middleware.{AutoSlash, ErrorAction, ErrorHandling, Logg
 
 class Module[F[_]: Async](config: ApplicationConfig) extends LazyLogging{
 
-  private val ratesService: RatesService[F] = RatesServices.dummy[F]
+  private val ratesClient: RatesClient[F] = RatesClient[F](config.oneFrameClient)
 
-  private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService, config.program)
+  private val ratesCache: RatesCache[F] = RatesCache[F](config.cache)
+
+  private val ratesService: RatesService[F] = RatesServices[F](config.oneFrameService, ratesClient, ratesCache)
+
+  private val ratesProgram: RatesProgram[F] = RatesProgram[F](config.program, ratesCache)
 
   private val ratesHttpRoutes: HttpRoutes[F] = new RatesHttpRoutes[F](ratesProgram).routes
 

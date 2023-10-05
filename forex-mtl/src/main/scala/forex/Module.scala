@@ -1,6 +1,6 @@
 package forex
 
-import cats.data.OptionT
+import cats.arrow.FunctionK
 import cats.effect.{Async, Sync}
 import com.typesafe.scalalogging.LazyLogging
 import forex.config.ApplicationConfig
@@ -9,13 +9,14 @@ import forex.services._
 import forex.programs._
 import org.http4s._
 import org.http4s.implicits._
-import org.http4s.server.middleware.{AutoSlash, ErrorAction, ErrorHandling, Timeout}
+import org.http4s.server.middleware.{AutoSlash, ErrorAction, ErrorHandling, Logger, Timeout}
+
 
 class Module[F[_]: Async](config: ApplicationConfig) extends LazyLogging{
 
   private val ratesService: RatesService[F] = RatesServices.dummy[F]
 
-  private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService)
+  private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService, config.oneFrame)
 
   private val ratesHttpRoutes: HttpRoutes[F] = new RatesHttpRoutes[F](ratesProgram).routes
 
@@ -28,20 +29,25 @@ class Module[F[_]: Async](config: ApplicationConfig) extends LazyLogging{
     }
   }
 
-  private val appMiddleware: TotalMiddleware = { http: HttpApp[F] =>
+  private val reqResLogger: TotalMiddleware = { http: HttpApp[F] =>
+    Logger[F, F] (logHeaders = true, logBody = true, FunctionK.id) (http)
+  }
+
+  private val logError: (Throwable, => String) => F[Unit] = { (t, msg) =>
+    Sync[F].delay { logger.error(msg, t) }
+  }
+
+  private val errorLogger: TotalMiddleware = { http: HttpApp[F] =>
+    ErrorHandling.Recover.total(ErrorAction.log(http, logError, logError))
+  }
+
+  private val apiTimeout: TotalMiddleware = { http: HttpApp[F] =>
     Timeout(config.http.timeout)(http)
   }
 
-  private val logError: (Throwable, => String) => OptionT[F,Unit] = (t, msg) =>
-    OptionT(Sync[F].delay {
-      logger.error(msg, t)
-      Some(())
-    })
+  private val appMiddleware: TotalMiddleware = { http: HttpApp[F] =>
+    reqResLogger(errorLogger(apiTimeout(http)))
+  }
 
-  private val http: HttpRoutes[F] = ErrorHandling.Recover.total(
-    ErrorAction.log(ratesHttpRoutes, logError, logError)
-  )
-
-  val httpApp: HttpApp[F] = appMiddleware(routesMiddleware(http).orNotFound)
-
+  val httpApp: HttpApp[F] = appMiddleware(routesMiddleware(ratesHttpRoutes).orNotFound)
 }

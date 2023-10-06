@@ -1,18 +1,17 @@
 package forex.cache.rates
 
 import cats.Functor
-import forex.config.CacheConfig
-import forex.domain.Rate
-import forex.programs.rates.errors.Error
+import forex.model.config.CacheConfig
+import forex.model.domain.Rate
 
 
 class RatesCache[F[_] : Functor](
                                        config: CacheConfig
                                      ) extends Algebra[F] {
 
-  override def update(ratePairs: Seq[Rate]): F[Error Either Unit] = ???
+  override def update(ratePairs: Seq[Rate]): F[Unit] = ???
 
-  override def get(ratePair: Rate.Pair): F[Error Either Rate] = ???
+  override def get(ratePair: Rate.Pair): F[Rate] = ???
 }
 
 object RatesCache {

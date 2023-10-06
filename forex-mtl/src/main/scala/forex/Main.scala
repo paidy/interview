@@ -1,7 +1,7 @@
 package forex
 
 import cats.effect._
-import forex.config._
+import forex.model.config.Config
 import fs2.Stream
 import org.http4s.blaze.server.BlazeServerBuilder
 
@@ -18,10 +18,11 @@ class Application[F[_]: Async] {
     for {
       config <- Config.stream("app")
       module = new Module[F](config)
-      _ <- BlazeServerBuilder[F]
-            .bindHttp(config.http.port, config.http.host)
-            .withHttpApp(module.httpApp)
-            .serve
+      _ <-BlazeServerBuilder[F]
+        .bindHttp(config.http.port, config.http.host)
+        .withHttpApp(module.httpApp)
+        .serve
+        .mergeHaltBoth(module.ratesRefresh)
     } yield ()
 
 }

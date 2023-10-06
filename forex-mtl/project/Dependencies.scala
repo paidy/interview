@@ -14,9 +14,11 @@ object Dependencies {
 
     val kindProjector       = "0.10.3"
     val logback             = "1.4.7"
-    val scalaCheck          = "1.17.0"
+
     val scalaTest           = "3.2.15"
-    val catsScalaCheck      = "0.3.2"
+    val catsScalaTest       = "3.1.1"
+    val scalaMock           = "5.1.0"
+    val catsEffectTest      = "1.5.0"
   }
 
   object Libraries {
@@ -47,8 +49,8 @@ object Dependencies {
 
     // Test
     lazy val scalaTest           = "org.scalatest"         %% "scalatest"                  % Versions.scalaTest
-    lazy val scalaCheck          = "org.scalacheck"        %% "scalacheck"                 % Versions.scalaCheck
-    lazy val catsScalaCheck      = "io.chrisdavenport"     %% "cats-scalacheck"            % Versions.catsScalaCheck
+    lazy val scalaMock           = "org.scalamock"         %% "scalamock"                  % Versions.scalaMock
+    lazy val catsScalaTest       = "com.ironcorelabs"      %% "cats-scalatest"             % Versions.catsScalaTest
+    lazy val catsEffectTest      = "org.typelevel"         %% "cats-effect-testing-scalatest" % Versions.catsEffectTest
   }
-
 }

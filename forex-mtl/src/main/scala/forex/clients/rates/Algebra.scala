@@ -1,11 +1,10 @@
 package forex.clients.rates
 
-import Protocol.OneFrameRate
-import forex.domain.Rate
-import forex.programs.rates.errors.Error
+import forex.model.http.Protocol.OneFrameRate
+import forex.model.domain.Rate
 
 
 trait Algebra[F[_]] {
-  def get(ratePairs: Set[Rate.Pair], token: String): F[Error Either Seq[OneFrameRate]]
+  def get(ratePairs: Set[Rate.Pair], token: String): F[Seq[OneFrameRate]]
 }
 

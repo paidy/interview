@@ -1,9 +1,9 @@
 package forex.cache.rates
 
-import forex.domain.Rate
-import forex.programs.rates.errors.Error
+import forex.model.domain.Rate
+
 
 trait Algebra[F[_]] {
-  def update(ratePairs: Seq[Rate]): F[Error Either Unit]
-  def get(ratePair: Rate.Pair): F[Error Either Rate]
+  def update(ratePairs: Seq[Rate]): F[Unit]
+  def get(ratePair: Rate.Pair): F[Rate]
 }

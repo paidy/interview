@@ -1,6 +1,6 @@
-package forex.http.rates
+package forex.model.http
 
-import forex.domain.Currency
+import forex.model.domain.Currency
 import org.http4s.QueryParamDecoder
 import org.http4s.dsl.impl.QueryParamDecoderMatcher
 
@@ -11,6 +11,7 @@ object QueryParams {
 
 
   object FromQueryParam extends QueryParamDecoderMatcher[Currency.Value]("from")
+
   object ToQueryParam extends QueryParamDecoderMatcher[Currency.Value]("to")
 
 }

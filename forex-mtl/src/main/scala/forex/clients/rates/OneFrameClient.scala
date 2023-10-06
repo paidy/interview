@@ -1,17 +1,16 @@
 package forex.clients.rates
 
 import cats.Functor
-import forex.clients.rates.Protocol.OneFrameRate
-import forex.config.OneFrameClientConfig
-import forex.domain.Rate
-import forex.programs.rates.errors.Error
+import forex.model.config.OneFrameClientConfig
+import forex.model.http.Protocol.OneFrameRate
+import forex.model.domain.Rate
 
 
 class OneFrameClient[F[_] : Functor](
                                       config: OneFrameClientConfig
                                     ) extends Algebra[F] {
 
-  override def get(ratePairs: Set[Rate.Pair], token: String): F[Error Either Seq[OneFrameRate]] = ???
+  override def get(ratePairs: Set[Rate.Pair], token: String): F[Seq[OneFrameRate]] = ???
 
 }
 

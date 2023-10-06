@@ -1,4 +1,4 @@
-package forex.config
+package forex.model.config
 
 import cats.effect.Sync
 import fs2.Stream

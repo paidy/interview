@@ -1,5 +1,6 @@
 package forex.domain
 
+import forex.model.domain.Currency
 import org.scalatest.TryValues
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

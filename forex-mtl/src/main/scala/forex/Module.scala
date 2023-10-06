@@ -5,10 +5,11 @@ import cats.effect.{Async, Sync}
 import com.typesafe.scalalogging.LazyLogging
 import forex.cache.RatesCache
 import forex.clients.RatesClient
-import forex.config.ApplicationConfig
 import forex.http.rates.RatesHttpRoutes
+import forex.model.config.ApplicationConfig
 import forex.services._
 import forex.programs._
+import fs2.Stream
 import org.http4s._
 import org.http4s.implicits._
 import org.http4s.server.middleware.{AutoSlash, ErrorAction, ErrorHandling, Logger, Timeout}
@@ -55,5 +56,6 @@ class Module[F[_]: Async](config: ApplicationConfig) extends LazyLogging{
     reqResLogger(errorLogger(apiTimeout(http)))
   }
 
+  val ratesRefresh: Stream[F, Unit] = ratesService.ratesRefresh
   val httpApp: HttpApp[F] = appMiddleware(routesMiddleware(ratesHttpRoutes).orNotFound)
 }

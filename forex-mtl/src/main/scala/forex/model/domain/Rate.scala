@@ -1,10 +1,12 @@
-package forex.domain
+package forex.model.domain
 
-case class Rate(
+
+final case class Rate(
     pair: Rate.Pair,
     price: Price,
     timestamp: Timestamp
 )
+
 
 object Rate {
   final case class Pair(

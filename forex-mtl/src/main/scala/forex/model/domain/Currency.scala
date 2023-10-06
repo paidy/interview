@@ -1,4 +1,4 @@
-package forex.domain
+package forex.model.domain
 
 import cats.Show
 import org.http4s.ParseFailure

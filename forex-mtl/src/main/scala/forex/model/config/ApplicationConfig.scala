@@ -1,9 +1,9 @@
-package forex.config
+package forex.model.config
 
 import scala.concurrent.duration.FiniteDuration
 
 
-case class ApplicationConfig(
+final case class ApplicationConfig(
                               http: HttpConfig,
                               oneFrameClient: OneFrameClientConfig,
                               oneFrameService: OneFrameServiceConfig,
@@ -12,33 +12,31 @@ case class ApplicationConfig(
                             )
 
 
-case class HttpConfig(
+final case class HttpConfig(
                        host: String,
                        port: Int,
                        timeout: FiniteDuration
                      )
 
 
-case class OneFrameClientConfig(
+final case class OneFrameClientConfig(
                                  host: String,
                                  port: Int,
                                  timeout: FiniteDuration
                                )
 
 
-case class OneFrameServiceConfig(
-                                  numRetry: Int,
-                                  retryTimeout: FiniteDuration,
+final case class OneFrameServiceConfig(
                                   oneFrameTokens: List[String],
                                   ratesRefreshTimeout: FiniteDuration
                                 )
 
 
-case class CacheConfig(
+final case class CacheConfig(
                         expireTimeout: FiniteDuration
                       )
 
 
-case class ProgramConfig(
+final case class ProgramConfig(
 
                         )

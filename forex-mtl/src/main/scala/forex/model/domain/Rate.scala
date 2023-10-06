@@ -12,5 +12,7 @@ object Rate {
   final case class Pair(
       from: Currency.Value,
       to: Currency.Value
-  )
+  ) {
+    lazy val joined: String = from.toString + to.toString
+  }
 }

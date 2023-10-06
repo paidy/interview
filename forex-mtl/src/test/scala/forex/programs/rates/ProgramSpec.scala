@@ -17,7 +17,6 @@ import forex.model.http.Converters._
 import forex.model.http.Protocol._
 
 
-
 class ProgramSpec extends AsyncFlatSpec with AsyncIOSpec with Matchers with AsyncMockFactory with LazyLogging {
 
   val fakeRate: Rate = Rate(

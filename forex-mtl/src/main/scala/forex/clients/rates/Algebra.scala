@@ -5,6 +5,6 @@ import forex.model.domain.Rate
 
 
 trait Algebra[F[_]] {
-  def get(ratePairs: Set[Rate.Pair], token: String): F[Seq[OneFrameRate]]
+  def get(ratePairs: Set[Rate.Pair], token: String): F[List[OneFrameRate]]
 }
 

@@ -5,6 +5,9 @@ import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto.{deriveConfiguredDecoder, deriveConfiguredEncoder}
 import io.circe._
 
+import java.time.OffsetDateTime
+import scala.util.Try
+
 
 object Protocol {
 
@@ -16,7 +19,7 @@ object Protocol {
                                  bid: BigDecimal,
                                  ask: BigDecimal,
                                  price: Price,
-                                 timestamp: Timestamp
+                                 timeStamp: Timestamp
                                )
 
   final case class GetApiResponse(
@@ -40,22 +43,27 @@ object Protocol {
     deriveConfiguredEncoder[Rate.Pair]
 
   implicit val priceEncoder: Encoder[Price] =
-    deriveConfiguredEncoder[Price]
+    Encoder.instance[Price] (v => Json.fromBigDecimal(v.value))
 
   implicit val priceDecoder: Decoder[Price] =
-    deriveConfiguredDecoder[Price]
+    Decoder.instance[Price](_.as[BigDecimal].map(Price(_)))
 
   implicit val timestampEncoder: Encoder[Timestamp] =
-    deriveConfiguredEncoder[Timestamp]
+    Encoder.instance[Timestamp] (v => Json.fromString(v.value.toString))
 
   implicit val timestampDecoder: Decoder[Timestamp] =
-    deriveConfiguredDecoder[Timestamp]
+    Decoder.instance[Timestamp](c => c.as[String]
+      .flatMap(str => Try(Timestamp(OffsetDateTime.parse(str))).toEither
+        .left.map(err => DecodingFailure(err.getMessage, c.history))))
 
   implicit val rateEncoder: Encoder[Rate] =
     deriveConfiguredEncoder[Rate]
 
   implicit val oneFrameRateEncoder: Encoder[OneFrameRate] =
     deriveConfiguredEncoder[OneFrameRate]
+
+  implicit val oneFrameRateDecoder: Decoder[OneFrameRate] =
+    deriveConfiguredDecoder[OneFrameRate]
 
   implicit val responseEncoder: Encoder[GetApiResponse] =
     deriveConfiguredEncoder[GetApiResponse]

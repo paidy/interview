@@ -23,7 +23,7 @@ class Module[F[_]: Async](config: ApplicationConfig) extends LazyLogging{
 
   private val ratesService: RatesService[F] = RatesServices[F](config.oneFrameService, ratesClient, ratesCache)
 
-  private val ratesProgram: RatesProgram[F] = RatesProgram[F](config.program, ratesCache)
+  private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesCache)
 
   private val ratesHttpRoutes: HttpRoutes[F] = new RatesHttpRoutes[F](ratesProgram).routes
 

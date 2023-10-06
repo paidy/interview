@@ -16,7 +16,6 @@ object Converters {
       )
   }
 
-
   implicit class OneFrameRateOps(val rate: OneFrameRate) extends AnyVal {
     def asRate: Rate =
       Rate(

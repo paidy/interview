@@ -7,8 +7,7 @@ final case class ApplicationConfig(
                               http: HttpConfig,
                               oneFrameClient: OneFrameClientConfig,
                               oneFrameService: OneFrameServiceConfig,
-                              cache: CacheConfig,
-                              program: ProgramConfig
+                              cache: CacheConfig
                             )
 
 
@@ -36,7 +35,3 @@ final case class CacheConfig(
                         expireTimeout: FiniteDuration
                       )
 
-
-final case class ProgramConfig(
-
-                        )

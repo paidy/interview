@@ -16,7 +16,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 
 
-class RatesCacheSpec extends AsyncFlatSpec with AsyncIOSpec with Matchers with AsyncMockFactory {
+class RatesCacheSpec extends AsyncFlatSpec with AsyncIOSpec with Matchers {
 
   val config: CacheConfig = CacheConfig(
     expireTimeout = 2.seconds

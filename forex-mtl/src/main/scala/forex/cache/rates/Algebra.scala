@@ -6,5 +6,6 @@ import forex.model.domain.Rate
 
 trait Algebra[F[_]] {
   def update(ratePairs: Seq[Rate]): F[Unit]
-  def get(ratePair: Rate.Pair):  OptionT[F, Rate]
+
+  def get(ratePair: Rate.Pair): OptionT[F, Rate]
 }

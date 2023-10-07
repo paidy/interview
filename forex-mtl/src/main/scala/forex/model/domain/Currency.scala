@@ -21,7 +21,7 @@ object Currency extends Enumeration {
   implicit val show: Show[Currency.Value] = Show.show(_.toString)
 
   def fromString(s: String): Try[Currency.Value] = Try(this.withName(s.toUpperCase()))
-    .recoverWith( _ => Failure(new ParseFailure(
+    .recoverWith(_ => Failure(new ParseFailure(
       s"'$s' is non valid currency ID, use one of: ${this.values.mkString(", ")}", "")))
 
   lazy val allCurrencyPairs: Set[Rate.Pair] = values.toSet[Currency.Value]

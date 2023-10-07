@@ -18,7 +18,7 @@ object Marshalling {
 
   implicit def enumDecoder[A: EnumerationDecoder]: Decoder[A] = implicitly
 
-  implicit def jsonDecoder[A : Decoder, F[_] : Concurrent]: EntityDecoder[F, A] = jsonOf[F, A]
+  implicit def jsonDecoder[A: Decoder, F[_] : Concurrent]: EntityDecoder[F, A] = jsonOf[F, A]
 
-  implicit def jsonEncoder[A : Encoder, F[_]]: EntityEncoder[F, A] = jsonEncoderOf[F, A]
+  implicit def jsonEncoder[A: Encoder, F[_]]: EntityEncoder[F, A] = jsonEncoderOf[F, A]
 }

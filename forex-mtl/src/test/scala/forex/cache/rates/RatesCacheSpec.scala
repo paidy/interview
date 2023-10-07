@@ -2,17 +2,11 @@ package forex.cache.rates
 
 import cats.effect.IO
 import cats.effect.testing.scalatest.AsyncIOSpec
-import forex.clients.RatesClient
-import forex.model.config.{CacheConfig, OneFrameServiceConfig}
+import forex.model.config.CacheConfig
 import forex.model.domain.{Currency, Price, Rate, Timestamp}
-import forex.model.http.Converters._
-import forex.model.http.Protocol.OneFrameRate
-import org.scalamock.matchers.ArgCapture.CaptureAll
-import org.scalamock.scalatest.AsyncMockFactory
+
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
-
-import scala.concurrent.Await
 import scala.concurrent.duration._
 
 

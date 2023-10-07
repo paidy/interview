@@ -1,11 +1,10 @@
 package forex.programs.rates
 
 import cats.data.OptionT
-import cats.effect.{Async, Sync}
-import cats.implicits._
+import cats.effect.Async
 import forex.cache.RatesCache
 import forex.model.domain.{Currency, Rate}
-import org.http4s.{Response, Status}
+import org.http4s.Response
 import org.http4s.dsl.Http4sDsl
 
 import forex.model.http.Marshalling._
@@ -21,6 +20,7 @@ class Program[F[_] : Async](ratesCache: RatesCache[F]) extends Algebra[F] with H
     .flatMap(rate => OptionT.liftF(Ok(rate.asGetApiResponse)))
     .getOrElseF(NotFound(s"No rate found for pair '$from' and '$to'"))
 }
+
 
 object Program {
 

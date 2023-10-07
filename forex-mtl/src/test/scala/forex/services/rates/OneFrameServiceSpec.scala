@@ -8,12 +8,10 @@ import forex.model.config.OneFrameServiceConfig
 import forex.model.domain.{Currency, Price, Rate, Timestamp}
 import forex.model.http.Protocol.OneFrameRate
 import org.scalamock.matchers.ArgCapture.CaptureAll
-import org.scalamock.scalatest.{AsyncMockFactory, MockFactory}
-import org.scalatest.Suite
+import org.scalamock.scalatest.AsyncMockFactory
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 import forex.model.http.Converters._
 
@@ -52,7 +50,7 @@ class OneFrameServiceSpec extends AsyncFlatSpec with AsyncIOSpec with Matchers w
     val oneFrameService = new OneFrameService[IO](config, ratesClient, ratesCache)
 
     oneFrameService.ratesRefresh
-      .interruptAfter(7.seconds)
+      .interruptAfter(5.seconds)
       .compile.drain
       .map { _ =>
 
@@ -60,6 +58,6 @@ class OneFrameServiceSpec extends AsyncFlatSpec with AsyncIOSpec with Matchers w
           Currency.allCurrencyPairs, Currency.allCurrencyPairs, Currency.allCurrencyPairs)
 
         clientCaptureTokens.values.toSet shouldEqual config.oneFrameTokens.toSet
-    }
+      }
   }
 }

@@ -1,8 +1,6 @@
 package forex.programs.rates
 
-import forex.model.domain.{Currency, Rate}
-import forex.model.http.Protocol
-import forex.model.http.Protocol.GetApiResponse
+import forex.model.domain.Currency
 import org.http4s.Response
 
 

@@ -2,6 +2,7 @@ package forex.model.http
 
 import forex.model.domain.Rate
 
+
 object Converters {
 
   import Protocol._

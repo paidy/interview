@@ -51,22 +51,22 @@ class ProgramSpec extends AsyncFlatSpec with AsyncIOSpec with Matchers with Asyn
       }
   }
 
-//  it should "return NotFound response if data found" in {
-//    val ratesCache = mockedRatesCache()
-//
-//    (ratesCache.get(_: Rate.Pair))
-//      .expects(fakeRate.pair)
-//      .once()
-//      .returns(OptionT.none[IO, Rate])
-//
-//    val oneFrameService = new Program[IO](ratesCache)
-//
-//    oneFrameService.get(fakeRate.pair.from, fakeRate.pair.to)
-//      .map { response =>
-//        logger.info("NotFound response: " + response)
-//        logger.info("NotFound body: " + response.as[String].unsafeRunSync())
-//
-//        response.status shouldEqual Status.NotFound
-//      }
-//  }
+  it should "return NotFound response if data found" in {
+    val ratesCache = mockedRatesCache()
+
+    (ratesCache.get(_: Rate.Pair))
+      .expects(fakeRate.pair)
+      .once()
+      .returns(OptionT.none[IO, Rate])
+
+    val oneFrameService = new Program[IO](ratesCache)
+
+    oneFrameService.get(fakeRate.pair.from, fakeRate.pair.to)
+      .map { response =>
+        logger.info("NotFound response: " + response)
+        logger.info("NotFound body: " + response.as[String].unsafeRunSync())
+
+        response.status shouldEqual Status.NotFound
+      }
+  }
 }

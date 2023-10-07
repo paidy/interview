@@ -1,0 +1,72 @@
+{
+	"info": {
+		"_postman_id": "2130aa68-3adf-4c1a-88c8-19922e2469a3",
+		"name": "Interview",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30253487"
+	},
+	"item": [
+		{
+			"name": "GET_rates",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:8080/rates?pair={currency_pair_0}&pair={currency_pair_1}",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"rates"
+					],
+					"query": [
+						{
+							"key": "pair",
+							"value": "{currency_pair_0}"
+						},
+						{
+							"key": "pair",
+							"value": "{currency_pair_1}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET_OneFrame",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:8080/rates?pair={currency_pair_0}&pair={currency_pair_1}",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"rates"
+					],
+					"query": [
+						{
+							"key": "pair",
+							"value": "{currency_pair_0}"
+						},
+						{
+							"key": "pair",
+							"value": "{currency_pair_1}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

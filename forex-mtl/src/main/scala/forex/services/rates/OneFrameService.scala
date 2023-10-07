@@ -30,7 +30,7 @@ class OneFrameService[F[_] : Async](
   val ratesRefresh: Stream[F, Unit] = Stream
     .evalSeq(Sync[F].delay(config.oneFrameTokens))
     .repeat                                         // Will cycle over all available tokens
-    .metered(config.ratesRefreshTimeout)
+    .meteredStartImmediately(config.ratesRefreshTimeout)
     .map(token => (token, System.currentTimeMillis()))
     .map { case (token, tStart) =>
       logger.info(s"New iteration of rates refresh started at $tStart with token '$token'")

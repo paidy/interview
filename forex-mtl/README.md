@@ -80,10 +80,10 @@ All configuration of _Forex service_ is in [application.conf](/src/main/resource
 * ```app.http.timeout``` – Request timeout. If processing will take more time, then _503 Service Unavailable_ 
 response will be returned. Default ```40 seconds```
 
-* ```app.one-frame-client. host``` – _One-Frame service_ host (note, request schema is part of 
+* ```app.one-frame-client.host``` (env var ```ONE_FRAME_HOST```) – _One-Frame service_ host (note, request schema is part of 
 host, i.e. ```"http://"``` or ```"https://"```). Default ```"http://127.0.0.1"```
 
-* ```app.one-frame-client. port``` – _One-Frame service_ port. Default ```8081```
+* ```app.one-frame-client.port``` (env var ```ONE_FRAME_PORT```)  – _One-Frame service_ port. Default ```8081```
 
 * ```app.one-frame-client.timeout``` – _One-Frame_ request timeout. If not response in time, then iteration 
 will be failed and rates data will not update. The next attempt will be performed in ```rates-refresh-timeout```. 
@@ -118,15 +118,20 @@ and [SBT](https://www.scala-sbt.org) installed):
 1. Make sure you have [Docked](https://www.docker.com) installed and up.
 
 2. Start dummy _One-Frame service_ with commands ```docker pull paidyinc/one-frame```
-and ```run -p 8081:8080 paidyinc/one-frame``` (see [documentation](https://hub.docker.com/r/paidyinc/one-frame) 
+and ```docker run -p 8081:8080 paidyinc/one-frame``` (see [documentation](https://hub.docker.com/r/paidyinc/one-frame) 
 for the details)
 
 3. Run test by command: ```sbt 'integration-test/test'```
 
+###### Create and run docker image
+
+1. Pack the app using ```sbt docker``` command.
+
+2. Now you can run it locally with ```docker compose up```
 
 ###### Manual testing
 
-1. Start dummy _One-Frame service_
+1. Start dummy _One-Frame service_ (if needed)
 
 2. Run _Forex service_ locally 
 

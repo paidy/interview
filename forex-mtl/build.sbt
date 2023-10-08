@@ -1,6 +1,5 @@
 import Dependencies._
 
-ThisBuild / name := "forex"
 ThisBuild / version := "1.0.1"
 
 ThisBuild / scalaVersion := "2.13.12"
@@ -51,7 +50,9 @@ ThisBuild / scalacOptions ++= Seq(
 )
 
 lazy val forex = (project in file("."))
+  .enablePlugins(sbtdocker.DockerPlugin, JavaAppPackaging)
   .settings(
+    name := "forex",
     libraryDependencies ++= Seq(
       compilerPlugin(Libraries.kindProjector),
       Libraries.cats,
@@ -80,3 +81,20 @@ lazy val `integration-test` = project
   .in(file("integration-test"))
   .aggregate(forex)
   .dependsOn(forex % "compile->compile;test->test;compile->test")
+
+docker / dockerfile := {
+  val jarFile: File = (Compile / packageBin / sbt.Keys.`package`).value
+  val classpath = (Compile / managedClasspath).value
+  val mainclass = (Compile / packageBin / mainClass).value.getOrElse(sys.error("Expected exactly one main class"))
+  val jarTarget = s"/app/${jarFile.getName}"
+
+  val classpathString = classpath.files.map("/app/" + _.getName)
+    .mkString(":") + ":" + jarTarget
+
+  new Dockerfile {
+    from("openjdk:17-alpine")
+    add(classpath.files, "/app/")
+    add(jarFile, jarTarget)
+    entryPoint("java", "-cp", classpathString, mainclass)
+  }
+}

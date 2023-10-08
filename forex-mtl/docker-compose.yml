@@ -1,0 +1,14 @@
+services:
+  app:
+    image: forex/forex
+    ports:
+      - "8080:8080"
+    environment:
+      ONE_FRAME_HOST: http://one-frame
+      ONE_FRAME_PORT: 8080
+    depends_on:
+      - one-frame
+  one-frame:
+    image: paidyinc/one-frame
+    ports:
+      - "8081:8080"

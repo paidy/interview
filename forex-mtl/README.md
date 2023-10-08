@@ -49,29 +49,29 @@ of 9 currently supported currency IDs: ```AUD```, ```CAD```, ```CHF```, ```EUR``
 
 ### Architecture
 
-![Architecture](/docs/forex_arh.png)
+![Architecture](/forex-mtl/docs/forex_arh.png)
 
 Service composed out of 5 main components:
 
-* [forex.http.rates.RatesHttpRoutes](/src/main/scala/forex/http/rates/RatesHttpRoutes.scala) – definition 
+* [forex.http.rates.RatesHttpRoutes](/forex-mtl/src/main/scala/forex/http/rates/RatesHttpRoutes.scala) – definition 
 of the _Forex service API_ described with _HTTP4S DSL_.
 
-* [forex.programs.rates.Program](/src/main/scala/forex/programs/rates/Program.scala) – contains 
+* [forex.programs.rates.Program](/forex-mtl/src/main/scala/forex/programs/rates/Program.scala) – contains 
 implementation of API endpoints.
 
-* [forex.cache.rates.RatesCache](/src/main/scala/forex/cache/rates/RatesCache.scala) – implementation 
+* [forex.cache.rates.RatesCache](/forex-mtl/src/main/scala/forex/cache/rates/RatesCache.scala) – implementation 
 of rates data cache, built on _Scaffeine lib_.
 
-* [forex.services.rates.OneFrameService](/src/main/scala/forex/services/rates/OneFrameService.scala) – implements 
+* [forex.services.rates.OneFrameService](/forex-mtl/src/main/scala/forex/services/rates/OneFrameService.scala) – implements 
 a worker look for fetching One-Frame data, built with _FS2 lib_.
 
-* [forex.clients.rates.OneFrameClient](/src/main/scala/forex/clients/rates/OneFrameClient.scala) – _HTTP4S client_, 
+* [forex.clients.rates.OneFrameClient](/forex-mtl/src/main/scala/forex/clients/rates/OneFrameClient.scala) – _HTTP4S client_, 
 which executing call of _One-Frame service_.
 
 
 ### Configuration
 
-All configuration of _Forex service_ is in [application.conf](/src/main/resources/application.conf) and have next parameters:
+All configuration of _Forex service_ is in [application.conf](/forex-mtl/src/main/resources/application.conf) and have next parameters:
 
 * ```app.http.host``` – This service bind host. Default ```"0.0.0.0"```
 
@@ -135,7 +135,7 @@ for the details)
 
 2. Run _Forex service_ locally 
 
-3. Use [Postman](https://www.postman.com) query [collection](/postman/Interview.postman_collection.json) 
+3. Use [Postman](https://www.postman.com) query [collection](/forex-mtl/postman/Interview.postman_collection.json) 
 to run API calls manually.
 
 

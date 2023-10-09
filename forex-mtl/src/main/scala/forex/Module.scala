@@ -1,29 +1,22 @@
 package forex
 
 import cats.arrow.FunctionK
-import cats.effect.{Async, Sync}
+import cats.effect.{Async, Sync, UnsafeRun}
 import com.typesafe.scalalogging.LazyLogging
-import forex.cache.RatesCache
 import forex.clients.RatesClient
 import forex.http.rates.RatesHttpRoutes
 import forex.model.config.ApplicationConfig
-import forex.services._
 import forex.programs._
-import fs2.Stream
 import org.http4s._
 import org.http4s.implicits._
 import org.http4s.server.middleware.{AutoSlash, ErrorAction, ErrorHandling, Logger, Timeout}
 
 
-class Module[F[_] : Async](config: ApplicationConfig) extends LazyLogging {
+class Module[F[_] : Async : UnsafeRun](config: ApplicationConfig) extends LazyLogging {
 
   private val ratesClient: RatesClient[F] = RatesClient[F](config.oneFrameClient)
 
-  private val ratesCache: RatesCache[F] = RatesCache[F](config.cache)
-
-  private val ratesService: RatesService[F] = RatesServices[F](config.oneFrameService, ratesClient, ratesCache)
-
-  private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesCache)
+  private val ratesProgram: RatesProgram[F] = RatesProgram[F](config.program, ratesClient)
 
   private val ratesHttpRoutes: HttpRoutes[F] = new RatesHttpRoutes[F](ratesProgram).routes
 
@@ -58,6 +51,5 @@ class Module[F[_] : Async](config: ApplicationConfig) extends LazyLogging {
     reqResLogger(errorLogger(apiTimeout(http)))
   }
 
-  val ratesRefresh: Stream[F, Unit] = ratesService.ratesRefresh
   val httpApp: HttpApp[F] = appMiddleware(routesMiddleware(ratesHttpRoutes).orNotFound)
 }

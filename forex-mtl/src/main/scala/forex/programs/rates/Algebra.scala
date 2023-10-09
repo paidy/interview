@@ -1,9 +1,9 @@
 package forex.programs.rates
 
 import forex.model.domain.Currency
-import org.http4s.Response
+import forex.model.http.Protocol.GetApiResponse
 
 
 trait Algebra[F[_]] {
-  def get(from: Currency.Value, to: Currency.Value): F[Response[F]]
+  def get(from: Currency.Value, to: Currency.Value): F[GetApiResponse]
 }

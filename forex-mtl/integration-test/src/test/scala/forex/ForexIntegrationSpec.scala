@@ -51,7 +51,7 @@ class ForexIntegrationSpec extends AsyncFlatSpec with AsyncIOSpec with Matchers 
     val oneFrameClient = new OneFrameClient[IO](appConfig.oneFrameClient)
 
     oneFrameClient
-      .get(Set(fakeRatePair), appConfig.oneFrameService.oneFrameTokens.head)
+      .get(Set(fakeRatePair), appConfig.program.oneFrameToken)
       .recoverWith { err =>
         logger.error("One-Frame service error", err)
         IO.raiseError(err)

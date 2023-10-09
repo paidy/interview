@@ -1,72 +1,107 @@
 package forex.programs.rates
 
-import cats.data.OptionT
 import cats.effect.IO
 import cats.effect.testing.scalatest.AsyncIOSpec
 import com.typesafe.scalalogging.LazyLogging
-import forex.cache.RatesCache
+import forex.clients.RatesClient
+import forex.model.config.ProgramConfig
 import forex.model.domain.{Currency, Price, Rate, Timestamp}
-import forex.model.http.Protocol.GetApiResponse
-import org.http4s.Status
 import org.scalamock.scalatest.AsyncMockFactory
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
-import forex.model.http.Marshalling._
 import forex.model.http.Protocol._
-import io.circe.Json
+import scala.concurrent.duration._
+import cats.implicits._
+import forex.model.errors.RateErrors.{OneFrameCallFailed, RateNotFound}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 
 class ProgramSpec extends AsyncFlatSpec with AsyncIOSpec with Matchers with AsyncMockFactory with LazyLogging {
 
-  val fakeRate: Rate = Rate(
-    Rate.Pair(Currency.CAD, Currency.CHF), Price(123), Timestamp.now())
+  val config: ProgramConfig = ProgramConfig(
+    oneFrameToken = "token_1",
+    cacheExpireTimeout = 2.seconds
+  )
 
-  def mockedRatesCache(): RatesCache[IO] = mock[RatesCache[IO]]
+  def fakeOneFrameRate(from: Currency.Value, to: Currency.Value): OneFrameRate =
+    OneFrameRate(from, to, BigDecimal(1), BigDecimal(2), Price(3), Timestamp.now())
 
-  it should "return OK response with rate data if found" in {
-    val ratesCache = mockedRatesCache()
+  it should "return rate data if found and refresh cache" in {
+    val ratesClient: RatesClient[IO] = mock[RatesClient[IO]]
+    val oneFrameService = new Program[IO](config, ratesClient)
 
-    (ratesCache.get(_: Rate.Pair))
-      .expects(fakeRate.pair)
+    val fakeRate1 = fakeOneFrameRate(Currency.CAD, Currency.CHF)
+    val fakeRate2 = fakeOneFrameRate(Currency.NZD, Currency.USD)
+
+    (ratesClient.get(_: Set[Rate.Pair], _: String))
+      .expects(Currency.allCurrencyPairs, config.oneFrameToken)
       .once()
-      .returns(OptionT.some[IO](fakeRate))
+      .returns(IO.pure(List(fakeRate1, fakeRate2)))
 
-    val oneFrameService = new Program[IO](ratesCache)
+    List(fakeRate1, fakeRate2).map(fakeRate =>
+      oneFrameService.get(fakeRate.from, fakeRate.to)
+      .map { res =>
+        logger.info(s"Run for $fakeRate, result: $res")
 
-    oneFrameService.get(fakeRate.pair.from, fakeRate.pair.to)
-      .flatMap { response =>
-        logger.info("OK response: " + response)
-        logger.info("OK body: " + response.as[Json].unsafeRunSync())
-
-        response.status shouldEqual Status.Ok
-
-        response.as[GetApiResponse]
-      }
-      .map { entity =>
-
-        entity.from      shouldEqual fakeRate.pair.from
-        entity.to        shouldEqual fakeRate.pair.to
-        entity.price     shouldEqual fakeRate.price
-        entity.timestamp shouldEqual fakeRate.timestamp
-      }
+        res.from      shouldEqual fakeRate.from
+        res.to        shouldEqual fakeRate.to
+        res.price     shouldEqual fakeRate.price
+        res.timestamp shouldEqual fakeRate.timeStamp
+      })
+      .sequence.map(_ => ())
   }
 
-  it should "return NotFound response if data found" in {
-    val ratesCache = mockedRatesCache()
+  it should "after data expired should refresh them again" in {
+    val ratesClient: RatesClient[IO] = mock[RatesClient[IO]]
+    val oneFrameService = new Program[IO](config, ratesClient)
 
-    (ratesCache.get(_: Rate.Pair))
-      .expects(fakeRate.pair)
+    val fakeRate = fakeOneFrameRate(Currency.CAD, Currency.CHF)
+
+    (ratesClient.get(_: Set[Rate.Pair], _: String))
+      .expects(Currency.allCurrencyPairs, config.oneFrameToken)
+      .twice()
+      .returns(IO.pure(List(fakeRate)))
+
+    for {
+      _ <- oneFrameService.get(fakeRate.from, fakeRate.to)     // First call result
+      _ <- IO.sleep(config.cacheExpireTimeout.plus(1.seconds)) // Wait for cached data expire
+      _ <- oneFrameService.get(fakeRate.from, fakeRate.to)     // Second call result
+    } yield ()
+  }
+
+  it should "return NotFound if rate data not found" in {
+    val ratesClient: RatesClient[IO] = mock[RatesClient[IO]]
+    val oneFrameService = new Program[IO](config, ratesClient)
+
+    (ratesClient.get(_: Set[Rate.Pair], _: String))
+      .expects(Currency.allCurrencyPairs, config.oneFrameToken)
       .once()
-      .returns(OptionT.none[IO, Rate])
+      .returns(IO.pure(List())) // No data loaded form OneFrame
 
-    val oneFrameService = new Program[IO](ratesCache)
+    oneFrameService.get(Currency.CAD, Currency.CHF)
+      .recover[Any] { error =>
+        logger.info(s"NotFound error: $error")
 
-    oneFrameService.get(fakeRate.pair.from, fakeRate.pair.to)
-      .map { response =>
-        logger.info("NotFound response: " + response)
-        logger.info("NotFound body: " + response.as[String].unsafeRunSync())
-
-        response.status shouldEqual Status.NotFound
+        error mustBe a[RateNotFound]
       }
+      .map(_ => ())
+  }
+
+  it should "return ServiceUnavailable if OneFrame call failed" in {
+    val ratesClient: RatesClient[IO] = mock[RatesClient[IO]]
+    val oneFrameService = new Program[IO](config, ratesClient)
+
+    (ratesClient.get(_: Set[Rate.Pair], _: String))
+      .expects(Currency.allCurrencyPairs, config.oneFrameToken)
+      .once()
+      .returns(IO.raiseError(new RuntimeException("Ops! OneFrame down")))
+
+    oneFrameService.get(Currency.CAD, Currency.CHF)
+      .recover[Any] { error =>
+        logger.info(s"ServiceUnavailable error: $error")
+
+        error mustBe a[OneFrameCallFailed]
+      }
+      .map(_ => ())
   }
 }

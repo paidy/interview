@@ -14,7 +14,7 @@ object Main extends IOApp {
 }
 
 
-class Application[F[_] : Async] {
+class Application[F[_] : Async : UnsafeRun] {
 
   def stream(): Stream[F, Unit] =
     for {
@@ -24,7 +24,6 @@ class Application[F[_] : Async] {
         .bindHttp(config.http.port, config.http.host)
         .withHttpApp(module.httpApp)
         .serve
-        .mergeHaltBoth(module.ratesRefresh)
     } yield ()
 
 }

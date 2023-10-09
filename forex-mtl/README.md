@@ -5,9 +5,9 @@
 
 A _Forex service_ is a simple proxy that provides access to 
 a [_One-Frame service_](https://hub.docker.com/r/paidyinc/one-frame) and to serve currency 
-exchange rates. The _One-Frame_ have limitation on 1000 requests/day. As a work around this limit, 
-the _Forex service_ fetching _One-Frame_ data in a loop with a timeout in between iterations and store them in 
-internal cache, from where they read by downstream clients.
+exchange rates. The _One-Frame_ have limitation on 1000 requests/day. As a workaround this limit, 
+the _Forex service_ fetching _One-Frame_ data for all currency pairs at first API call and store them in cache. Next 
+call will return cached data. After configured timeout cached data will be refreshed at the next call API.
 
 
 ### API
@@ -27,7 +27,8 @@ of 9 currently supported currency IDs: ```AUD```, ```CAD```, ```CHF```, ```EUR``
 
 * ```NotFound(404)``` – incorrect URL path or no data for requested currency pair.  
 
-* ```ServiceUnavailable(503)``` – processing took more time than configured in ```app.http. timeout``` parameter.
+* ```ServiceUnavailable(503)``` – processing took more time than configured in ```app.http.timeout``` parameter 
+or One-Frame call failed.
 
 * ```InternalServerError(500)``` – fatal error.
 
@@ -57,13 +58,7 @@ Service composed out of 5 main components:
 of the _Forex service API_ described with _HTTP4S DSL_.
 
 * [forex.programs.rates.Program](/forex-mtl/src/main/scala/forex/programs/rates/Program.scala) – contains 
-implementation of API endpoints.
-
-* [forex.cache.rates.RatesCache](/forex-mtl/src/main/scala/forex/cache/rates/RatesCache.scala) – implementation 
-of rates data cache, built on _Scaffeine lib_.
-
-* [forex.services.rates.OneFrameService](/forex-mtl/src/main/scala/forex/services/rates/OneFrameService.scala) – implements 
-a worker look for fetching One-Frame data, built with _FS2 lib_.
+implementation of API endpoints logic and _Scaffeine lib_ cache.
 
 * [forex.clients.rates.OneFrameClient](/forex-mtl/src/main/scala/forex/clients/rates/OneFrameClient.scala) – _HTTP4S client_, 
 which executing call of _One-Frame service_.
@@ -85,20 +80,14 @@ host, i.e. ```"http://"``` or ```"https://"```). Default ```"http://127.0.0.1"``
 
 * ```app.one-frame-client.port``` (env var ```ONE_FRAME_PORT```)  – _One-Frame service_ port. Default ```8081```
 
-* ```app.one-frame-client.timeout``` – _One-Frame_ request timeout. If not response in time, then iteration 
-will be failed and rates data will not update. The next attempt will be performed in ```rates-refresh-timeout```. 
-Default ```10 seconds```
+* ```app.one-frame-client.timeout``` – _One-Frame_ request timeout. If not response in time, 
+then ServiceUnavailable will be returned. Default ```10 seconds```
 
-* ```app.one-frame-service. one-frame-tokens``` – A set of available _One-Frame_ tokens. On each call will 
-be used next token in the list, when last token will be used it start from beginning of 
-list. Default ```["10dc303535874aeccc86a8251e6992f5"]```
+* ```app.program.one-frame-token``` – The _One-Frame_ token used in the service calls. 
+Default ```"10dc303535874aeccc86a8251e6992f5"```
 
-* ```app.one-frame-service.rates-refresh-timeout``` – Timeout on between _One-Frame_ calls. Incising of 
-will save network traffic (reduce number of calls per day). Decreasing of it will make updates of rates 
-faster. Default ```3 minutes```
-
-* ```app.cache.expire-timeout``` – TTL of cached rates, if expire and data not updated in time, then rate 
-will be removed from cache. Default ```5 minutes```
+* ```app.program.cache-expire-timeout``` – TTL of cached rates, if expire data will be refreshed in the next API 
+call. Default ```5 minutes```
 
 
 ### How to run and test

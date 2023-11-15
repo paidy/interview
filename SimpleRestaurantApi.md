@@ -6,7 +6,7 @@ The programming language required to complete the test will be communicated to y
 It may be permissable to choose between a set of languages, or you may be directed to complete the assignment using
 a prescribed programming language.
 
-Please try to spend around 4-6 hours on this test.  The focus will be on data structure choice, API design and 
+The focus will be on data structure choice, API design and 
 implementation, internal implementation (especially regarding data correctness, multi-threaded capacity, and 
 proper unit testing).  How "functional" the solution is coded will also be a strong factor.  Please learn and use all 
 of the functional programming skills you can to complete this test, along with a good sense of when and where to apply 
@@ -54,7 +54,10 @@ Good luck!
 ## Submission
 
 You can either submit your work with a GitHub repository or send us a zip file with your source files.  In both cases, 
-please provide a README file to indicate how to build and run your source as well as the expected outputs.
+please provide a README file with:
+- Time spent on the challenge
+- Instructions on how to build and run your source
+- Some example calls with expected outputs
 
 # Assignment
 

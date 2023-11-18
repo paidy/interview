@@ -15,6 +15,8 @@ object Currency {
   case object SGD extends Currency
   case object USD extends Currency
 
+  case object UNK extends Currency
+
   implicit val show: Show[Currency] = Show.show {
     case AUD => "AUD"
     case CAD => "CAD"
@@ -25,6 +27,7 @@ object Currency {
     case JPY => "JPY"
     case SGD => "SGD"
     case USD => "USD"
+    case UNK => "UNK"
   }
 
   def fromString(s: String): Currency = s.toUpperCase match {
@@ -37,6 +40,7 @@ object Currency {
     case "JPY" => JPY
     case "SGD" => SGD
     case "USD" => USD
+    case "UNK" => UNK
   }
 
 }

@@ -24,12 +24,18 @@ class OneFrameLive[F[_] : Applicative](config: ApplicationConfig) extends Algebr
     EitherT.fromEither[F](response).value
   }
 
-  private def executeGetRequest(uri: String, parameters: Seq[(String, String)]) = {
-    val response = Http(uri).header("token", config.url.token).params(parameters).asString
-    decode[List[OneFrameResponse]](response.body) match {
-      case Left(res) =>
-        Left(errors.Error.OneFrameLookupFailed(res.getMessage): errors.Error)
-      case Right(res) => Right(res.head.toRate)
+  private def executeGetRequest(uri: String, parameters: Seq[(String, String)]): Either[errors.Error, Rate] = {
+    val response = try {
+      Some(Http(uri).header("token", config.url.token).params(parameters).asString)
+    } catch {
+      case _: Exception => None
     }
+    if (response.isDefined) {
+      decode[List[OneFrameResponse]](response.get.body) match {
+        case Left(res) =>
+          Left(errors.Error.OneFrameLookupFailed(res.getMessage): errors.Error)
+        case Right(res) => Right(res.head.toRate)
+      }
+    } else Left(errors.Error.ServiceUnavailableError("Service Rates API is down. Please try after sometime."): errors.Error)
   }
 }

@@ -96,4 +96,5 @@ class RatesCache[F[_]: Sync] {
 ```
 and call this in get() of service.
 
-* I would've added many more tests, and handle errors. I found error handling is keep giving me syntax error.
+* I would've added many more tests, and handle errors. Couldn't understand how concurrent work in a short time
+* I found error handling is keep giving me syntax error.

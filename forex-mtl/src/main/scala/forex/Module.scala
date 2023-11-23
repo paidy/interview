@@ -1,17 +1,26 @@
 package forex
 
-import cats.effect.{ Concurrent, Timer }
-import forex.config.ApplicationConfig
+import cats.effect.{Concurrent, ConcurrentEffect, Timer}
+import forex.config.{ApplicationConfig, OneFrameConfig}
 import forex.http.rates.RatesHttpRoutes
-import forex.services._
+import forex.services.RatesService
 import forex.programs._
+import forex.services.rates.interpreters.OneFrameInterpreter
 import org.http4s._
 import org.http4s.implicits._
-import org.http4s.server.middleware.{ AutoSlash, Timeout }
+import org.http4s.server.middleware.{AutoSlash, Timeout}
 
-class Module[F[_]: Concurrent: Timer](config: ApplicationConfig) {
+import scala.annotation.nowarn
 
-  private val ratesService: RatesService[F] = RatesServices.dummy[F]
+@nowarn("cat=unused")
+class Module[F[_]: Concurrent: Timer :ConcurrentEffect](config: ApplicationConfig) {
+  private val oneFrameConfig: OneFrameConfig = config.oneFrame
+  private val oneFrameApiUri: Uri = Uri.fromString(oneFrameConfig.uri).getOrElse(
+    throw new Exception("Invalid OneFrame API URI provided")
+  )
+  private val oneFrameToken: String = oneFrameConfig.token
+
+  private val ratesService: RatesService[F] = new OneFrameInterpreter[F](oneFrameApiUri, oneFrameToken)
 
   private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService)
 

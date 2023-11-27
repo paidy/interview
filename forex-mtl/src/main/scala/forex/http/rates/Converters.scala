@@ -1,6 +1,7 @@
 package forex.http.rates
 
 import forex.domain._
+import forex.programs.rates.errors.{ Error => ProgramError }
 
 object Converters {
   import Protocol._
@@ -12,6 +13,14 @@ object Converters {
         to = rate.pair.to,
         price = rate.price,
         timestamp = rate.timestamp
+      )
+  }
+
+  private[rates] implicit class ApiErrorOps(val error: ProgramError) extends AnyVal {
+    def asApiError: ApiError =
+      ApiError(
+        errorType = error.getClass.getSimpleName,
+        errorMsg = error.getMessage
       )
   }
 

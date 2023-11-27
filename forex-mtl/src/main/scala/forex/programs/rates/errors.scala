@@ -4,9 +4,9 @@ import forex.services.rates.errors.{ Error => RatesServiceError }
 
 object errors {
 
-  sealed trait Error extends Exception
+  abstract class Error(msg: String) extends Exception(msg) {}
   object Error {
-    final case class RateLookupFailed(msg: String) extends Error
+    final case class RateLookupFailed(msg: String) extends Error(msg)
   }
 
   def toProgramError(error: RatesServiceError): Error = error match {

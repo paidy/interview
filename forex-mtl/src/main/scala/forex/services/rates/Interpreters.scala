@@ -1,8 +1,10 @@
 package forex.services.rates
 
 import cats.Applicative
+import forex.services
 import interpreters._
 
 object Interpreters {
-  def dummy[F[_]: Applicative]: Algebra[F] = new OneFrameDummy[F]()
+  def apply[F[_]: Applicative](ingestor: services.rates_ingestor.Algebra[F]): Algebra[F] =
+    new OneFrameService[F](ingestor)
 }

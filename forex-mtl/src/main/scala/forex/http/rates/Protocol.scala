@@ -7,6 +7,7 @@ import forex.domain._
 import io.circe._
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto.deriveConfiguredEncoder
+import cats.implicits._
 
 object Protocol {
 
@@ -24,8 +25,22 @@ object Protocol {
       timestamp: Timestamp
   )
 
+  final case class ApiError(
+      errorType: String,
+      errorMsg: String
+  )
+
   implicit val currencyEncoder: Encoder[Currency] =
     Encoder.instance[Currency] { show.show _ andThen Json.fromString }
+
+  implicit val currencyDecoder: Decoder[Currency] =
+    Decoder.instance[Currency](
+      _.value.asString
+        .toRight(DecodingFailure("Currency is not a String.", Nil))
+        .flatMap(
+          (Currency.fromString _).andThen(_.toEither.leftMap(nel => DecodingFailure(nel.head.getMessage(), Nil)))
+        )
+    )
 
   implicit val pairEncoder: Encoder[Pair] =
     deriveConfiguredEncoder[Pair]
@@ -36,4 +51,6 @@ object Protocol {
   implicit val responseEncoder: Encoder[GetApiResponse] =
     deriveConfiguredEncoder[GetApiResponse]
 
+  implicit val errorEncoder: Encoder[ApiError] =
+    deriveConfiguredEncoder[ApiError]
 }

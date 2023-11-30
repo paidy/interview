@@ -1,11 +1,10 @@
 package forex
 
 import scala.concurrent.ExecutionContext
-
 import cats.effect._
 import forex.config._
 import fs2.Stream
-import org.http4s.server.blaze.BlazeServerBuilder
+import org.http4s.blaze.server.BlazeServerBuilder
 
 object Main extends IOApp {
 

@@ -80,5 +80,5 @@ $ curl --no-buffer -s -H "token: 10dc303535874aeccc86a8251e6992f5" 'localhost:80
 ```
 
 ## F.A.Q.
-[Please click here for the F.A.Q.](./README.md)
+[Please click here for the F.A.Q.](./README.md#faq)
 

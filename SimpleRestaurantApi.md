@@ -3,13 +3,13 @@
 (See "Assignment" section for assignment details)
 
 The programming language required to complete the test will be communicated to you prior to being given the assignment.
-It may be permissable to choose between a set of languages, or you may be directed to complete the assignment using
+It may be permissible to choose between a set of languages, or you may be directed to complete the assignment using
 a prescribed programming language.
 
-The focus will be on data structure choice, API design and 
+The focus will be on data structure choice, RESTful API design and 
 implementation, internal implementation (especially regarding data correctness, multi-threaded capacity, and 
 proper unit testing).  How "functional" the solution is coded will also be a strong factor.  Please learn and use all 
-of the functional programming skills you can to complete this test, along with a good sense of when and where to apply 
+the functional programming skills you can to complete this test, along with a good sense of when and where to apply 
 them.  Knowing when to try to stay purely functional and when to deviate to a more procedural mindset is a 
 skill which will come in handy for this test.
 
@@ -55,9 +55,9 @@ Good luck!
 
 You can either submit your work with a GitHub repository or send us a zip file with your source files.  In both cases, 
 please provide a README file with:
-- Time spent on the challenge
-- Instructions on how to build and run your source
-- Some example calls with expected outputs
+* Time spent on the challenge
+* Instructions on how to build and run your source
+* Some example calls with expected outputs
 
 # Assignment
 
@@ -102,7 +102,3 @@ of time between 5 and 15 minutes and kept static from then on.
 for table "4", for example, any other requests for table "4" must refer to the same table.
 * “Clients” can be simulated as simple threads in a main() function calling the main server application with a 
 variety of requests.  There should be more than one, preferably around 5-10 running at any one time.
-* The API is up to the developer.  HTTP REST is acceptable, but direct API calls are also acceptable if they mimic an 
-HTTP REST-like API (e.g. api_call1(string id, string resource), etc.).
-
-

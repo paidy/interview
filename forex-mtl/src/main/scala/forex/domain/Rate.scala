@@ -1,6 +1,6 @@
 package forex.domain
 
-case class Rate(
+final case class Rate(
     pair: Rate.Pair,
     price: Price,
     timestamp: Timestamp

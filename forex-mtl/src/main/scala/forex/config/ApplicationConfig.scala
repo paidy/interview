@@ -4,6 +4,7 @@ import scala.concurrent.duration.FiniteDuration
 
 final case class ApplicationConfig(
     http: HttpConfig,
+    oneFrame: OneFrameConfig
 )
 
 final case class HttpConfig(
@@ -11,3 +12,9 @@ final case class HttpConfig(
     port: Int,
     timeout: FiniteDuration
 )
+
+final case class OneFrameConfig(
+                                 url: String,
+                                 token: String
+                               )
+

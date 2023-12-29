@@ -39,4 +39,12 @@ object Currency {
     case "USD" => USD
   }
 
+  private val currencies: Vector[Currency] = Vector(AUD, CAD, CHF, EUR, GBP, NZD, JPY, SGD, USD)
+  val allPairs: Vector[(Currency, Currency)] = {
+    currencies
+      .combinations(2)
+      .flatMap(_.permutations)
+      .collect { case Seq(from: Currency, to: Currency) => (from, to) }
+      .toVector
+  }
 }

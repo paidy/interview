@@ -6,12 +6,11 @@ import cats.implicits._
 import forex.client.OneFrameClient
 import forex.config.CacheConfig
 import forex.domain._
-import io.circe.{DecodingFailure, Error => CirceError}
+import forex.services.rates.errors.Error
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import scalacache.caffeine.CaffeineCache
 import scalacache.modes.sync.mode
-import sttp.client.{DeserializationError, Response, ResponseError}
 
 import java.time.OffsetDateTime
 import scala.concurrent.duration.DurationInt
@@ -27,15 +26,15 @@ class OneFrameServiceSpec extends AnyFunSuite with Matchers {
     class MockOneFrameClient[F[_]: Applicative] extends OneFrameClient[F] {
       override def getRates(
                              pairs: Vector[Rate.Pair]
-                           ): F[Response[Either[ResponseError[CirceError], List[OneFrameCurrencyInformation]]]] = {
-        val mockResponse = Right(List(OneFrameCurrencyInformation(from = "USD",
+                           ): F[Either[Error, List[OneFrameCurrencyInformation]]] = {
+        val mockResponse = List(OneFrameCurrencyInformation(from = "USD",
           to= "JPY",
           bid= 0.4332159351433372,
           ask= 0.2056211718073755,
           price= 0.31941855347535635,
-          time_stamp= "2023-12-29T17:22:46.691Z")))
+          time_stamp= "2023-12-29T17:22:46.691Z"))
 
-        Applicative[F].pure(Response.ok(mockResponse))
+        Applicative[F].pure(mockResponse.asRight)
       }
     }
     val oneFrameClient = new MockOneFrameClient[IO]
@@ -57,16 +56,13 @@ class OneFrameServiceSpec extends AnyFunSuite with Matchers {
 
   // Negative test case
   test("get should return OneFrameLookupFailed for an exception during the call") {
+    // Mock OneFrameClient for testing
     class MockOneFrameClientNegative[F[_]: Applicative] extends OneFrameClient[F] {
       override def getRates(
                              pairs: Vector[Rate.Pair]
-                           ): F[Response[Either[ResponseError[CirceError], List[OneFrameCurrencyInformation]]]] = {
-        val decodingFailure: CirceError = DecodingFailure("Simulated deserialization error", Nil)
-        val responseError: ResponseError[CirceError] = DeserializationError("decode error" ,decodingFailure)
-        val leftResponse: Either[ResponseError[CirceError], List[OneFrameCurrencyInformation]] =
-          Left(responseError)
-
-        Applicative[F].pure(Response.ok(leftResponse))
+                           ): F[Either[Error, List[OneFrameCurrencyInformation]]] = {
+        val leftResponse = Error.OneFrameLookupFailed("Something went wrong...")
+        Applicative[F].pure(leftResponse.asLeft)
       }
     }
 
@@ -82,5 +78,4 @@ class OneFrameServiceSpec extends AnyFunSuite with Matchers {
     resultNegative shouldBe a[Left[_, _]]
     resultNegative.left.map(_.toString) shouldBe Left("OneFrameLookupFailed(Cache not updated. Please contact admin.)")
   }
-
 }

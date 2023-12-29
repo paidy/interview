@@ -14,13 +14,8 @@ final case class HttpConfig(
     timeout: FiniteDuration
 )
 
-final case class OneFrameConfig(
-                                 url: String,
-                                 token: String
-                               )
+final case class OneFrameConfig(url: String, token: String)
 
 final case class CacheConfig(
-                              oneFrameExpiry: Int
-                            )
-
-
+    oneFrameExpiry: Int
+)

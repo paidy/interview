@@ -3,6 +3,7 @@ package forex.services.rates.interpreters
 import cats.effect.{Concurrent, Timer}
 import cats.Applicative
 import cats.implicits._
+import com.typesafe.scalalogging.LazyLogging
 import forex.domain._
 import forex.client.OneFrameClient
 import forex.config.CacheConfig
@@ -17,7 +18,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.duration.DurationInt
 
-class OneFrameService[F[_]: Concurrent](oneFrameClient: OneFrameClient[F], rateCache: Cache[Rate], cacheConfig: CacheConfig) extends Algebra[F] {
+class OneFrameService[F[_]: Concurrent](oneFrameClient: OneFrameClient[F], rateCache: Cache[Rate], cacheConfig: CacheConfig) extends Algebra[F] with LazyLogging{
 
   private val allPairs: Vector[Rate.Pair] = Currency.allPairs.map(Rate.Pair.tupled)
 
@@ -25,7 +26,9 @@ class OneFrameService[F[_]: Concurrent](oneFrameClient: OneFrameClient[F], rateC
     for{
       rate <- rateCache.get(pair.key) match {
         case Some(rate) => rate.asRight[Error].pure[F]
-        case _ => OneFrameLookupFailed("Cache not updated. Please contact admin.").asLeft[Rate].pure[F]
+        case _ =>
+          logger.error("Unable to fetch rate from cache")
+          OneFrameLookupFailed("Cache not updated. Please contact admin.").asLeft[Rate].pure[F]
       }
     } yield rate
   }
@@ -33,9 +36,11 @@ class OneFrameService[F[_]: Concurrent](oneFrameClient: OneFrameClient[F], rateC
   private def populateCache(): F[Unit] =
     for {
       freshRates <- oneFrameClient.getRates(allPairs)
-      rates = freshRates.body match {
+      rates = freshRates match {
         case Right(rates) => rates
-        case Left(_) => List.empty[OneFrameCurrencyInformation]
+        case Left(error) =>
+          logger.error("API returned empty list when populating cache.", error)
+          List.empty[OneFrameCurrencyInformation]
       }
       _ <- if (rates.nonEmpty) updateCache(rates) else Applicative[F].unit
     } yield {}
@@ -45,6 +50,7 @@ class OneFrameService[F[_]: Concurrent](oneFrameClient: OneFrameClient[F], rateC
 
   private def updateCache(rates: List[OneFrameCurrencyInformation]): F[Unit] =
     Applicative[F].pure(rates.map{rate =>
+      logger.debug("Updating cache with latest value.")
       val currentRate = Rate(Rate.Pair(Currency.fromString(rate.from), Currency.fromString(rate.to)), Price.apply(rate.price), Timestamp(
         OffsetDateTime.parse(rate.time_stamp, DateTimeFormatter.ISO_OFFSET_DATE_TIME)))
       rateCache.put(currentRate.pair.key)(currentRate, cacheConfig.oneFrameExpiry.minutes.some)}).void

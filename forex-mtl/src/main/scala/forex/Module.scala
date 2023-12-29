@@ -22,7 +22,7 @@ class Module[F[_]: Concurrent: Timer](config: ApplicationConfig) {
 
   private lazy val oneFrameClient: OneFrameClient[F] = OneFrameClient.OneFrameHttpClient(config.oneFrame)
 
-  val ratesService: RatesService[F] = RatesServices.live[F](oneFrameClient, rateCache)
+  val ratesService: RatesService[F] = RatesServices.live[F](oneFrameClient, rateCache, config.cache)
 
   private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService)
 

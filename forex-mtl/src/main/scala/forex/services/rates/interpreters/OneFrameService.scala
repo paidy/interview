@@ -1,21 +1,25 @@
 package forex.services.rates.interpreters
 
-import cats.effect.{ Concurrent, Timer }
+import cats.effect.{Concurrent, Timer}
 import cats.Applicative
 import cats.implicits._
 import forex.domain._
 import forex.client.OneFrameClient
+import forex.config.CacheConfig
 import forex.services.rates.Algebra
 import forex.services.rates.errors.Error.OneFrameLookupFailed
 import fs2.Stream
 import forex.services.rates.errors._
 import scalacache.Cache
 import scalacache.modes.sync.mode
+
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.duration.DurationInt
 
-class OneFrameService[F[_]: Concurrent](oneFrameClient: OneFrameClient[F], rateCache: Cache[Rate]) extends Algebra[F] {
+class OneFrameService[F[_]: Concurrent](oneFrameClient: OneFrameClient[F], rateCache: Cache[Rate], cacheConfig: CacheConfig) extends Algebra[F] {
+
+  private val allPairs: Vector[Rate.Pair] = Currency.allPairs.map(Rate.Pair.tupled)
 
   override def get(pair: Rate.Pair): F[Error Either Rate] = {
     for{
@@ -25,8 +29,6 @@ class OneFrameService[F[_]: Concurrent](oneFrameClient: OneFrameClient[F], rateC
       }
     } yield rate
   }
-
-  private val allPairs: Vector[Rate.Pair] = Currency.allPairs.map(Rate.Pair.tupled)
 
   private def populateCache(): F[Unit] =
     for {
@@ -45,5 +47,5 @@ class OneFrameService[F[_]: Concurrent](oneFrameClient: OneFrameClient[F], rateC
     Applicative[F].pure(rates.map{rate =>
       val currentRate = Rate(Rate.Pair(Currency.fromString(rate.from), Currency.fromString(rate.to)), Price.apply(rate.price), Timestamp(
         OffsetDateTime.parse(rate.time_stamp, DateTimeFormatter.ISO_OFFSET_DATE_TIME)))
-      rateCache.put(currentRate.pair.key)(currentRate, 4.minutes.some)}).pure[F].void
+      rateCache.put(currentRate.pair.key)(currentRate, cacheConfig.oneFrameExpiry.minutes.some)}).void
 }

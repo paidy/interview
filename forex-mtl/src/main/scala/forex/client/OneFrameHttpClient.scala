@@ -23,7 +23,7 @@ class OneFrameHttpClient[F[_]: Async](
 
   def getRates(pairs: Vector[Pair]): F[Either[Error, List[OneFrameCurrencyInformation]]] = {
     val param = pairs.map((pair: Pair) => "pair" -> s"${pair.from}${pair.to}")
-    val url   = uri"http://${oneFrameConfig.url}/rates?$param"
+    val url   = uri"${oneFrameConfig.url}/rates?$param"
 
     val request = basicRequest
       .get(uri = url)

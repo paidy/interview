@@ -1,6 +1,6 @@
 package forex.http.rates
 
-import cats.implicits.toBifunctorOps
+import cats.implicits._
 import forex.domain.Currency
 import org.http4s.{ ParseFailure, QueryParamDecoder }
 import org.http4s.dsl.impl.ValidatingQueryParamDecoderMatcher

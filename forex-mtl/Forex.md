@@ -84,3 +84,42 @@ $ curl -H "token: 10dc303535874aeccc86a8251e6992f5" 'localhost:8080/rates?pair=U
 
 ## F.A.Q.
 [Please click here for the F.A.Q.](./README.md)
+
+
+### Assumption
+1. Token will always remain the same.
+2. Rate should not be older than 5 minutes.
+3. Currently, the input is only for 2 valid currencies.
+4. 1 API token = 10,000 successful requests per day
+
+### Limitation
+1. The One-Frame service supports a maximum of 1000 requests per day for any given authentication token. 
+
+### Suggested Solution
+1. I initially though of making single calls for fetching exchange rate for a pair of currencies, quickly understood this would not work with our limitation.
+2. So instead fetch all currencies every 4 minutes => 15 requests per hour => 360 requests per 24 hours (per day).
+3. I have used a cache to hold the values with an expiry of 4 minutes, since we do not want to have any exchange rate older than 5 minutes, having a buffer of 1 minute extra will not cause any issues, because we are still managing the existing limitations.
+
+### Output
+![img.png](img.png)
+
+### Running
+
+You need to download and install sbt for this application to run.
+
+#### Pre-requisite
+Scala 2.13.12  
+SBT 1.8.0  
+Java 11 (I have developed and tested using Java 11)
+
+Once you have sbt installed, type/run the following command in the terminal:
+
+```bash
+sbt run
+or
+Run via IDE
+```
+
+#### Extensions
+1. Token is currently configured via configuration file, would be good to have a scheduler to fetch this and store in memory if needed.
+2. I have worked with tag less final implementation via libraries but not directly in code, would be good to understand this better and have better error handling.

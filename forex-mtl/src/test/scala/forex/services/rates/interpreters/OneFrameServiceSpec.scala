@@ -4,7 +4,7 @@ import cats.Applicative
 import cats.effect._
 import cats.implicits._
 import forex.client.OneFrameClient
-import forex.config.CacheConfig
+import forex.config.{ CacheConfig, SchedulerConfig }
 import forex.domain._
 import forex.services.rates.errors.Error
 import org.scalatest.funsuite.AnyFunSuite
@@ -19,6 +19,9 @@ class OneFrameServiceSpec extends AnyFunSuite with Matchers {
 
   implicit val contextShiftInstance: ContextShift[IO] = IO.contextShift(scala.concurrent.ExecutionContext.global)
   implicit val timerInstance: Timer[IO]               = IO.timer(scala.concurrent.ExecutionContext.global)
+  val cache                                           = CaffeineCache[Rate]
+  val cacheConfig                                     = CacheConfig(4)
+  val schedulerConfig                                 = SchedulerConfig(4)
 
   // Test case
   test("get should return cached rate if available") {
@@ -42,9 +45,7 @@ class OneFrameServiceSpec extends AnyFunSuite with Matchers {
       }
     }
     val oneFrameClient = new MockOneFrameClient[IO]
-    val cache          = CaffeineCache[Rate]
-    val cacheConfig    = CacheConfig(5)
-    val service        = new OneFrameService[IO](oneFrameClient, cache, cacheConfig)
+    val service        = new OneFrameService[IO](oneFrameClient, cache, cacheConfig, schedulerConfig)
 
     val pair = Rate.Pair(Currency.USD, Currency.EUR)
     val rate = Rate(pair, Price(BigDecimal(1.2)), Timestamp(OffsetDateTime.now()))
@@ -70,9 +71,7 @@ class OneFrameServiceSpec extends AnyFunSuite with Matchers {
     }
 
     val oneFrameClientNegative = new MockOneFrameClientNegative[IO]
-    val cacheNegative          = CaffeineCache[Rate]
-    val cacheConfigNegative    = CacheConfig(5)
-    val service                = new OneFrameService[IO](oneFrameClientNegative, cacheNegative, cacheConfigNegative)
+    val service                = new OneFrameService[IO](oneFrameClientNegative, cache, cacheConfig, schedulerConfig)
 
     val pairNegative = Rate.Pair(Currency.USD, Currency.EUR)
 

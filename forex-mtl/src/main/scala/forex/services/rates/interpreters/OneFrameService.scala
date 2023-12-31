@@ -6,7 +6,7 @@ import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import forex.domain._
 import forex.client.OneFrameClient
-import forex.config.CacheConfig
+import forex.config.{ CacheConfig, SchedulerConfig }
 import forex.services.rates.Algebra
 import forex.services.rates.errors.Error.OneFrameLookupFailed
 import fs2.Stream
@@ -20,7 +20,8 @@ import scala.concurrent.duration.DurationInt
 
 class OneFrameService[F[_]: Concurrent](oneFrameClient: OneFrameClient[F],
                                         rateCache: Cache[Rate],
-                                        cacheConfig: CacheConfig)
+                                        cacheConfig: CacheConfig,
+                                        schedulerConfig: SchedulerConfig)
     extends Algebra[F]
     with LazyLogging {
 
@@ -49,7 +50,9 @@ class OneFrameService[F[_]: Concurrent](oneFrameClient: OneFrameClient[F],
     } yield {}
 
   override def scheduleCacheRefresh()(implicit timer: Timer[F]): Stream[F, Unit] =
-    Stream.eval(populateCache()) >> Stream.awakeEvery[F](4.minutes) >> Stream.eval(populateCache())
+    Stream.eval(populateCache()) >> Stream.awakeEvery[F](schedulerConfig.oneFrameRefresh.minutes) >> Stream.eval(
+      populateCache()
+    )
 
   private def updateCache(rates: List[OneFrameCurrencyInformation]): F[Unit] = {
     logger.info("Updating cache with latest values.")

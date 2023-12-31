@@ -1,6 +1,6 @@
 package forex
 
-import cats.effect.{Concurrent, Timer}
+import cats.effect.{ Concurrent, Timer }
 import forex.client.OneFrameClient
 import forex.config.ApplicationConfig
 import forex.domain.Rate
@@ -9,10 +9,10 @@ import forex.programs._
 import forex.services._
 import org.http4s._
 import org.http4s.implicits._
-import org.http4s.server.middleware.{AutoSlash, Timeout}
+import org.http4s.server.middleware.{ AutoSlash, Timeout }
 import scalacache.Cache
 import scalacache.caffeine.CaffeineCache
-import sttp.client.{HttpURLConnectionBackend, Identity, NothingT, SttpBackend}
+import sttp.client.{ HttpURLConnectionBackend, Identity, NothingT, SttpBackend }
 
 class Module[F[_]: Concurrent: Timer](config: ApplicationConfig) {
 
@@ -22,7 +22,7 @@ class Module[F[_]: Concurrent: Timer](config: ApplicationConfig) {
 
   private lazy val oneFrameClient: OneFrameClient[F] = OneFrameClient.OneFrameHttpClient(config.oneFrame)
 
-  val ratesService: RatesService[F] = RatesServices.live[F](oneFrameClient, rateCache, config.cache)
+  val ratesService: RatesService[F] = RatesServices.live[F](oneFrameClient, rateCache, config.cache, config.scheduler)
 
   private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService)
 

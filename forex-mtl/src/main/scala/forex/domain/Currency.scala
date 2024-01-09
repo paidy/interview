@@ -1,10 +1,11 @@
 package forex.domain
 
 import cats.Show
+import enumeratum._
 
-sealed trait Currency
+sealed trait Currency extends EnumEntry
 
-object Currency {
+object Currency extends Enum[Currency] {
   case object AUD extends Currency
   case object CAD extends Currency
   case object CHF extends Currency
@@ -14,6 +15,8 @@ object Currency {
   case object JPY extends Currency
   case object SGD extends Currency
   case object USD extends Currency
+
+  val values = findValues
 
   implicit val show: Show[Currency] = Show.show {
     case AUD => "AUD"

@@ -1,21 +1,19 @@
 package users.main
 
-import cats.data.Reader
+import cats.data.*
+import cats.implicits.*
+import cats.Applicative
 
-import users.config._
-import users.persistence.repositories._
+import users.config.*
+import users.persistence.repositories.*
 
-object Repositories {
-  val reader: Reader[Unit, Repositories] =
-    Reader((_: Unit) ⇒ Repositories())
+object Repositories:
 
-  val fromApplicationConfig: Reader[ApplicationConfig, Repositories] =
-    reader.local[ApplicationConfig](_ ⇒ ())
-}
+  def reader[F[_]: Applicative]: ReaderT[F, Unit, Repositories[F]] =
+    ReaderT((_: Unit) => Repositories().pure)
 
-final case class Repositories() {
+  def fromApplicationConfig[F[_]: Applicative]: ReaderT[F, ApplicationConfig, Repositories[F]] =
+    reader[F].local[ApplicationConfig](_ => ())
 
-  final val userRepository: UserRepository =
-    UserRepository.inMemory()
-
-}
+final case class Repositories[F[_]: Applicative]():
+  val userRepository: UserRepository[F] = UserRepository.inMemory()

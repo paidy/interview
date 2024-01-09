@@ -1,37 +1,31 @@
 package users.persistence.repositories.users
 
-import cats.implicits._
-
-import users.domain._
-import users.persistence.repositories._
-
 import scala.collection.concurrent.TrieMap
-import scala.concurrent.Future
 
-private[users] object InMemoryRepository {
-  private final val UserMap: TrieMap[User.Id, User] =
-    TrieMap.empty
-}
+import cats.implicits.*
+import cats.Applicative
 
-private[users] class InMemoryRepository extends UserRepository {
-  import InMemoryRepository._
+import users.domain.*
+import users.persistence.repositories.*
 
-  def insert(user: User): Future[Done] =
-    Future.successful {
-      UserMap + (user.id → user)
-      Done
-    }
+private[users] object InMemoryRepository:
+  private final val UserMap: TrieMap[User.Id, User] = TrieMap.empty
 
-  def get(id: User.Id): Future[Option[User]] =
-    Future.successful(UserMap.get(id))
+private[users] class InMemoryRepository[F[_]: Applicative] extends UserRepository[F]:
+  import InMemoryRepository.*
 
-  def getByUserName(userName: UserName): Future[Option[User]] =
-    Future.successful {
-      UserMap.collectFirst {
-        case (_, user) if user.userName === userName ⇒ user
+  def insert(user: User): F[Done] = {
+    UserMap.update(user.id, user)
+    Done
+  }.pure[F]
+
+  def get(id: User.Id): F[Option[User]] = UserMap.get(id).pure[F]
+
+  def getByUserName(userName: UserName): F[Option[User]] =
+    UserMap
+      .collectFirst {
+        case (_, user) if user.userName === userName => user
       }
-    }
+      .pure[F]
 
-  def all(): Future[List[User]] =
-    Future.successful(UserMap.values.toList)
-}
+  def all(): F[List[User]] = UserMap.values.toList.pure[F]

@@ -52,9 +52,7 @@ examine how you update the database and process the information given to you fro
 Good luck!
 
 ## Submission
-
-You can either submit your work with a GitHub repository or send us a zip file with your source files.  In both cases, 
-please provide a README file to indicate how to build and run your source as well as the expected outputs.
+[Please click here for our submission guide.](./README.md#how-to-submit)
 
 # Assignment
 

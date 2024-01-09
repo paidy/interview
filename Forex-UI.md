@@ -8,7 +8,7 @@
 **Treat it like production code**. That is, develop your software in the same way that you would for any code that is intended to be deployed to production. These may be toy exercises, but we really would like to get an idea of how you build code on a day-to-day basis.
 
 ## How to submit?
-[Please click here for our submission guide](./README.md#how-to-submit)
+[Please click here for our submission guide.](./README.md#how-to-submit)
 
 # An in-browser Forex rates SPA
 

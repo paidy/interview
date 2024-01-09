@@ -2,7 +2,7 @@ package forex.domain
 
 import java.time.OffsetDateTime
 
-case class Timestamp(value: OffsetDateTime) extends AnyVal
+final case class Timestamp(value: OffsetDateTime) extends AnyVal
 
 object Timestamp {
   def now: Timestamp =

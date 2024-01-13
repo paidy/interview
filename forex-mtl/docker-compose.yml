@@ -1,0 +1,39 @@
+version: "3"
+
+networks:
+  backend:
+
+services:
+
+  redis:
+    image: redis/redis-stack:latest
+    ports:
+      - "6379:6379"  # Default Redis port
+      - "8001:8001"  # Redis UI port
+    networks:
+      - backend
+
+  oneFrame:
+    image: paidyinc/one-frame
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+
+
+  forex-service:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ONE_FRAME_HOST: oneFrame
+      ONE_FRAME_PORT: 8080
+    depends_on:
+      - redis
+      - oneFrame
+    networks:
+      - backend

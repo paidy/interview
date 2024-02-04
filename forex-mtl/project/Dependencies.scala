@@ -15,6 +15,8 @@ object Dependencies {
     val scalaCheck     = "1.15.3"
     val scalaTest      = "3.2.7"
     val catsScalaCheck = "0.3.2"
+
+    val sttp = "3.9.2"
   }
 
   object Libraries {
@@ -44,6 +46,8 @@ object Dependencies {
     lazy val scalaTest      = "org.scalatest"     %% "scalatest"       % Versions.scalaTest
     lazy val scalaCheck     = "org.scalacheck"    %% "scalacheck"      % Versions.scalaCheck
     lazy val catsScalaCheck = "io.chrisdavenport" %% "cats-scalacheck" % Versions.catsScalaCheck
+
+    lazy val sttp            = "com.softwaremill.sttp.client3" %% "core" % Versions.sttp
   }
 
 }

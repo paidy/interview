@@ -16,7 +16,9 @@ class Module[F[_]: Concurrent: Timer](config: ApplicationConfig) {
     case "dummy" => RatesServices.dummy[F]
   }
 
-  private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService)
+  private val cacheService: CacheService = CacheServices.RedisCache(config.redis)
+
+  private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService, cacheService)
 
   private val ratesHttpRoutes: HttpRoutes[F] = new RatesHttpRoutes[F](ratesProgram).routes
 

@@ -32,9 +32,6 @@ The Forex service provides a single endpoint:
 }
 ```
 
-
-
-
 ## Requirement
 
 We need to implement the following use case:
@@ -46,16 +43,12 @@ We need to implement the following use case:
 Please note the following drawback of the **One-Frame service**:
 - The One-Frame service supports a maximum of 1000 requests per day for any given authentication token.
 
-
-## Assumption
-1. If we know `USD-JPY`, doesn't mean we can derive `JPY-USD = 1 / UDS-JPY`
-2. If we know `USD-JPY` and `JPY-SGD`, doesn't mean we can derive `USD-SGD = USD-JPY * JPY-USD`
-
 ## Tackling the Problem
 
-### Architecture
+### Assumption
 
-![Alt text](doc/architecture-0-basic.excalidraw)
+1. If we know `USD-JPY`, doesn't mean we can derive `JPY-USD = 1 / UDS-JPY`
+2. If we know `USD-JPY` and `JPY-SGD`, doesn't mean we can derive `USD-SGD = USD-JPY * JPY-USD`
 
 
 ### Counting the Worst Scenario
@@ -85,7 +78,19 @@ We need to lift the 2nd assumption:
   - if not, does `a=???JPY` and `b=SGD???`, return `1/a * 1/b`
 - In total, how many possible request a day? TODO
 
+### Final Solution
+So, what's the right solution?
+- Every 5 minute, get all possible /rates from One Frame Service
+- Put it into cache
+- This way we only need 288 request time at worst
+
 ## Test Design
+
+
+
+## Architecture
+
+![Alt text](doc/architecture-0-basic.excalidraw)
 
 
 ## HOWTO
@@ -96,8 +101,10 @@ We need to lift the 2nd assumption:
 2. Run Forex service
 3. Hit: http://localhost:9090/rates?from=USD&to=EUR
 
-### Testing
+### How to test
 
 ```bash
  docker run -p 8080:8080 paidyinc/one-frame
+ docker run --name my-redis -p 6379:6379 redis:7.2.4
+ docker exec -it my-redis redis-cli  
 ```

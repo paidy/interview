@@ -5,7 +5,7 @@ It's a service that can be consumed by other internal services to get the exchan
 so they don't have to care about the specifics of third-party providers.
 
 ## API
-The Forex service provides a single endpoint:
+The Forex service only provides a single endpoint:
 
 **GET** `<host>:<port>/rates?from=<currency_id>&to=<currency_id>`
 
@@ -36,23 +36,49 @@ The Forex service provides a single endpoint:
 
 We need to implement the following use case:
 - [x] The service returns an exchange rate when provided with 2 supported currencies
-- [ ] The rate should not be older than 5 minutes
-- [ ] The service should support at least 10,000 successful requests per day with 1 API token
-
+- [x] The rate should not be older than 5 minutes
+- [x] The service should support at least 10,000 successful requests per day with 1 API token
 
 Please note the following drawback of the **One-Frame service**:
 - The One-Frame service supports a maximum of 1000 requests per day for any given authentication token.
 
-## Tackling the Problem
+## HOWTO
+
+### How to Use
+
+1. Run `One Frame API`
+2. Run Forex service
+3. Hit: http://localhost:9090/rates?from=USD&to=EUR
+
+```bash
+ docker run -p 8080:8080 paidyinc/one-frame
+ docker run --name my-redis -p 6379:6379 redis:7.2.4
+ docker exec -it my-redis redis-cli  
+```
+
+### How to test
+
+## Architecture
+
+![Alt text](doc/architecture-1-cache.png)
+
+The system will consist of:
+- `Forex` service: main service that receive and response `/rates?from=<curr-1>&to=<curr-2>` request from user
+- `One Frame` service: source of information for our `Forex Service`. The `Forex` service need `One Frame` by calling this endpoint: `/rates?pair=<pair-1>&pair=<pair-2>`
+- `Redis`: cache to for faster lookup and solution to achieve 10,000request/day with only 
+
+## Discussion
+
+This section discussing how I derive the above architecture:
 
 ### Assumption
-
+Let's start with the most restrictive assumption.
 1. If we know `USD-JPY`, doesn't mean we can derive `JPY-USD = 1 / UDS-JPY`
 2. If we know `USD-JPY` and `JPY-SGD`, doesn't mean we can derive `USD-SGD = USD-JPY * JPY-USD`
 
 
 ### Counting the Worst Scenario
-So, we have these requirements:
+We have these requirements:
 - The service should support at least 10,000 successful requests per day with 1 API token (that can only serve 1000 request)
   - Forex should serve 10,000 requests a day
   - One Frame can only serve 1,000 request a day
@@ -80,31 +106,19 @@ We need to lift the 2nd assumption:
 
 ### Final Solution
 So, what's the right solution?
-- Every 5 minute, get all possible /rates from One Frame Service
-- Put it into cache
+- Cache all possible /rates from One Frame Service into Redis.
+  - Let say we only have 3 currency `USD`, `SGD`, `JPY`
+  - Then, we will save 3P2=6 keys into Redis
+  - (USDSGD -> Rate1, USDJPY -> Rate2, ... `JPYSGD` -> Rate6)
+
+How it's works?
+- When a user request to `Forex` service, we will:
+  - Search in the Redis Cache first. If found the pair, return.
+  - If not, do the caching process explained in above
+  - Set the `expire` for each key as required, i.e. `5 minutes`
 - This way we only need 288 request time at worst
 
 ## Test Design
 
-
-
-## Architecture
-
-![Alt text](doc/architecture-0-basic.excalidraw)
-
-
-## HOWTO
-
-### How to Use
-
-1. Run `One Frame API`
-2. Run Forex service
-3. Hit: http://localhost:9090/rates?from=USD&to=EUR
-
-### How to test
-
-```bash
- docker run -p 8080:8080 paidyinc/one-frame
- docker run --name my-redis -p 6379:6379 redis:7.2.4
- docker exec -it my-redis redis-cli  
-```
+- Test getting 1 pair given it's exists in cache
+- Test getting 1 pair given it's exists it's not exist cache

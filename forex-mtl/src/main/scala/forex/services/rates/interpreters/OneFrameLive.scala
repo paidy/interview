@@ -2,20 +2,23 @@ package forex.services.rates.interpreters
 
 import cats.Applicative
 import cats.implicits.catsSyntaxApplicativeId
-import forex.config.OneFrameConfig
+import forex.config.{OneFrameConfig, RedisConfig}
 import forex.domain.Rate.Pair
 import forex.domain.{Currency, Price, Rate, Timestamp}
+import forex.repo.RedisCache
 import sttp.client3.{HttpURLConnectionBackend, UriContext, basicRequest}
-import forex.services.rates.Algebra
+import forex.services.rates.{Algebra, OneFrameResp}
 import forex.services.rates.errors.Error.OneFrameLookupFailed
 import forex.services.rates.errors.{Error => OneFrameError}
 import io.circe.{Error => CirceError}
 
-class OneFrameLive[F[_]: Applicative](config: OneFrameConfig) extends Algebra[F] {
+class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfig: RedisConfig) extends Algebra[F] {
+
+  val allPairs = Currency.allPairs
 
   private def getRatesFromOneFrameAPI(token: String, pair: Pair): Either[OneFrameError, String] = {
 
-    val url = uri"http://${config.http.host}:${config.http.port}/rates?pair=${pair.from}${pair.to}"
+    val url = uri"http://${oneFrameConfig.http.host}:${oneFrameConfig.http.port}/rates?pair=${pair.from}${pair.to}"
     val request = basicRequest
       .header("token", token)
       .get(url)
@@ -50,7 +53,12 @@ class OneFrameLive[F[_]: Applicative](config: OneFrameConfig) extends Algebra[F]
 //  F[Either[OneFrameError, Rate]]
   override def get(pair: Rate.Pair): F[OneFrameError Either Rate] = {
 
-    getRatesFromOneFrameAPI(config.token, pair) match {
+    val rc = RedisCache.getInstance(redisConfig)
+
+//    val a = rc.conn.get("USDJPY")
+//    println(a)
+
+    getRatesFromOneFrameAPI(oneFrameConfig.token, pair) match {
       case Right(jsonString: String) => ratesDecoder(jsonString).pure[F]
       case Left(_) => ???
     }

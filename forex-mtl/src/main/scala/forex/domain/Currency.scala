@@ -39,4 +39,24 @@ object Currency {
     case "USD" => USD
   }
 
+  import scala.reflect.runtime.universe._
+
+  def findSubclasses[T: TypeTag]: List[String] = {
+    val _ = runtimeMirror(getClass.getClassLoader)
+    val parentType = typeOf[T]
+
+    val subclasses = for {
+      sym <- parentType.typeSymbol.asClass.knownDirectSubclasses
+      if sym.isClass
+    } yield sym.name.toString
+
+    subclasses.toList
+  }
+
+  lazy val allCurrencies = findSubclasses[Currency]
+  lazy val allPairs = for {
+    i <- allCurrencies
+    j <- allCurrencies
+    if i != j
+  } yield (i,j)
 }

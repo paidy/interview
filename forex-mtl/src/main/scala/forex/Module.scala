@@ -1,24 +1,26 @@
 package forex
 
-import cats.effect.{ Concurrent, Timer }
+import cats.effect.{Concurrent, Timer}
 import forex.config.ApplicationConfig
 import forex.http.rates.RatesHttpRoutes
 import forex.services._
 import forex.programs._
+import forex.repo.RedisCache
 import org.http4s._
 import org.http4s.implicits._
-import org.http4s.server.middleware.{ AutoSlash, Timeout }
+import org.http4s.server.middleware.{AutoSlash, Timeout}
 
 class Module[F[_]: Concurrent: Timer](config: ApplicationConfig) {
 
+  // initiate redisCache
+  RedisCache.getInstance(config.redis)
+
   private val ratesService: RatesService[F] = config.interpreter match {
-    case "live" => RatesServices.live[F](config.oneFrameSvc)
+    case "live" => RatesServices.live[F](config.oneFrameSvc, config.redis)
     case "dummy" => RatesServices.dummy[F]
   }
 
-  private val cacheService: CacheService = CacheServices.RedisCache(config.redis)
-
-  private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService, cacheService)
+  private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService)
 
   private val ratesHttpRoutes: HttpRoutes[F] = new RatesHttpRoutes[F](ratesProgram).routes
 

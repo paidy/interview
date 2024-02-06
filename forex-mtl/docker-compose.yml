@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  one-frame:
+    image: paidyinc/one-frame
+    ports:
+      - "8080:8080"
+
+  my-redis:
+    image: redis:7.2.4
+    ports:
+      - "6379:6379"
+#  docker-compose exec my-redis redis-cli

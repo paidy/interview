@@ -1,4 +1,4 @@
-package forex.services.rates.interpreters
+package forex.services.rates
 
 import io.circe.Decoder
 

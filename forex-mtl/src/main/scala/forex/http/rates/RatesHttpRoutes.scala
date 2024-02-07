@@ -19,9 +19,9 @@ class RatesHttpRoutes[F[_]: Sync](rates: RatesProgram[F]) extends Http4sDsl[F] {
   private val httpRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root :? FromQueryParam(from) +& ToQueryParam(to) =>
       (from, to).tupled.fold(
-        err => BadRequest(err.toString),
+        err => BadRequest(err.head.getMessage()),
         validated => validated match {
-          case (from, to) if from == to => {}
+          case (from, to) if from == to =>
             val sameCurrencyResp = GetApiResponse(from, from, Price(BigDecimal(1)), Timestamp.now)
             Ok(sameCurrencyResp)
           case (from, to) =>
@@ -31,6 +31,8 @@ class RatesHttpRoutes[F[_]: Sync](rates: RatesProgram[F]) extends Http4sDsl[F] {
             }
         }
       )
+    case GET -> Root :? FromQueryParam(_) =>  BadRequest("\"to\" param must be exist")
+    case GET -> Root :? ToQueryParam(_) =>  BadRequest("\"from\" param must be exist")
   }
 
   val routes: HttpRoutes[F] = Router(

@@ -13,7 +13,7 @@ object QueryParams {
     QueryParamDecoder[String]
       .emap(currencyStr => Try(Currency.fromString(currencyStr))
       .toEither
-      .leftMap(t => ParseFailure(t.getMessage, t.getMessage)))
+      .leftMap(_ => ParseFailure("Parse Failure", currencyStr + " is not a valid currency")))
 
   object FromQueryParam extends ValidatingQueryParamDecoderMatcher[Currency]("from")
   object ToQueryParam extends ValidatingQueryParamDecoderMatcher[Currency]("to")

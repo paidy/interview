@@ -8,33 +8,34 @@ import forex.domain.{Currency, Price, Rate, Timestamp}
 import forex.repo.RedisCache
 import sttp.client3.{HttpURLConnectionBackend, UriContext, basicRequest}
 import forex.services.rates.{Algebra, OneFrameResp}
-import forex.services.rates.errors.RateServiceError.OneFrameLookupFailed
+import forex.services.rates.errors.RateServiceError.{OneFrameAPIRequestFailed, OneFrameParseRatesFailed}
 import forex.services.rates.errors.RateServiceError
 import io.circe.{Error => CirceError}
+import sttp.model.Uri
 
 
 class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfig: RedisConfig) extends Algebra[F] {
 
-  private def getRatesFromOneFrameAPI(token: String): Either[RateServiceError, String] = {
-
-    val allPairs: List[String] = Currency.allPairs.map(p => s"${p._1}${p._2}")
-//    [USDJPY, JPYSGD, ...]
-
-    val baseUrl = uri"http://${oneFrameConfig.http.host}:${oneFrameConfig.http.port}/rates"
-
-    val url = baseUrl.withParams(allPairs.map(p => ("pair", p)): _*)
-
-    val request = basicRequest
+  private def sendRequest(url: Uri, token: String): Either[RateServiceError, String]  = {
+    basicRequest
       .header("token", token)
       .get(url)
-
-    val backend = HttpURLConnectionBackend()
-    val response = request.send(backend)
-
-    response.body match {
+      .send(HttpURLConnectionBackend())
+      .body match {
       case Right(jsonString) => Right(jsonString)
-      case Left(errorMessage) => Left(OneFrameLookupFailed(errorMessage))
+      case Left(errorMessage) => Left(OneFrameAPIRequestFailed(errorMessage))
     }
+  }
+
+  private def getRatesFromOneFrameAPI(token: String): Either[RateServiceError, String] = {
+
+    val oneFrameHostPort = s"${oneFrameConfig.http.host}:${oneFrameConfig.http.port}"
+    val baseUrl = uri"http://${oneFrameHostPort}/rates"
+
+    val allPairs: List[String] = Currency.allPairs.map(p => s"${p._1}${p._2}") // [USDJPY, JPYSGD, ...]
+    val url = baseUrl.withParams(allPairs.map(p => ("pair", p)): _*)
+
+    sendRequest(url, token)
   }
 
   private def ratesDecoder(jsonString: String): Either[RateServiceError, List[Rate]] = {
@@ -49,7 +50,7 @@ class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfi
 
     result match {
       case Right(resp) => Right(resp.map(x => convertOneFrameRateIntoRate(x)))
-      case Left(error) => Left(OneFrameLookupFailed(error.getMessage))
+      case Left(error) => Left(OneFrameParseRatesFailed(error.getMessage))
     }
   }
 

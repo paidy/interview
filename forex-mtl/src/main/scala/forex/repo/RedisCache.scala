@@ -8,9 +8,9 @@ import io.circe.Encoder
 class RedisCache(config: RedisConfig) {
   private val conn = new RedisClient(config.host, config.port)
 
-  val pairToKey = (pair: Rate.Pair) => s"${pair.to}${pair.from}"
+  val pairToString = (pair: Rate.Pair) => s"${pair.to}${pair.from}"
 
-  def get(pair: Rate.Pair): Option[Rate] = conn.get(pairToKey(pair)) match {
+  def get(pair: Rate.Pair): Option[Rate] = conn.get(pairToString(pair)) match {
     case Some(jsonString) => io.circe.parser.decode[Rate](jsonString) match {
       case Right(data) => Some(data)
       case Left(_) => None
@@ -19,7 +19,7 @@ class RedisCache(config: RedisConfig) {
   }
 
   def setOne(rate: Rate): Boolean = conn.set(
-    pairToKey(rate.pair),
+    pairToString(rate.pair),
     Encoder[Rate].apply(rate).noSpaces,
     expire = config.expire
   )

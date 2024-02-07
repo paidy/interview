@@ -5,21 +5,24 @@ import cats.implicits._
 import forex.config.{OneFrameConfig, RedisConfig}
 import forex.domain.Rate.Pair
 import forex.domain.{Currency, Price, Rate, Timestamp}
-import forex.repo.{RedisCache}
+import forex.repo.RedisCache
 import sttp.client3.{HttpURLConnectionBackend, UriContext, basicRequest}
 import forex.services.rates.{Algebra, OneFrameResp}
 import forex.services.rates.errors.RateServiceError.OneFrameLookupFailed
 import forex.services.rates.errors.RateServiceError
 import io.circe.{Error => CirceError}
 
+
 class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfig: RedisConfig) extends Algebra[F] {
 
   private def getRatesFromOneFrameAPI(token: String): Either[RateServiceError, String] = {
 
-    val allPairs = Currency.allPairs
+    val allPairs: List[String] = Currency.allPairs.map(p => s"${p._1}${p._2}")
+//    [USDJPY, JPYSGD, ...]
 
     val baseUrl = uri"http://${oneFrameConfig.http.host}:${oneFrameConfig.http.port}/rates"
-    val url = baseUrl.withParams(allPairs.map(p => ("pair", p.show)): _*)
+
+    val url = baseUrl.withParams(allPairs.map(p => ("pair", p)): _*)
 
     val request = basicRequest
       .header("token", token)
@@ -34,7 +37,7 @@ class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfi
     }
   }
 
-  private def ratesDecoder(jsonString: String): Either[RateServiceError, Rate] = {
+  private def ratesDecoder(jsonString: String): Either[RateServiceError, List[Rate]] = {
 
     val result: Either[CirceError, List[OneFrameResp]] = io.circe.parser.decode[List[OneFrameResp]](jsonString)
 
@@ -45,7 +48,7 @@ class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfi
       )
 
     result match {
-      case Right(resp) => Right(resp.map(x => convertOneFrameRateIntoRate(x)).head)
+      case Right(resp) => Right(resp.map(x => convertOneFrameRateIntoRate(x)))
       case Left(error) => Left(OneFrameLookupFailed(error.getMessage))
     }
   }
@@ -68,7 +71,13 @@ class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfi
     tmp match {
       case Some(rate: Rate) => rate.asRight[RateServiceError].pure[F]
       case None => getRatesFromOneFrameAPI(oneFrameConfig.token) match {
-        case Right(jsonString: String) => ratesDecoder(jsonString).pure[F]
+        case Right(jsonString: String) => ratesDecoder(jsonString) match {
+          case Right(rates: List[Rate]) => {
+            rc.setAll(rates)
+            rates.filter(r => r.pair == pair).head.asRight[RateServiceError].pure[F]
+          }
+          case Left(error) => error.asLeft[Rate].pure[F]
+        }
         case Left(error) => error.asLeft[Rate].pure[F]
       }
     }

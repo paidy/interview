@@ -1,24 +1,27 @@
 package forex.services.rates.interpreters
 
 import cats.Applicative
-import cats.implicits.catsSyntaxApplicativeId
+import cats.implicits._
 import forex.config.{OneFrameConfig, RedisConfig}
 import forex.domain.Rate.Pair
 import forex.domain.{Currency, Price, Rate, Timestamp}
-import forex.repo.RedisCache
+import forex.repo.{RedisCache}
 import sttp.client3.{HttpURLConnectionBackend, UriContext, basicRequest}
 import forex.services.rates.{Algebra, OneFrameResp}
-import forex.services.rates.errors.Error.OneFrameLookupFailed
-import forex.services.rates.errors.{Error => OneFrameError}
+import forex.services.rates.errors.RateServiceError.OneFrameLookupFailed
+import forex.services.rates.errors.RateServiceError
 import io.circe.{Error => CirceError}
 
 class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfig: RedisConfig) extends Algebra[F] {
 
-  val allPairs = Currency.allPairs
+  private def getRatesFromOneFrameAPI(token: String): Either[RateServiceError, String] = {
 
-  private def getRatesFromOneFrameAPI(token: String, pair: Pair): Either[OneFrameError, String] = {
+    val allPairs = Currency.allPairs
 
-    val url = uri"http://${oneFrameConfig.http.host}:${oneFrameConfig.http.port}/rates?pair=${pair.from}${pair.to}"
+    val allPairsParam = allPairs.map(p => s"pair=${p._1}${p._2}")
+    println(allPairsParam)
+
+    val url = uri"http://${oneFrameConfig.http.host}:${oneFrameConfig.http.port}/rates?pair=${allPairsParam}"
     val request = basicRequest
       .header("token", token)
       .get(url)
@@ -32,7 +35,7 @@ class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfi
     }
   }
 
-  private def ratesDecoder(jsonString: String): Either[OneFrameError, Rate] = {
+  private def ratesDecoder(jsonString: String): Either[RateServiceError, Rate] = {
 
     val result: Either[CirceError, List[OneFrameResp]] = io.circe.parser.decode[List[OneFrameResp]](jsonString)
 
@@ -51,16 +54,24 @@ class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfi
 //  Learned: both of this are the same
 //  F[OneFrameError Either Rate]
 //  F[Either[OneFrameError, Rate]]
-  override def get(pair: Rate.Pair): F[OneFrameError Either Rate] = {
+  override def get(pair: Rate.Pair): F[RateServiceError Either Rate] = {
+
+//    Step 1: Check if the pair already cached
+//    Step 2a: If yes,
+//       - return answer: Rate
+//    Step 2b: If no,
+//       - request from the One Frame Service: allPairs
+//       -
 
     val rc = RedisCache.getInstance(redisConfig)
+    val tmp: Option[Rate] = rc.get(pair)
 
-//    val a = rc.conn.get("USDJPY")
-//    println(a)
-
-    getRatesFromOneFrameAPI(oneFrameConfig.token, pair) match {
-      case Right(jsonString: String) => ratesDecoder(jsonString).pure[F]
-      case Left(_) => ???
+    tmp match {
+      case Some(rate: Rate) => rate.asRight[RateServiceError].pure[F]
+      case None => getRatesFromOneFrameAPI(oneFrameConfig.token) match {
+        case Right(jsonString: String) => ratesDecoder(jsonString).pure[F]
+        case Left(error) => error.asLeft[Rate].pure[F]
+      }
     }
   }
 

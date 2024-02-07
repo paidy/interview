@@ -1,6 +1,6 @@
 package forex.programs.rates
 
-import forex.services.rates.errors.{ Error => RatesServiceError }
+import forex.services.rates.errors.{ RateServiceError => RatesServiceError }
 
 object errors {
 

@@ -53,8 +53,8 @@ object Currency {
     subclasses.toList
   }
 
-  lazy val allCurrencies = findSubclasses[Currency]
-  lazy val allPairs = for {
+  val allCurrencies = findSubclasses[Currency]
+  val allPairs = for {
     i <- allCurrencies
     j <- allCurrencies
     if i != j

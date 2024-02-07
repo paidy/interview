@@ -18,10 +18,9 @@ class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfi
 
     val allPairs = Currency.allPairs
 
-    val allPairsParam = allPairs.map(p => s"pair=${p._1}${p._2}")
-    println(allPairsParam)
+    val baseUrl = uri"http://${oneFrameConfig.http.host}:${oneFrameConfig.http.port}/rates"
+    val url = baseUrl.withParams(allPairs.map(p => ("pair", p.show)): _*)
 
-    val url = uri"http://${oneFrameConfig.http.host}:${oneFrameConfig.http.port}/rates?pair=${allPairsParam}"
     val request = basicRequest
       .header("token", token)
       .get(url)

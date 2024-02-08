@@ -46,15 +46,9 @@ Please note the following drawback of the **One-Frame service**:
 
 ### How to Use
 
-1. Run `One Frame API`
-2. Run Forex service
+1. Run `One Frame API` and Redis: `docker-compose up`
+2. Run Forex service: `sbt run`
 3. Hit: http://localhost:9090/rates?from=USD&to=EUR
-
-```bash
- docker run -p 8080:8080 paidyinc/one-frame
- docker run --name my-redis -p 6379:6379 redis:7.2.4
- docker exec -it my-redis redis-cli  
-```
 
 ### How to test
 
@@ -102,7 +96,11 @@ We need to lift the 2nd assumption:
   - does `JPYSGD` exists
   - if not, does `a=JPY???` and `b=???SGD`, return `a*b`
   - if not, does `a=???JPY` and `b=SGD???`, return `1/a * 1/b`
-- In total, how many possible request a day? TODO
+- Given 9 currency, there are `9P2 = 9*8 = 72` pair
+- There are `9-2=7` currencies left we can pair, so total of `72*7=504`
+- For each 3 pair, say `JPY`, `???`, `SGD`, we need to exclude the duplicate by dividing them by `3!`
+- There will be `504/6 = 84` requests at max in 5 minute interval or `84*288 = 24192`
+- Actually, this is worse then previous solution and implementation will be really complicated.
 
 ### Final Solution
 So, what's the right solution?
@@ -124,8 +122,8 @@ How it's works?
 - Test getting 1 pair given it's exists it's not exist cache
 
 ## Layer of Application
-1. domain:
-2. repo: 
-3. services:
-4. programs:
-5. http:
+1. domain: contains the domain logic of the application, including entities and value objects such as `Rate`, `Currency`
+2. repo: provides access to storage such as database, `Redis` connection are in this layer
+3. services: encapsulates application-specific logic and orchestrates interactions between different components
+4. programs: consists of standalone executable programs or scripts that perform specific tasks
+5. http: handles HTTP requests and responses, exposing endpoints for interaction with the application over the web

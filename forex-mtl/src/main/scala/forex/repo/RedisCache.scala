@@ -8,24 +8,31 @@ import io.circe.Encoder
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.{Failure, Success, Try}
 
-class RedisCache(config: RedisConfig) {
-  private val conn = new RedisClient(config.host, config.port)
+case class RedisCache(config: RedisConfig) {
+  private val conn: Try[RedisClient] = Try(new RedisClient(config.host, config.port))
 
-  def get(pair: Rate.Pair): Option[Rate] = conn.get(Pair.stringify(pair)) match {
-    case Some(jsonString) => io.circe.parser.decode[Rate](jsonString) match {
-      case Right(data) => Some(data)
-      case Left(_) => None
+  def get(pair: Rate.Pair): Option[Rate] = conn match {
+    case Failure(_) => None
+    case Success(conn) => conn.get(Pair.stringify(pair)) match {
+      case Some(jsonString) => io.circe.parser.decode[Rate](jsonString) match {
+        case Right(data) => Some(data)
+        case Left(_) => None
+      }
+      case None => None
     }
-    case None => None
   }
 
   def setOne(rate: Rate): Future[Boolean] = Future {
-    conn.set(
-      Pair.stringify(rate.pair),
-      Encoder[Rate].apply(rate).noSpaces,
-      expire = config.expire
-    )
+    conn match {
+      case Failure(_) => false
+      case Success(conn) => conn.set(
+        Pair.stringify(rate.pair),
+        Encoder[Rate].apply(rate).noSpaces,
+        expire = config.expire
+      )
+    }
   }
 
   def setAll(rates: List[Rate]): Future[Boolean] = {

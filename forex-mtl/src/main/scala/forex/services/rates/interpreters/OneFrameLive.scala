@@ -13,10 +13,6 @@ import forex.services.rates.errors.RateServiceError
 import io.circe.{Error => CirceError}
 import sttp.model.Uri
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-import scala.util.{Failure, Success}
-
 
 class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfig: RedisConfig) extends Algebra[F] {
 
@@ -74,20 +70,23 @@ class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfi
     val maybeRate: Option[Rate] = rc.get(pair)
 
     maybeRate match {
-      case Some(rate: Rate) => rate.asRight[RateServiceError].pure[F]
-      case None => getRatesFromOneFrameAPI(oneFrameConfig.token) match {
-        case Right(jsonString: String) => ratesDecoder(jsonString) match {
-          case Right(rates: List[Rate]) => {
-            val setAllPairsFuture = rc.setAll(rates)
-            setAllPairsFuture.onComplete {
-              case Success(_) => println(s"success setAll pairs in Redis")
-              case Failure(e) => println(s"failed to setAll pairs in Redis, error: ${e}")
+      case Some(rate: Rate) => {
+        println("Get rate from RedisCache")
+        rate.asRight[RateServiceError].pure[F]
+      }
+      case None => {
+        println("Get rate from OneFrame Service")
+        getRatesFromOneFrameAPI(oneFrameConfig.token) match {
+          case Right(jsonString: String) => ratesDecoder(jsonString) match {
+            case Right(rates: List[Rate]) => {
+              rc.setAll(rates)
+              println("cache all pairs in future")
+              rates.filter(r => r.pair == pair).head.asRight[RateServiceError].pure[F]
             }
-            rates.filter(r => r.pair == pair).head.asRight[RateServiceError].pure[F]
+            case Left(error) => error.asLeft[Rate].pure[F]
           }
           case Left(error) => error.asLeft[Rate].pure[F]
         }
-        case Left(error) => error.asLeft[Rate].pure[F]
       }
     }
   }

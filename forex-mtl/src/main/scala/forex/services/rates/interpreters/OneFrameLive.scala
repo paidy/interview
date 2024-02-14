@@ -13,6 +13,10 @@ import forex.services.rates.errors.RateServiceError
 import io.circe.{Error => CirceError}
 import sttp.model.Uri
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
+import scala.util.{Failure, Success}
+
 
 class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfig: RedisConfig) extends Algebra[F] {
 
@@ -67,14 +71,18 @@ class OneFrameLive[F[_]: Applicative](oneFrameConfig: OneFrameConfig, redisConfi
 //       -
 
     val rc = RedisCache.getInstance(redisConfig)
-    val tmp: Option[Rate] = rc.get(pair)
+    val maybeRate: Option[Rate] = rc.get(pair)
 
-    tmp match {
+    maybeRate match {
       case Some(rate: Rate) => rate.asRight[RateServiceError].pure[F]
       case None => getRatesFromOneFrameAPI(oneFrameConfig.token) match {
         case Right(jsonString: String) => ratesDecoder(jsonString) match {
           case Right(rates: List[Rate]) => {
-            rc.setAll(rates)
+            val setAllPairsFuture = rc.setAll(rates)
+            setAllPairsFuture.onComplete {
+              case Success(_) => println(s"success setAll pairs in Redis")
+              case Failure(e) => println(s"failed to setAll pairs in Redis, error: ${e}")
+            }
             rates.filter(r => r.pair == pair).head.asRight[RateServiceError].pure[F]
           }
           case Left(error) => error.asLeft[Rate].pure[F]

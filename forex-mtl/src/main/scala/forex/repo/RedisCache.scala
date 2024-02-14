@@ -6,6 +6,9 @@ import forex.domain.Rate
 import forex.domain.Rate.Pair
 import io.circe.Encoder
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 class RedisCache(config: RedisConfig) {
   private val conn = new RedisClient(config.host, config.port)
 
@@ -17,13 +20,18 @@ class RedisCache(config: RedisConfig) {
     case None => None
   }
 
-  def setOne(rate: Rate): Boolean = conn.set(
-    Pair.stringify(rate.pair),
-    Encoder[Rate].apply(rate).noSpaces,
-    expire = config.expire
-  )
+  def setOne(rate: Rate): Future[Boolean] = Future {
+    conn.set(
+      Pair.stringify(rate.pair),
+      Encoder[Rate].apply(rate).noSpaces,
+      expire = config.expire
+    )
+  }
 
-  def setAll(rates: List[Rate]): Boolean = rates.map(rate => setOne(rate)).forall(identity)
+  def setAll(rates: List[Rate]): Future[Boolean] = {
+    val setResults: List[Future[Boolean]] = rates.map(rate => setOne(rate))
+    Future.sequence(setResults).map(_.forall(identity))
+  }
 }
 
 object RedisCache {

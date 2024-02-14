@@ -11,4 +11,7 @@ object Rate {
       from: Currency,
       to: Currency
   )
+  object Pair {
+    val stringify = (pair: Rate.Pair) => s"${pair.to}${pair.from}"
+  }
 }

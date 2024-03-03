@@ -14,6 +14,7 @@ object Dependencies {
     val logback        = "1.2.3"
     val scalaCheck     = "1.15.3"
     val scalaTest      = "3.2.7"
+    val sttp           = "4.0.0-M1"
     val catsScalaCheck = "0.3.2"
   }
 
@@ -33,6 +34,7 @@ object Dependencies {
     lazy val circeGenericExt = circe("circe-generic-extras")
     lazy val circeParser     = circe("circe-parser")
     lazy val pureConfig      = "com.github.pureconfig" %% "pureconfig" % Versions.pureConfig
+    lazy val sttpClient            = "com.softwaremill.sttp.client4" %% "core" % Versions.sttp
 
     // Compiler plugins
     lazy val kindProjector = "org.typelevel" %% "kind-projector" % Versions.kindProjector cross CrossVersion.full

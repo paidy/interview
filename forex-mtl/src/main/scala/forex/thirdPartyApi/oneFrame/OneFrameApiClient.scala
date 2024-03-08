@@ -11,6 +11,7 @@ import scala.collection.immutable.HashMap
 import sttp.client4.quick._
 import sttp.model.Uri
 import errors._
+import forex.logging.Logger.logger
 
 final case class RateSchema(from: String, to: String, bid: BigDecimal, ask: BigDecimal, price: BigDecimal, time_stamp: String)
 final case class ErrorResponse(error: String)
@@ -39,8 +40,12 @@ class OneFrameApiClient {
 		val maybeRateDtos = decode[List[RateSchema]](response.body) match {
 			case Left(_) => 
 				decode[ErrorResponse](response.body) match {
-					case Left(_) => Left(errors.OneFrameApiClientError.JsonDecodingError("Could not decode JSON"))
-					case Right(r) => Left(errors.OneFrameApiClientError.RequestError(r.error))
+					case Left(_) => 
+						logger.error(s"Could not decode JSON: ${response.body}")
+						Left(errors.OneFrameApiClientError.JsonDecodingError("Could not decode JSON"))
+					case Right(r) => 
+						logger.error(s"Error from OneFrame API.\nURL: ${url}\nError: ${r.error}")
+						Left(errors.OneFrameApiClientError.RequestError(r.error))
 				}
 				
 			case Right(i) => Right(i)

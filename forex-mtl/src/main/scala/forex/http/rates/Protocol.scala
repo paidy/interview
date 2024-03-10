@@ -44,7 +44,7 @@ object Protocol {
   implicit val errorEncoder: Encoder[GetApiError] =
     deriveConfiguredEncoder[GetApiError]
 
-  implicit val errorTypeConder: Encoder[ErrorType] = 
+  implicit val errorTypeEncoder: Encoder[ErrorType] = 
     Encoder.instance[ErrorType] { ErrorType.show.show _ andThen Json.fromString }
 
 }

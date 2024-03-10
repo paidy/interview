@@ -26,8 +26,8 @@ class RatesHttpRoutes[F[_]: Sync](rates: RatesProgram[F]) extends Http4sDsl[F] {
 
       maybeValidatedParams match {
         case Left(e) => BadRequest(e)
-        case Right(validateParams) => {
-          val maybeRate = rates.get(RatesProgramProtocol.GetRatesRequest(validateParams.from, validateParams.to))
+        case Right(validatedParams) => {
+          val maybeRate = rates.get(RatesProgramProtocol.GetRatesRequest(validatedParams.from, validatedParams.to))
 
           maybeRate.flatMap { r =>
             r match {

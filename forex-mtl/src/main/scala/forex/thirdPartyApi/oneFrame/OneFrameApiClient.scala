@@ -27,38 +27,33 @@ object ErrorResponse {
 class OneFrameApiClient {
   def getAll(): Either[OneFrameApiClientError, Map[Rate.Pair, Rate]] = {
 		// Build URL and add currency pairs as query parameters 
-		var url: Uri = config.endpoint.get()
+		implicit var url: Uri = config.endpoint.get()
+
 		this.getCurrencyPairs()
-		.foreach((pair) => {
-			url = url.addParam("pair", pair.from.toString() + pair.to.toString())
-		})
+			.foreach((pair) => {
+				url = url.addParam("pair", pair.from.toString() + pair.to.toString())
+			})
 
 		// Send request
-		val response = quickRequest.get(url).header("token", config.token.get()).send()
+		val response = quickRequest
+			.get(url)
+			.header("token", config.token.get())
+			.send()
 		
-		// Convert response body to RateDtos
-		val maybeRateDtos = decode[List[RateSchema]](response.body) match {
-			case Left(_) => 
-				decode[ErrorResponse](response.body) match {
-					case Left(_) => 
-						logger.error(s"Could not decode JSON: ${response.body}")
-						Left(errors.OneFrameApiClientError.JsonDecodingError("Could not decode JSON"))
-					case Right(r) => 
-						logger.error(s"Error from OneFrame API.\nURL: ${url}\nError: ${r.error}")
-						Left(errors.OneFrameApiClientError.RequestError(r.error))
-				}
-				
-			case Right(i) => Right(i)
-		}
+		// Convert response body to RateSchema
+		val maybeRateSchemas = decode[List[RateSchema]](response.body).fold(
+			_ => Left(decodeErrorResponse(response.body)),
+			r => Right(r)
+		)
 
-		var rateMap: Map[Rate.Pair, Rate] = new HashMap()
+		var rateMap = new HashMap[Rate.Pair, Rate]()
 
-		maybeRateDtos.fold(
+		maybeRateSchemas.fold(
 			e => Left(e),
-			rateDtos => {
-				for (rateDto <- rateDtos) {
-					val ratePair = Rate.Pair(Currency.fromString(rateDto.from), Currency.fromString(rateDto.to))
-					val rate = Rate(ratePair, Price(rateDto.price), Timestamp.fromString(rateDto.time_stamp))
+			rateSchemas => {
+				for (rateSchema <- rateSchemas) {
+					val ratePair = Rate.Pair(Currency.fromString(rateSchema.from), Currency.fromString(rateSchema.to))
+					val rate = Rate(ratePair, Price(rateSchema.price), Timestamp.fromString(rateSchema.time_stamp))
 					rateMap = rateMap + (ratePair -> rate)
 				}
 				Right(rateMap)
@@ -75,4 +70,17 @@ class OneFrameApiClient {
 
 		return pairs
   }
+
+	private def decodeErrorResponse(response: String)(implicit url: Uri): OneFrameApiClientError = {
+		decode[ErrorResponse](response).fold(
+			_ => {
+				logger.error(s"Could not decode JSON: ${response}")
+				errors.OneFrameApiClientError.JsonDecodingError("Could not decode JSON")
+			},
+			r => {
+				logger.error(s"Error from OneFrame API.\nURL: ${url}\nError: ${r.error}")
+				errors.OneFrameApiClientError.RequestError(r.error)
+			}
+		)
+	}
 }

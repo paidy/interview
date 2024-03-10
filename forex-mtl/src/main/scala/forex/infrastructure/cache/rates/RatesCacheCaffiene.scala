@@ -1,4 +1,4 @@
-package forex.infrastructure.cache
+package forex.infrastructure.cache.rates
 
 import forex.services.rates.RatesCache
 import forex.domain.Rate

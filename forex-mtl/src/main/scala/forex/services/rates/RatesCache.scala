@@ -1,7 +1,8 @@
 package forex.services.rates
 
 import forex.domain.Rate
-import forex.infrastructure.ratesCacheCaffiene
+import scala.concurrent.duration._
+import forex.infrastructure.ratesCacheFactory
 
 trait RatesCache {
   def get(pair: Rate.Pair): Option[Rate]
@@ -10,5 +11,5 @@ trait RatesCache {
 }
 
 object RatesCache {
-    final val ratesCache = ratesCacheCaffiene
+  final val ratesCache = ratesCacheFactory.create(3.minute, 100)
 }

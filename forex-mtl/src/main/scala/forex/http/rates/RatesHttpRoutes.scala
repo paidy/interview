@@ -17,29 +17,23 @@ class RatesHttpRoutes[F[_]: Sync](rates: RatesProgram[F]) extends Http4sDsl[F] {
 
   private val httpRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root :? FromQueryParam(maybeFrom) +& ToQueryParam(maybeTo) =>
-      
-      val maybeValidatedParams = validateParams(new Params(maybeFrom.toOption, maybeTo.toOption))
-        .fold(
-          e => Left(Protocol.GetApiError(ErrorType.InvalidRate, e.sanitized)),
-          p => Right(p)
+      validateParams(new Params(maybeFrom.toOption, maybeTo.toOption))
+      .fold(
+        err => Left(BadRequest(Protocol.GetApiError(ErrorType.InvalidRate, err.sanitized))),
+        validatedParams => Right(validatedParams)
+      )
+      .map(validatedParams => rates.get(
+        RatesProgramProtocol.GetRatesRequest(validatedParams.from, validatedParams.to)
+      ))
+      .map(maybeRate => maybeRate.flatMap { r =>
+        r.fold(
+          _ => InternalServerError(Protocol.GetApiError(
+            ErrorType.InterpreterError, "Error has occurred. Please try again later."
+            )),
+          rate => Ok(rate.asGetApiResponse)
         )
-
-      maybeValidatedParams match {
-        case Left(e) => BadRequest(e)
-        case Right(validatedParams) => {
-          val maybeRate = rates.get(RatesProgramProtocol.GetRatesRequest(validatedParams.from, validatedParams.to))
-
-          maybeRate.flatMap { r =>
-            r match {
-                case Left(_) => 
-                  InternalServerError(Protocol.GetApiError(
-                    ErrorType.InterpreterError, "Error has occurred. Please try again later."
-                  ))
-                case Right(rate) => Ok(rate.asGetApiResponse)
-            }
-          }
-        }
-      }
+      })
+      .merge
   }
 
   val routes: HttpRoutes[F] = Router(

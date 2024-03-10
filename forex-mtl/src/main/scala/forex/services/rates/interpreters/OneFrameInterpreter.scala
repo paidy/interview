@@ -22,27 +22,26 @@ class OneFrameInterpreter[F[_]: Applicative](oneFrameApiClient: OneFrameApiClien
   }
 
   private def getFromApi(pair: Rate.Pair): Either[Error, Rate] = {
-      val ratesFromClient = oneFrameApiClient.getAll()
+      val ratesFromApi = oneFrameApiClient.getAll()
 
-      val rateFromMap = ratesFromClient match {
-        case Left(_) => Left(OneFrameLookupFailed("Error with getting response from OneFrameApiClient")) 
-        case Right(r) => 
+      val rateFromApi = ratesFromApi.fold(
+        _ => Left(OneFrameLookupFailed("Error with getting response from OneFrameApiClient")),
+        r => {
           ratesCache.setAll(r.values.toSet)
           Right(r.get(pair))
-      }
+        }
+      )
   
-      val rate = rateFromMap match {
-        case Left(e) => Left(e)
-        case Right(value) => 
-          if (value.isEmpty) {
+      rateFromApi.fold(
+        e => Left(e),
+        maybeRate => 
+          if (maybeRate.isEmpty) {
             logger.error(s"Received a valid response from OneFrame API but could not find rate for ${pair}")
             Left(OneFrameLookupFailed("Pair does not exist"))
           } else {
-            Right(value.get)
+            Right(maybeRate.get)  
           }
-      }
-
-      return rate
+      )
   }
 
 }

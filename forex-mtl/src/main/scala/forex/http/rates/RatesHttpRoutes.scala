@@ -11,15 +11,29 @@ import org.http4s.server.Router
 
 class RatesHttpRoutes[F[_]: Sync](rates: RatesProgram[F]) extends Http4sDsl[F] {
 
-  import Converters._, QueryParams._, Protocol._
+  import Converters._, QueryParams._
 
   private[http] val prefixPath = "/rates"
 
   private val httpRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
-    case GET -> Root :? FromQueryParam(from) +& ToQueryParam(to) =>
-      rates.get(RatesProgramProtocol.GetRatesRequest(from, to)).flatMap(Sync[F].fromEither).flatMap { rate =>
-        Ok(rate.asGetApiResponse)
-      }
+    case GET -> Root :? FromQueryParam(maybeFrom) +& ToQueryParam(maybeTo) =>
+      validateParams(new Params(maybeFrom.toOption, maybeTo.toOption))
+      .fold(
+        err => Left(BadRequest(Protocol.GetApiError(ErrorType.InvalidRate, err.sanitized))),
+        validatedParams => Right(validatedParams)
+      )
+      .map(validatedParams => rates.get(
+        RatesProgramProtocol.GetRatesRequest(validatedParams.from, validatedParams.to)
+      ))
+      .map(maybeRate => maybeRate.flatMap { r =>
+        r.fold(
+          _ => InternalServerError(Protocol.GetApiError(
+            ErrorType.InterpreterError, "Error has occurred. Please try again later."
+            )),
+          rate => Ok(rate.asGetApiResponse)
+        )
+      })
+      .merge
   }
 
   val routes: HttpRoutes[F] = Router(

@@ -20,7 +20,7 @@ We appreciate your efforts and hope you’ll have fun doing this homework assign
 Please include all the work requested under the [guidance section](./AddressValidation.md#guidance) in a PDF file and email it to the Paidy talent acquisition team.
 
 ## The Follow-Up Interview
-During the follow-up interview, you'll have the opportunity to meet more members of our team. You'll be asked to discuss the decisions you made, explain the reasoning behind them, and review the requirements you outlined.
+During the follow-up interview, you'll have the opportunity to meet more members of our team. You'll be asked to present your submission and the requirements that you wrote in the style of a project kick off meeting. We would like to hear about the decisions you made, explain the reasoning behind them, and review the requirements and the scope that you outlined.
 
 ## Requirements: Address validation engine
 ### Context

@@ -27,8 +27,11 @@ The complete specification for this exercise can be found in the [Forex-UI.md](F
 ### 3. [Platform] Build a local proxy for currency exchange rates
 The complete specification for this exercise can be found in the [Forex.md](Forex.md).
 
-### 5. [Platform] Build an API for managing a restaurant
+### 4. [Platform] Build an API for managing a restaurant
 The complete specification for this exercise can be found at [SimpleRestaurantApi.md](SimpleRestaurantApi.md)
+
+### 5. [Technical Product Manager] Choose an address validation provider and write the project requirements
+The complete specification for this exercise can be found at [AddressValidation.md](./AddressValidation.md)
 
 ## F.A.Q.
 1) _Should I work on all exercises ?_

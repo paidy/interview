@@ -98,6 +98,5 @@ of time between 5 and 15 minutes and kept static from then on.
 for table "4", for example, any other requests for table "4" must refer to the same table.
 * “Clients” can be simulated as simple threads in a main() function calling the main server application with a 
 variety of requests.  There should be more than one, preferably around 5-10 running at any one time.
-* The API must follow REST principles and accept HTTP connections.
 
 

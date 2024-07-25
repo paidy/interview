@@ -75,6 +75,7 @@ to add, remove, and query menu items for each table.  Please make this as simple
 
 ## Requirements
 
+* The server API MUST fully follow REST API principles and present a set of HTTP endpoints to connect to.
 * The client (the restaurant staff “devices” making the requests) MUST be able to: add one or more items with a 
 table number, remove an item for a table, and query the items still remaining for a table.
 * The application MUST, upon creation request, store the item, the table number, and how long the item will take to cook.
@@ -97,7 +98,6 @@ of time between 5 and 15 minutes and kept static from then on.
 for table "4", for example, any other requests for table "4" must refer to the same table.
 * “Clients” can be simulated as simple threads in a main() function calling the main server application with a 
 variety of requests.  There should be more than one, preferably around 5-10 running at any one time.
-* The API is up to the developer.  HTTP REST is acceptable, but direct API calls are also acceptable if they mimic an 
-HTTP REST-like API (e.g. api_call1(string id, string resource), etc.).
+* The API must follow REST principles and accept HTTP connections.
 
 

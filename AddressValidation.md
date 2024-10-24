@@ -31,17 +31,6 @@ We’d like to hear about:
 
 We’ll treat this interview as a collaborative session, similar to a project meeting where you’d gather input from key stakeholders. Be prepared to answer questions, justify your choices, and potentially adapt your solution based on feedback. This will give us insight into how you manage discussions and adjust plans in a dynamic team environment.
 
-## Requirements: Address validation engine
-### Context
-
-When a consumer makes a transaction at a merchant using Paidy, we receive via API some key information about the transaction. One of these key information is the shipping address entered by the consumer on the checkout page of the merchant. Address validity is a key topic not only for marketing and logistics reasons but also for fraud. For fraudsters, a mailing address offers a lot of payment fraud and account take over opportunities. 
-
-Imagine you’re a Risk TPM at Paidy trying to implement an address validation system to catch fraudulent transactions before they cause significant harm to Paidy’s business. How would you go about designing and implementing such a system at Paidy using a third party address validation vendor?
-
-_Notes: the shipping address is entered on the merchant website and is communicated to Paidy via API [checkout documentation here](https://paidy.com/docs/api/en/#1-introduction). Assume that we cannot change the UI of the merchant website to prompt the consumer to correct the address. The shipping address is communicated as it was shared with the merchant so we are only thinking about implementing further checks once Paidy receives the payment information._
-
-### Guidance
-
 ## Requirements: Address Validation Engine
 
 ### Context

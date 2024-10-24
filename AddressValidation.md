@@ -53,7 +53,7 @@ _Notes: The shipping address is entered on the merchant’s website and is commu
 
 3. **Product Requirement Document (PRD)**: Write a PRD that outlines the requirements for this feature. Break down the implementation into actionable, small steps.
 
-4. **Presentation Preparation**: In the next session, you will present the feature and scope proposal to the Engineering Lead and other product managers during a project kick-off meeting. Choose a format that you believe will effectively communicate the user stories and how the feature will be implemented.
+4. **Presentation Preparation**: In the next interview, you will present the feature and scope proposal to the Engineering Lead and other product managers during a project kick-off meeting. Choose a format that you believe will effectively communicate the user stories and how the feature will be implemented.
 
 ## F.A.Q.
 [Please click here for the F.A.Q.](./README.md#faq)

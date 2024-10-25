@@ -15,6 +15,8 @@ object Dependencies {
     val scalaCheck     = "1.15.3"
     val scalaTest      = "3.2.7"
     val catsScalaCheck = "0.3.2"
+    val sttp           = "3.9.1"
+    val redisClient   = "3.5.2"
   }
 
   object Libraries {
@@ -33,7 +35,9 @@ object Dependencies {
     lazy val circeGenericExt = circe("circe-generic-extras")
     lazy val circeParser     = circe("circe-parser")
     lazy val pureConfig      = "com.github.pureconfig" %% "pureconfig" % Versions.pureConfig
-
+    lazy val sttp            = "com.softwaremill.sttp.client3" %% "core"               % Versions.sttp
+    lazy val sttpCirce       = "com.softwaremill.sttp.client3" %% "circe"               % Versions.sttp
+    lazy val redisClient    =  "redis.clients" % "jedis"       % Versions.redisClient
     // Compiler plugins
     lazy val kindProjector = "org.typelevel" %% "kind-projector" % Versions.kindProjector cross CrossVersion.full
 

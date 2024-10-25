@@ -1,4 +1,4 @@
-import Dependencies._
+import Dependencies.*
 
 name := "forex"
 version := "1.0.1"
@@ -62,8 +62,15 @@ libraryDependencies ++= Seq(
   Libraries.circeGenericExt,
   Libraries.circeParser,
   Libraries.pureConfig,
+  Libraries.sttp,
+  Libraries.redisClient,
+  Libraries.sttpCirce,
   Libraries.logback,
   Libraries.scalaTest      % Test,
   Libraries.scalaCheck     % Test,
   Libraries.catsScalaCheck % Test
 )
+
+
+mainClass := Some("forex.Main")
+assembly := (assembly dependsOn dependencyUpdates).value

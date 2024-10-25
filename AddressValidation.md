@@ -39,7 +39,7 @@ When a consumer makes a transaction at a merchant using Paidy, we receive key in
 
 As a Risk Technical Product Manager (TPM) at Paidy, your task is to design and implement an address validation system that can catch fraudulent transactions before they harm Paidy’s business. You will be using a third-party address validation vendor to accomplish this.
 
-_Notes: The shipping address is entered on the merchant’s website and is communicated to Paidy via API. Assume that we cannot change the UI of the merchant website to prompt the consumer to correct the address. Therefore, we will only implement further checks once Paidy receives the payment information._
+_Notes: The shipping address is entered on the merchant’s website and is communicated to Paidy via API [check the documentation here](https://paidy.com/docs/api/en/#1-introduction). Assume that we cannot change the UI of the merchant website to prompt the consumer to correct the address. Therefore, we will only implement further checks once Paidy receives the payment information._
 
 ### Guidance
 

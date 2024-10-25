@@ -49,7 +49,7 @@ _Notes: The shipping address is entered on the merchant’s website and is commu
    - [Google Maps](https://developers.google.com/maps/documentation/address-validation/requests-validate-address)
    - [Postgrid](https://www.postgrid.com/address-verification/)
 
-2. **Key Performance Indicators (KPIs)**: Identify the KPIs you would use to measure the performance of your new system.
+2. **Key Performance Indicators (KPIs)**: Identify the KPIs or metrics you would use to measure the performance of your new system and the business impact.
 
 3. **Product Requirement Document (PRD)**: Write a PRD that outlines the requirements for this feature. Break down the implementation into actionable, small steps.
 

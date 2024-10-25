@@ -1,16 +1,17 @@
 package users.main
 
-import cats.data._
-import users.config._
+import cats.*
+import cats.data.*
+import cats.effect.*
+import cats.implicits.*
 
-object Application {
-  val reader: Reader[Services, Application] =
-    Reader(Application.apply)
+import users.config.*
 
-  val fromApplicationConfig: Reader[ApplicationConfig, Application] =
-    Services.fromApplicationConfig andThen reader
-}
+object Application:
 
-case class Application(
-    services: Services
-)
+  def reader[F[_]: Async]: ReaderT[F, Services[F], Application[F]] = ReaderT(Application[F].apply(_).pure)
+
+  def fromApplicationConfig[F[_]: Async]: ReaderT[F, ApplicationConfig, Application[F]] =
+    Services.fromApplicationConfig[F].andThen(reader)
+
+case class Application[F[_]: Async](services: Services[F])

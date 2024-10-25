@@ -1,25 +1,22 @@
 package users.main
 
-import cats.data.Reader
-
-import users.config._
-
 import java.util.concurrent.ForkJoinPool
+
+import cats.*
+import cats.data.*
+import cats.implicits.*
+
 import scala.concurrent.ExecutionContext
 
-object Executors {
-  val reader: Reader[ExecutorsConfig, Executors] =
-    Reader(Executors.apply)
+import users.config.*
 
-  val fromApplicationConfig: Reader[ApplicationConfig, Executors] =
-    reader.local[ApplicationConfig](_.executors)
-}
+object Executors:
+  def reader[F[_]: Applicative]: ReaderT[F, ExecutorsConfig, Executors] = ReaderT(Executors.apply(_).pure)
 
-final case class Executors(
-    config: ExecutorsConfig
-) {
+  def fromApplicationConfig[F[_]: Applicative]: ReaderT[F, ApplicationConfig, Executors] =
+    reader[F].local[ApplicationConfig](_.executors)
+
+final case class Executors(config: ExecutorsConfig):
 
   final val serviceExecutor: ExecutionContext =
     ExecutionContext.fromExecutor(new ForkJoinPool(config.services.parallellism))
-
-}

@@ -1,38 +1,41 @@
 package users.main
 
-import cats.data._
+import cats.data.*
+import cats.effect.*
+import cats.implicits.*
 
-import users.config._
-import users.services._
+import scala.concurrent.ExecutionContext
 
-import scala.concurrent.Future
+import users.config.*
+import users.services.*
 
-object Services {
-  val reader: Reader[(ServicesConfig, Executors, Repositories), Services] =
-    Reader((Services.apply _).tupled)
+object Services:
 
-  val fromApplicationConfig: Reader[ApplicationConfig, Services] =
-    (for {
-      config ← ServicesConfig.fromApplicationConfig
-      executors ← Executors.fromApplicationConfig
-      repositories ← Repositories.fromApplicationConfig
-    } yield (config, executors, repositories)) andThen reader
-}
+  def reader[F[_]: Async]: ReaderT[F, (ServicesConfig, Executors, Repositories[F], HttpService), Services[F]] =
+    ReaderT(Services[F].apply.tupled(_).pure)
 
-final case class Services(
-    config: ServicesConfig,
-    executors: Executors,
-    repositories: Repositories
-) {
-  import executors._
-  import repositories._
+  def fromApplicationConfig[F[_]: Async]: ReaderT[F, ApplicationConfig, Services[F]] =
+    (for
+      config <- ServicesConfig.fromApplicationConfig
+      executors <- Executors.fromApplicationConfig
+      repositories <- Repositories.fromApplicationConfig
+      httpService <- HttpService.fromApplicationConfig
+    yield (config, executors, repositories, httpService)).andThen(reader)
 
-  implicit val ec = serviceExecutor
+final case class Services[F[_]: Async](
+  config: ServicesConfig,
+  executors: Executors,
+  repositories: Repositories[F],
+  httpService: HttpService
+):
 
-  final val userManagement: UserManagement[Future[?]] =
-    UserManagement.unreliable(
-      UserManagement.default(userRepository),
+  import executors.*
+  import repositories.*
+
+  implicit val ec: ExecutionContext = serviceExecutor
+
+  final val userManagement: UserManagement[F] =
+    UserManagement.unreliable[F](
+      UserManagement.default[F](userRepository),
       config.users
     )
-
-}

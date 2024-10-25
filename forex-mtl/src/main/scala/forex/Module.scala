@@ -1,19 +1,24 @@
 package forex
 
-import cats.effect.{ Concurrent, Timer }
+import cats.effect.{Concurrent, Timer}
+import forex.cache.rates.RatesCache
+import forex.client.OneFrameHttpClient
 import forex.config.ApplicationConfig
 import forex.http.rates.RatesHttpRoutes
 import forex.services._
 import forex.programs._
 import org.http4s._
 import org.http4s.implicits._
-import org.http4s.server.middleware.{ AutoSlash, Timeout }
+import org.http4s.server.middleware.{AutoSlash, Timeout}
 
 class Module[F[_]: Concurrent: Timer](config: ApplicationConfig) {
+  private val oneFrameHttpClient: OneFrameHttpClient = OneFrameHttpClient.getInstance
 
-  private val ratesService: RatesService[F] = RatesServices.dummy[F]
+  private val ratesService: RatesService[F] = RatesServices.oneFrameClient[F](oneFrameHttpClient)
 
-  private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService)
+  private val ratesCache: RatesCache = RatesCache.getInstance
+
+  private val ratesProgram: RatesProgram[F] = RatesProgram[F](ratesService, ratesCache)
 
   private val ratesHttpRoutes: HttpRoutes[F] = new RatesHttpRoutes[F](ratesProgram).routes
 

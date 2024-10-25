@@ -56,6 +56,8 @@ libraryDependencies ++= Seq(
   Libraries.fs2,
   Libraries.http4sDsl,
   Libraries.http4sServer,
+  Libraries.sttpClient,
+  Libraries.caffiene,
   Libraries.http4sCirce,
   Libraries.circeCore,
   Libraries.circeGeneric,

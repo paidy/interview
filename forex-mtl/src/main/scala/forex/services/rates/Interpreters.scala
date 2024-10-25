@@ -1,8 +1,9 @@
 package forex.services.rates
 
 import cats.Applicative
+import forex.client.OneFrameHttpClient
 import interpreters._
 
 object Interpreters {
-  def dummy[F[_]: Applicative]: Algebra[F] = new OneFrameDummy[F]()
+  def oneFrameClient[F[_]: Applicative](oneFrameHttpClient: OneFrameHttpClient): Algebra[F] = new OneFrameClient[F](oneFrameHttpClient)
 }

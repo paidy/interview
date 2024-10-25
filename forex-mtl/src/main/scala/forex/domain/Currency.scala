@@ -39,4 +39,14 @@ object Currency {
     case "USD" => USD
   }
 
+  def tryFromString(s: String): Option[Currency] = {
+    try {
+      Option(fromString(s))
+    }
+    catch {
+      case _ : MatchError => None
+    }
+  }
+
+  def cases(): Set[Currency] = Set(AUD, CAD, CHF, EUR, GBP, NZD, JPY, SGD, USD)
 }

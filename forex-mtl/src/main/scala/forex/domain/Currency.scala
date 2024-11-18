@@ -15,6 +15,8 @@ object Currency {
   case object SGD extends Currency
   case object USD extends Currency
 
+  val supportedCurrencies : Set[Currency] = Set(AUD, CAD, CHF, EUR, GBP, NZD, JPY, SGD, USD)
+
   implicit val show: Show[Currency] = Show.show {
     case AUD => "AUD"
     case CAD => "CAD"

@@ -4,6 +4,7 @@ package rates
 import forex.domain.Currency.show
 import forex.domain.Rate.Pair
 import forex.domain._
+import forex.programs.rates.errors
 import io.circe._
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto.deriveConfiguredEncoder
@@ -24,6 +25,13 @@ object Protocol {
       timestamp: Timestamp
   )
 
+  final case class GetApiErrorResponse(
+      from: Currency,
+      to: Currency,
+      price: Price,
+      timestamp: Timestamp
+   )
+
   implicit val currencyEncoder: Encoder[Currency] =
     Encoder.instance[Currency] { show.show _ andThen Json.fromString }
 
@@ -35,5 +43,8 @@ object Protocol {
 
   implicit val responseEncoder: Encoder[GetApiResponse] =
     deriveConfiguredEncoder[GetApiResponse]
+
+  implicit val rateLookupErrorEncoder: Encoder[errors.Error.RateLookupFailed] =
+    deriveConfiguredEncoder[errors.Error.RateLookupFailed]
 
 }

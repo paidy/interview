@@ -67,3 +67,10 @@ libraryDependencies ++= Seq(
   Libraries.scalaCheck     % Test,
   Libraries.catsScalaCheck % Test
 )
+
+libraryDependencies ++= Seq(
+  "net.debasishg" %% "redisclient" % "3.41"
+)
+
+libraryDependencies += "com.lihaoyi" %% "requests" % "0.8.0"
+

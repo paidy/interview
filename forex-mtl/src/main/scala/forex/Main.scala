@@ -8,9 +8,14 @@ import org.http4s.blaze.server.BlazeServerBuilder
 
 object Main extends IOApp {
 
-  override def run(args: List[String]): IO[ExitCode] =
-    new Application[IO].stream(executionContext).compile.drain.as(ExitCode.Success)
-
+  override def run(args: List[String]): IO[ExitCode] = {
+    val startupTask = IO {StartupTasks.process()}
+    val app: IO[ExitCode] = new Application[IO].stream(executionContext).compile.drain.as(ExitCode.Success)
+    for {
+      _ <- startupTask.start //This will run async and starts another task after 4minutes to refresh cache...
+      exitCode <- app //This will run the app in current thread
+    } yield { exitCode}
+  }
 }
 
 class Application[F[_]: ConcurrentEffect: Timer] {
@@ -24,5 +29,4 @@ class Application[F[_]: ConcurrentEffect: Timer] {
             .withHttpApp(module.httpApp)
             .serve
     } yield ()
-
 }

@@ -2,19 +2,20 @@
 
 (See "Assignment" section for assignment details)
 
-The programming language required to complete the test will be communicated to you prior to being given the assignment.
-It may be permissable to choose between a set of languages, or you may be directed to complete the assignment using
-a prescribed programming language.
+Please use the Rust programming language to complete this assignment.
 
-Please try to spend around 4-6 hours on this test.  The focus will be on data structure choice, API design and 
-implementation, internal implementation (especially regarding data correctness, multi-threaded capacity, and 
+If you encounter any ambiguity, please document your assumptions and the reasoning behind them.
+
+As a guideline, you can expect this assignment will take around 4-6 hours, but spend as much time as you feel is appropriate.
+The focus will be on data structure choice, API design and 
+implementation, internal implementation (especially regarding data correctness, multithreaded capacity, and 
 proper unit testing).  How "functional" the solution is coded will also be a strong factor.  Please learn and use all 
-of the functional programming skills you can to complete this test, along with a good sense of when and where to apply 
+the functional programming skills you can to complete this test, along with a good sense of when and where to apply 
 them.  Knowing when to try to stay purely functional and when to deviate to a more procedural mindset is a 
 skill which will come in handy for this test.
 
 Please keep everything simple and focus on making each piece as solid as possible.  The parts that are in the 
-solution should be tested.  If time runs out, it is preferable to have a few pieces that are well-written and 
+solution should be tested. It is preferable to have a few pieces that are well-written and 
 functional with unit tests rather than a broader solution which is buggy and untestable.
 
 In general, consider your final solution to be a "production-ready" application, so whatever constitutes 
@@ -22,19 +23,16 @@ In general, consider your final solution to be a "production-ready" application,
 
 ## Important Notes: 
 
-Please don't fret too much about a lack of experience in the programming language specified in the Job Description. 
+Please don't fret too much about a lack of experience in Rust. 
 Regard this as a chance to showcase your ability to pick up a new language, understand its basics, and apply that understanding 
 in a short amount of time. Picking a new language and showing that you can write some basic code using the strengths of that language, 
 even if the code isn’t mastery-level and doesn’t include super high-powered features, is a powerful showcase of your 
 software engineering skills.  In addition, other basic software engineering skills will be on display regardless of your
-familiarity with the actual programming language used for implementation. We will also accept solutions in these other languages:
-* Java
-* Kotlin
-* Python
+familiarity with Rust. 
 
-The solution should be designed to be production-ready as you would normally do for a real business application.
-However, you can keep it simple, and focus to solve the problem, just be ready to explain how you could scale it 
-if/when needed. Try to make it as clean as you can (deployable, tested, documented, etc.), and please bear in mind that 
+The solution should be designed to be production-ready as you would normally do for a real business application. You don't need to
+deploy it somewhere, but keep in mind how the code would need to evolve when requested to add new features or if business requirements changed.
+Try to make it as clean as you can (tested, documented, etc.), and please bear in mind that 
 the point of this is to showcase your skills, particularly with functional programming, API design, data structure choice, 
 and data manipulation techniques. The desire to use third-party tools to perform data updating, table and database management, etc. 
 which would ordinarily be in a production-ready design is much appreciated and understood, however, these tools hide 
@@ -42,12 +40,11 @@ your skills behind already-built libraries, and make it difficult for us to unde
 vital to success at Paidy.  
 
 So, please refrain from using tools which perform API and data structure design for you, or hide the data 
-manipulation behind third-party library calls such as ORM tools (JPA, Hibernate, SQLAlchemy, etc...), 
-API generation tools (OpenAPI generator, etc.).  
+manipulation behind third-party library calls such as ORM tools (Diesel, JPA, Hibernate, SQLAlchemy, etc...), 
+API generation tools (OpenAPI generator, etc.).   
 
 Note: Libraries which deal with threading, thread channels, TCP/IP streaming, HTTP processing, REST 
-webserver endpoints, and other functionality which bring the data into your app are fine, as long as we can still 
-examine how you update the database and process the information given to you from those low-level libraries.
+webserver endpoints, and other functionality which bring the data into your app (Rocket, Axum, Actix, etc...) are fine.
 
 Good luck!
 
